@@ -1,0 +1,9 @@
+Y Combinator Startup School Evaluating Ideas and Users Guide
+
+When evaluating a startup idea, you must ask: why now? Timing is the secret tailwind that drives massive growth. Look for a technology shift (e.g. mobile, AI, cloud), a regulatory change, or a cultural shift that makes this business possible today but impossible two years ago. If nothing has changed in the macro environment in the last two years, why hasn't an incumbent or another startup done this already? Timing must be supported by tailwinds, not headwinds.
+
+User Discovery and Testing Baseline Demand
+The first step of execution is talking to users. Do not build in a vacuum. Speak to potential customers to understand their current workflows and alternative solutions. If users are not already trying to solve the problem using sub-optimal hacks, the pain is not high enough. Your MVP should target the smallest possible customer base that experiences the problem most acutely. Focus on retention as your primary metric: if early users do not stick around, product-market fit is low.
+
+Sizing the Market and Customer Base
+A great market is either very large already or growing rapidly. Sizing the market requires looking at the number of potential customers and the annual value of each customer. Startups that target small, stagnant markets struggle to grow even with perfect execution. Target markets where customers are active, growing, and willing to pay. Focus on capturing a small niche of a high-value market first, then expand horizontally into adjacent categories.

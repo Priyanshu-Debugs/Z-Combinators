@@ -1,3 +1,4 @@
+import uuid
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -5,15 +6,29 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from config import settings
-from models import EvaluateRequest, EvaluateResponse
+from models import (
+    EvaluateRequest,
+    EvaluateResponse,
+    MessageRequest,
+    MessageResponse,
+    ChatMessage
+)
 from rag.evaluator import evaluate_idea
+from rag.chat import evaluate_chat_turn
+from database import (
+    init_db,
+    create_session,
+    save_message,
+    get_session_messages,
+    get_compiled_evaluations
+)
 
 # Rate limiter setup
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="Z-Combinator API",
-    description="AI-powered startup idea evaluation using RAG.",
+    description="AI-powered startup idea evaluation and chat advisor using RAG.",
     version="1.0.0",
 )
 
@@ -31,6 +46,12 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Run database table initialization on startup."""
+    init_db()
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring."""
@@ -41,11 +62,80 @@ async def health_check():
 @limiter.limit(settings.RATE_LIMIT)
 async def evaluate_endpoint(request: Request, body: EvaluateRequest):
     """
-    Evaluate a startup idea across 6 dimensions using RAG.
-
-    - Retrieves relevant framework chunks from ChromaDB (filtered by dimension)
-    - Runs 6 parallel LLM calls via Groq
-    - Returns scores, justifications, and source citations
+    Static RAG evaluation endpoint (kept for backward compatibility).
     """
     result = await evaluate_idea(body.idea)
     return result
+
+
+@app.post("/api/chat/session")
+async def start_session_endpoint():
+    """Initialize a new chat session with a unique UUID."""
+    session_id = str(uuid.uuid4())
+    create_session(session_id, title="Startup Evaluation Chat")
+    return {"session_id": session_id}
+
+
+@app.get("/api/chat/session/{session_id}", response_model=MessageResponse)
+async def get_session_endpoint(session_id: str):
+    """Retrieve chat history and compiled dossier reports for an existing session."""
+    messages = get_session_messages(session_id)
+    compiled = get_compiled_evaluations(session_id)
+    
+    history = [
+        ChatMessage(role=m["role"], content=m["content"], evaluations=m["evaluations"])
+        for m in messages
+    ]
+    
+    return MessageResponse(
+        session_id=session_id,
+        reply="",
+        evaluations=[],
+        history=history,
+        compiled_dossier=compiled
+    )
+
+
+@app.post("/api/chat/message", response_model=MessageResponse)
+@limiter.limit(settings.RATE_LIMIT)
+async def post_message_endpoint(request: Request, body: MessageRequest):
+    """
+    Post a message to the chat advisor.
+    
+    1. Fetch context history.
+    2. Save user message.
+    3. Run evaluation through LangChain RAG.
+    4. Save assistant response and evaluations.
+    5. Compile and return message list and current dossier scores.
+    """
+    session_id = body.session_id
+    content = body.content
+    
+    # 1. Fetch current history for RAG context
+    history_raw = get_session_messages(session_id)
+    
+    # 2. Save user message to database
+    save_message(session_id, "user", content)
+    
+    # 3. Call LangChain RAG chat pipeline
+    reply, evaluations = await evaluate_chat_turn(content, history_raw)
+    
+    # 4. Save assistant response and evaluations to database
+    evals_json = [ev.model_dump() for ev in evaluations]
+    save_message(session_id, "assistant", reply, evals_json)
+    
+    # 5. Fetch updated logs and compiled dossier
+    updated_history_raw = get_session_messages(session_id)
+    history = [
+        ChatMessage(role=m["role"], content=m["content"], evaluations=m["evaluations"])
+        for m in updated_history_raw
+    ]
+    compiled = get_compiled_evaluations(session_id)
+    
+    return MessageResponse(
+        session_id=session_id,
+        reply=reply,
+        evaluations=evaluations,
+        history=history,
+        compiled_dossier=compiled
+    )

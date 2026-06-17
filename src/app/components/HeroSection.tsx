@@ -21,9 +21,8 @@ export default function HeroSection() {
           style={{
             fontSize: "clamp(18px, 4vw, 26px)",
             lineHeight: 1.3,
-            fontWeight: 400,
+            fontWeight: 600,
             color: "#000",
-            filter: "blur(4px)",
           }}
         >
           Skip the generic AI advice,
@@ -32,7 +31,7 @@ export default function HeroSection() {
         </p>
 
         <p
-          className="text-black mb-6 sm:mb-8 font-body font-normal"
+          className="text-black mb-6 sm:mb-8 font-body font-medium"
           style={{
             fontSize: "clamp(18px, 4vw, 26px)",
             lineHeight: 1.35,

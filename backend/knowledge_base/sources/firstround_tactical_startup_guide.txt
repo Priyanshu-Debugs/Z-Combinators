@@ -1,0 +1,9 @@
+First Round Review Tactical Startup Guide
+
+To build a great team, look for founder-market fit. Domain expertise is the single most important factor in the early stages. Founders who have personally lived the problem have a massive advantage over those who are simply chasing an opportunity. The founding team must possess a complementary set of technical and operational skills. If you are building a highly technical product, you must have a strong technical co-founder. If you are building an operationally intensive business, you need leadership with strong operational background.
+
+Execution and MVP User Testing
+Before building a complete product, you must test user demand. Build an MVP (Minimum Viable Product) that solves only the core problem. Ship early and iterate based on direct user feedback. The fastest team to iterate wins. Focus on metrics: user engagement, retention, and growth. If your product-market fit is low, pivot quickly. Do not waste capital on marketing before you have high retention.
+
+Evaluating Team Dynamics and Hiring
+As you scale, hiring becomes the CEO's primary job. Recruit people who have a passion for the problem. Look for team members who are self-directed and comfortable with ambiguity. A startup team must have high alignment and high trust. Ensure your incentives are aligned, and establish a culture of high execution speed and continuous learning.

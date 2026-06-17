@@ -1,0 +1,9 @@
+Naval Ravikant How to Get Rich and Find PMF Guide
+
+Startups need a strong, defensible moat to build long-term value. A moat can come from network effects, high switching costs, brand, proprietary technology, or data advantages. If your business lacks a moat, it is not defensible and will be competed away. Leverage is key: you want code and media leverage, which are permissionless and scale with near-zero marginal cost. Combine leverage with specific knowledge—the stuff you were doing effortlessly as a teenager or that you do naturally—to create unique, differentiated value.
+
+Founder Leverage and Choosing Cofounders
+Cofounder selection is the most important decision a startup makes. Choose a partner with high intelligence, high energy, and high integrity. The team must have complementary skills: one person must be able to build the product (technical), and the other must be able to sell the product (operational). Solo founders are hard because a startup requires both building and selling in parallel. Domain expertise and founder-market fit ensure you are building something that actually needs to exist.
+
+Finding Product-Market Fit and Focus
+Do not scale execution before finding product-market fit (PMF). PMF is when the market is actively pulling the product out of you. Focus on a narrow target customer base first. It is better to build something that a small number of people love than something that a large number of people just like. If your early traction is low, do not force growth; keep iterating on the core value proposition until the flywheel starts spinning naturally.

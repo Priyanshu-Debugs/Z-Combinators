@@ -13,7 +13,7 @@ Target users include first-time founders, indie hackers, students, and side-proj
 
 ### 2.2 Assumptions & Dependencies
 * High-quality, curated text chunks (~150-200) from credible sources are available for the RAG knowledge base.
-* The LLM API (Groq) remains responsive and within budget limits for free-tier/public usage.
+* The LLM API (Gemini API via LangChain) remains responsive and within budget limits for free-tier/public usage.
 
 ## 3. Specific Requirements
 ### 3.1 Functional Requirements

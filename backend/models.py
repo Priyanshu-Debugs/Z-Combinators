@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Literal, Optional
 
 
-# ===== REQUEST =====
+# ===== STATIC EVALUATION (COMPATIBILITY) =====
 class EvaluateRequest(BaseModel):
     idea: str = Field(
         ...,
@@ -12,7 +12,6 @@ class EvaluateRequest(BaseModel):
     )
 
 
-# ===== RESPONSE =====
 class DimensionResult(BaseModel):
     dimension: str
     score: int = Field(..., ge=1, le=10)
@@ -25,3 +24,23 @@ class DimensionResult(BaseModel):
 class EvaluateResponse(BaseModel):
     overall_score: float = Field(..., ge=1.0, le=10.0)
     dimensions: list[DimensionResult]
+
+
+# ===== CHAT PROTOCOL =====
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+    evaluations: Optional[list[DimensionResult]] = None
+
+
+class MessageRequest(BaseModel):
+    session_id: str
+    content: str
+
+
+class MessageResponse(BaseModel):
+    session_id: str
+    reply: str
+    evaluations: list[DimensionResult]
+    history: list[ChatMessage]
+    compiled_dossier: list[DimensionResult]

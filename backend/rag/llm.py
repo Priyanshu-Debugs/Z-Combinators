@@ -1,10 +1,9 @@
 import json
 import asyncio
-from google import genai
-from google.genai import types
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
 from config import settings
-
-_client = None
 
 SYSTEM_PROMPT = """You are an expert startup evaluator. You evaluate startup ideas by applying established frameworks from Y Combinator, Andreessen Horowitz (a16z), and NFX.
 
@@ -19,31 +18,12 @@ Rules:
 - Do NOT use any emojis in your response.
 
 Respond in this exact JSON format and nothing else:
-{
+{{
   "score": <integer 1-10>,
   "justification": "<2-4 sentences explaining the score, referencing the framework context>"
-}"""
+}}"""
 
-
-def get_gemini_client() -> genai.Client:
-    """Get the Gemini client as a singleton."""
-    global _client
-    if _client is None:
-        # If no key is set, Client will try to read from GEMINI_API_KEY env var
-        _client = genai.Client(api_key=settings.GEMINI_API_KEY or None)
-    return _client
-
-
-def build_user_prompt(
-    idea: str, dimension: str, context_chunks: list[dict]
-) -> str:
-    """Build the user prompt with the idea, dimension, and retrieved context."""
-    context_text = "\n\n---\n\n".join(
-        f"[Source: {c['source_title']} ({c['source_org'].upper()})]\n{c['text']}"
-        for c in context_chunks
-    )
-
-    return f"""DIMENSION TO EVALUATE: {dimension.upper()}
+HUMAN_PROMPT_TEMPLATE = """DIMENSION TO EVALUATE: {dimension}
 
 STARTUP IDEA:
 {idea}
@@ -51,7 +31,20 @@ STARTUP IDEA:
 FRAMEWORK CONTEXT (use ONLY this to justify your score):
 {context_text}
 
-Evaluate the startup idea on the {dimension.upper()} dimension. Return JSON only."""
+Evaluate the startup idea on the {dimension} dimension. Return JSON only."""
+
+# Define LangChain ChatPromptTemplate
+prompt = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_PROMPT),
+    ("human", HUMAN_PROMPT_TEMPLATE)
+])
+
+
+def resolve_model_name(model_name: str) -> str:
+    """Resolve configured model names, mapping gemini-3.5-flash-lite to gemini-3.1-flash-lite."""
+    if model_name == "gemini-3.5-flash-lite":
+        return "gemini-3.1-flash-lite"
+    return model_name
 
 
 async def evaluate_dimension(
@@ -60,31 +53,44 @@ async def evaluate_dimension(
     context_chunks: list[dict],
 ) -> dict:
     """
-    Call Gemini LLM to evaluate one dimension.
+    Call Gemini LLM via LangChain to evaluate one dimension.
 
-    Runs the synchronous GenAI SDK call in a thread executor to allow
-    concurrent execution of all 6 dimension evaluations.
-
-    Returns: { "score": int, "justification": str }
+    Includes automatic model resolution and fallback mechanisms for robust execution.
     """
-    client = get_gemini_client()
-    user_prompt = build_user_prompt(idea, dimension, context_chunks)
+    context_text = "\n\n---\n\n".join(
+        f"[Source: {c['source_title']} ({c['source_org'].upper()})]\n{c['text']}"
+        for c in context_chunks
+    )
 
-    def _call_llm():
+    # Primary and fallback models list
+    primary_model = resolve_model_name(settings.GEMINI_MODEL)
+    models_to_try = [primary_model]
+
+    # Guarantees availability by trying secondary/tertiary models if primary fails
+    fallback_models = ["gemini-3.1-flash-lite", "gemini-2.5-flash"]
+    for fallback in fallback_models:
+        if fallback not in models_to_try:
+            models_to_try.append(fallback)
+
+    last_error = None
+    for model_name in models_to_try:
         try:
-            response = client.models.generate_content(
-                model=settings.GEMINI_MODEL,
-                contents=user_prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_PROMPT,
-                    temperature=0.3,
-                    max_output_tokens=300,
-                    response_mime_type="application/json",
-                ),
+            llm = ChatGoogleGenerativeAI(
+                model=model_name,
+                temperature=0.3,
+                max_tokens=300,
+                google_api_key=settings.GEMINI_API_KEY or None,
             )
 
-            content = response.text
-            result = json.loads(content)
+            # LangChain chain
+            chain = prompt | llm | JsonOutputParser()
+
+            # Async invoke using LangChain standard ainvoke
+            result = await chain.ainvoke({
+                "dimension": dimension.upper(),
+                "idea": idea,
+                "context_text": context_text,
+            })
 
             score = int(result.get("score", 5))
             score = max(1, min(10, score))
@@ -95,13 +101,14 @@ async def evaluate_dimension(
             return {"score": score, "justification": justification}
 
         except Exception as e:
-            return {
-                "score": 5,
-                "justification": (
-                    f"Evaluation could not be completed for this dimension. "
-                    f"Error: {str(e)}"
-                ),
-            }
+            last_error = e
+            continue
 
-    # Run synchronous Gemini call in thread executor for async compatibility
-    return await asyncio.get_event_loop().run_in_executor(None, _call_llm)
+    # If all model execution attempts fail, return a structured error result
+    return {
+        "score": 5,
+        "justification": (
+            f"Evaluation could not be completed for this dimension. "
+            f"Error: {str(last_error)}"
+        ),
+    }

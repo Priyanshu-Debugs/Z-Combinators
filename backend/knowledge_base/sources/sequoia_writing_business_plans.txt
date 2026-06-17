@@ -1,0 +1,9 @@
+Sequoia Capital Writing Business Plans and Pitches Guide
+
+We want to see that you have a deep understanding of your target customer base and your addressable market size. When writing a business plan or pitch, clearly define the problem you are solving, who is experiencing it, and why existing alternatives are insufficient. The market opportunity must be defined in terms of TAM (Total Addressable Market), SAM (Serviceable Addressable Market), and SOM (Serviceable Obtainable Market). Startups that succeed are those that target a large, growing market where customer pain is high.
+
+Evaluating Competition and Market Position
+To win, you must have a clear map of the competitive landscape. Identify all key competitors, both direct and indirect. What is your differentiation? Why will customers switch to your product? If the switching costs are low, you face high competition. Your go-to-market strategy must outline how you plan to capture market share and overcome barriers to entry.
+
+Defining Value Proposition and Customer Base
+A compelling value proposition answers the question: why should a customer buy your product instead of a competitor's or doing nothing? You must explain the tangible value—whether in time saved, money saved, or efficiency gains. Define your ideal customer profile (ICP). Who is the buyer? Who is the user? If the buyer is different from the user, explain how you will navigate the sales process.
