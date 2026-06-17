@@ -1,6 +1,7 @@
 import json
 import asyncio
-from groq import Groq
+from google import genai
+from google.genai import types
 from config import settings
 
 _client = None
@@ -24,11 +25,12 @@ Respond in this exact JSON format and nothing else:
 }"""
 
 
-def get_groq_client() -> Groq:
-    """Get the Groq client as a singleton."""
+def get_gemini_client() -> genai.Client:
+    """Get the Gemini client as a singleton."""
     global _client
     if _client is None:
-        _client = Groq(api_key=settings.GROQ_API_KEY)
+        # If no key is set, Client will try to read from GEMINI_API_KEY env var
+        _client = genai.Client(api_key=settings.GEMINI_API_KEY or None)
     return _client
 
 
@@ -58,30 +60,30 @@ async def evaluate_dimension(
     context_chunks: list[dict],
 ) -> dict:
     """
-    Call Groq LLM to evaluate one dimension.
+    Call Gemini LLM to evaluate one dimension.
 
-    Runs the synchronous Groq SDK call in a thread executor to allow
+    Runs the synchronous GenAI SDK call in a thread executor to allow
     concurrent execution of all 6 dimension evaluations.
 
     Returns: { "score": int, "justification": str }
     """
-    client = get_groq_client()
+    client = get_gemini_client()
     user_prompt = build_user_prompt(idea, dimension, context_chunks)
 
     def _call_llm():
         try:
-            response = client.chat.completions.create(
-                model=settings.GROQ_MODEL,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt},
-                ],
-                temperature=0.3,
-                max_tokens=300,
-                response_format={"type": "json_object"},
+            response = client.models.generate_content(
+                model=settings.GEMINI_MODEL,
+                contents=user_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_PROMPT,
+                    temperature=0.3,
+                    max_output_tokens=300,
+                    response_mime_type="application/json",
+                ),
             )
 
-            content = response.choices[0].message.content
+            content = response.text
             result = json.loads(content)
 
             score = int(result.get("score", 5))
@@ -101,5 +103,5 @@ async def evaluate_dimension(
                 ),
             }
 
-    # Run synchronous Groq call in thread executor for async compatibility
+    # Run synchronous Gemini call in thread executor for async compatibility
     return await asyncio.get_event_loop().run_in_executor(None, _call_llm)
