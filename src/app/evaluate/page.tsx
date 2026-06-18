@@ -40,7 +40,6 @@ function EvaluateContent() {
   ]);
   const [dossier, setDossier] = useState<Dimension[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "dossier">("chat");
   const [showHistory, setShowHistory] = useState(false);
@@ -104,7 +103,6 @@ function EvaluateContent() {
           setMessages(data.history.length > 0 ? data.history : [WELCOME_MESSAGE]);
           setDossier(data.compiled_dossier);
           setError(null);
-          setIsInitializing(false);
           if (retryTimerRef.current) {
             clearInterval(retryTimerRef.current);
             retryTimerRef.current = null;
@@ -128,7 +126,6 @@ function EvaluateContent() {
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
         setError(null);
-        setIsInitializing(false);
         if (retryTimerRef.current) {
           clearInterval(retryTimerRef.current);
           retryTimerRef.current = null;
@@ -136,11 +133,8 @@ function EvaluateContent() {
         return true;
       }
     } catch (err) {
-      setError(
-        "Advisor service is currently booting up (typical for free hosting, takes 1-2 minutes). We are retrying connection automatically..."
-      );
+      console.warn("Advisor service is currently booting up, retrying...", err);
     }
-    setIsInitializing(false);
     return false;
   }, []);
 
@@ -228,7 +222,6 @@ function EvaluateContent() {
   };
 
   const handleResetSession = async () => {
-    setIsInitializing(true);
     setError(null);
     try {
       const res = await fetch(`${API_URL}/api/chat/session`, {
@@ -244,8 +237,6 @@ function EvaluateContent() {
       }
     } catch (err) {
       setError("Failed to reset session.");
-    } finally {
-      setIsInitializing(false);
     }
   };
 
@@ -267,21 +258,6 @@ function EvaluateContent() {
       setTimeout(() => setCopyToast(false), 2500);
     });
   };
-
-  if (isInitializing) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] text-text-secondary text-sm font-medium">
-        <div className="flex flex-col items-center space-y-4">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 rounded-full border-4 border-t-accent border-r-transparent border-b-accent border-l-transparent"
-          />
-          <span>Restoring Advisor Workspace...</span>
-        </div>
-      </div>
-    );
-  }
 
   // Compute overallScore for tab badge
   const scoredMap = new Map<string, Dimension>();
@@ -305,6 +281,24 @@ function EvaluateContent() {
   return (
     <PageTransition>
       <div className="flex-grow flex flex-col pt-14 pb-0 px-0 mx-0 w-full max-w-full h-[calc(100vh-92px)] min-h-[550px] overflow-hidden">
+        {/* Connection status bar */}
+        <AnimatePresence>
+          {!sessionId && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="flex-shrink-0 bg-black text-white text-[11px] font-medium py-2 px-6 flex items-center justify-center space-x-2 w-full select-none"
+            >
+              <svg className="animate-spin h-3.5 w-3.5 text-white/80" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Connecting to the backend. Getting ready might take 1-2 minutes...</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Error Banner */}
         <AnimatePresence>
           {error && (
@@ -392,7 +386,8 @@ function EvaluateContent() {
                 <motion.button
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  whileTap={{ scale: 0.92 }}
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleCopyResults}
                   className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                 >
@@ -404,7 +399,9 @@ function EvaluateContent() {
               )}
 
               {/* History Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.04, y: -1 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowHistory(true)}
                 className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-border-strong hover:text-text-primary transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
               >
@@ -412,14 +409,16 @@ function EvaluateContent() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>History</span>
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.04, y: -1 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleResetSession}
-                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-score-low/30 hover:bg-score-low/5 hover:text-score-low transition-all duration-200 cursor-pointer active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-score-low/30 hover:bg-score-low/5 hover:text-score-low transition-all duration-200 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
               >
                 Reset Chat
-              </button>
+              </motion.button>
             </div>
           </div>
 

@@ -38,7 +38,12 @@ export default function ActionPills() {
       className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5"
     >
       {/* Large prominent Validate Idea Button */}
-      <motion.div variants={pillItemVariants}>
+      <motion.div
+        variants={pillItemVariants}
+        whileHover={{ scale: 1.03, y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 450, damping: 15 }}
+      >
         <Link
           href="/evaluate"
           className="group inline-flex items-center justify-center bg-black text-white border border-black rounded-full text-base sm:text-lg md:text-xl px-8 py-3.5 sm:px-10 sm:py-4 hover:bg-white hover:text-black hover:border-black transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl font-bold active:scale-95 w-full sm:w-auto text-center"
@@ -62,10 +67,16 @@ export default function ActionPills() {
         className="flex flex-wrap gap-2.5 sm:gap-3"
       >
         {PILLS.map((pill) => (
-          <motion.div key={pill.label} variants={pillItemVariants}>
+          <motion.div
+            key={pill.label}
+            variants={pillItemVariants}
+            whileHover={{ scale: 1.04, y: -1.5 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 450, damping: 15 }}
+          >
             <Link
               href={pill.href}
-              className="inline-flex items-center justify-center bg-white/70 text-black border border-black/10 rounded-full text-sm sm:text-base px-5 py-2.5 sm:px-6 sm:py-3 hover:bg-black hover:text-white transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center bg-white/70 text-black border border-black/10 rounded-full text-sm sm:text-base px-5 py-2.5 sm:px-6 sm:py-3 hover:bg-black hover:text-white transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
             >
               {pill.label}
             </Link>

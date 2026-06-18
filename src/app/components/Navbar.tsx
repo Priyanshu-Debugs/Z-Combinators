@@ -41,7 +41,7 @@ export default function Navbar() {
     if (isActive) {
       return `${base} text-text-primary font-medium`;
     }
-    return `${base} text-text-primary/70 hover:text-text-primary`;
+    return `${base} text-text-primary/85 hover:text-text-primary`;
   };
 
   const navLinks = [
@@ -143,7 +143,7 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-heading text-3xl font-medium text-text-primary/70 hover:text-text-primary transition-colors block"
+                    className="font-heading text-3xl font-medium text-text-primary/85 hover:text-text-primary transition-colors block"
                   >
                     {link.label}
                   </Link>

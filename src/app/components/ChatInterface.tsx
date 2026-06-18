@@ -518,6 +518,7 @@ export default function ChatInterface({
           <motion.button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
+            whileHover={{ scale: 1.05, y: -1 }}
             whileTap={{ scale: 0.88 }}
             className="p-2.5 rounded-xl bg-accent text-accent-inverse transition-all duration-200 hover:bg-[#1a1a1a] active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer flex items-center justify-center w-10 h-10 shrink-0 shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
           >

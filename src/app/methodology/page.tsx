@@ -207,21 +207,28 @@ export default function MethodologyPage() {
           <h2 className="font-heading text-2xl font-semibold text-text-primary max-w-md mx-auto leading-tight">
             Ready to see how your idea scores?
           </h2>
-          <Link
-            href="/evaluate"
-            className="group inline-flex items-center px-8 py-3.5 rounded-full bg-accent text-accent-inverse text-base font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+          <motion.div
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-block"
+            transition={{ type: "spring", stiffness: 450, damping: 15 }}
           >
-            Validate your Idea
-            <svg
-              className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
+            <Link
+              href="/evaluate"
+              className="group inline-flex items-center px-8 py-3.5 rounded-full bg-accent text-accent-inverse text-base font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </Link>
+              Validate your Idea
+              <svg
+                className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          </motion.div>
         </motion.div>
       </div>
       <Disclaimer />
