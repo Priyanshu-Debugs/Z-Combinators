@@ -7,6 +7,9 @@ from config import settings
 from rag.key_manager import key_manager, is_rate_limit_error
 from rag.vector_store import retrieve_for_dimension
 from models import DimensionResult
+import logging
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_CHAT_PROMPT = """You are an expert startup advisor applying frameworks from Y Combinator, Andreessen Horowitz (a16z), Sequoia Capital, First Round Review, and NFX.
 
@@ -280,7 +283,7 @@ async def evaluate_chat_turn(
 
             except Exception as e:
                 last_error = e
-                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                if key_manager.has_multiple_keys():
                     key_manager.rotate_key()
                     rotated = True
                     break
@@ -366,6 +369,15 @@ async def evaluate_chat_turn_stream(
                             if new_text:
                                 yield {"type": "token", "content": new_text}
                                 last_reply = chunk.reply
+                                
+                if final_result is None:
+                    final_result = await chain.ainvoke({
+                        "chat_history": chat_history,
+                        "user_message": user_message,
+                        "framework_context": framework_context
+                    })
+                    if final_result and hasattr(final_result, "reply") and final_result.reply:
+                        yield {"type": "token", "content": final_result.reply}
                 
                 scores_dict = {}
                 if final_result:
@@ -421,7 +433,7 @@ async def evaluate_chat_turn_stream(
 
             except Exception as e:
                 last_error = e
-                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                if key_manager.has_multiple_keys():
                     key_manager.rotate_key()
                     rotated = True
                     break

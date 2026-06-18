@@ -123,7 +123,7 @@ async def post_message_endpoint(request: Request, body: MessageRequest):
     reply, evaluations = await evaluate_chat_turn(content, history_raw)
     
     # 4. Save assistant response and evaluations to database
-    evals_json = [ev.model_dump() for ev in evaluations]
+    evals_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in evaluations]
     save_message(session_id, "assistant", reply, evals_json)
     
     # 5. Fetch updated logs and compiled dossier
@@ -177,12 +177,12 @@ async def post_message_stream_endpoint(request: Request, body: MessageRequest):
                     final_evals = event["evaluations"]
             
             # Save assistant response and evaluations to database
-            evals_json = [ev.model_dump() for ev in final_evals]
+            evals_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in final_evals]
             save_message(session_id, "assistant", full_reply, evals_json)
             
             # Fetch updated compiled dossier
             compiled = get_compiled_evaluations(session_id)
-            compiled_json = [ev.model_dump() for ev in compiled]
+            compiled_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in compiled]
             
             # Send completion signal with final data
             yield f"data: {json.dumps({'type': 'done', 'evaluations': evals_json, 'compiled_dossier': compiled_json})}\n\n"

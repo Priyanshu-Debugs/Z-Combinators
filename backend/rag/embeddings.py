@@ -29,7 +29,7 @@ def embed_text(text: str) -> list[float]:
             model = get_embeddings_model()
             return model.embed_query(text)
         except Exception as e:
-            if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+            if key_manager.has_multiple_keys():
                 key_manager.rotate_key()
                 get_embeddings_model(force_recreate=True)
                 continue
@@ -61,7 +61,7 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
                 success = True
                 break
             except Exception as e:
-                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                if key_manager.has_multiple_keys():
                     key_manager.rotate_key()
                     get_embeddings_model(force_recreate=True)
                     continue

@@ -113,7 +113,7 @@ async def evaluate_dimension(
     
             except Exception as e:
                 last_error = e
-                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                if key_manager.has_multiple_keys():
                     key_manager.rotate_key()
                     rotated = True
                     break
