@@ -12,21 +12,38 @@ SYSTEM_CHAT_PROMPT = """You are an expert startup advisor applying frameworks fr
 Your task is to engage in a conversation with the user about their startup idea.
 1. Review the user's latest input and the entire conversation history.
 2. In your conversational 'reply', answer the user's questions, give constructive feedback on their strengths and weaknesses, and suggest what areas they need to flesh out.
-3. Independently evaluate the 6 dimensions: Market, Team, Timing, Competition, Moat, and Execution.
-4. CRITICAL: Only assign a score to a dimension if the user has provided enough concrete details in the conversation to evaluate it.
-5. If the conversation does not contain enough info for a dimension, do NOT score it in the JSON "scores" dictionary.
-6. The score must be an integer between 1 and 10. The justification must be 2-3 sentences and MUST be strictly grounded in the provided framework context for that dimension. Do not invent reasoning.
+3. Independently evaluate all 6 dimensions on every turn: Market, Team, Timing, Competition, Moat, and Execution.
+4. You MUST assign a score (integer 1-10) and a justification (2-3 sentences) for each of the 6 dimensions.
+5. CRITICAL: If the conversation does not contain enough details to evaluate a specific dimension yet, assign a neutral score of 5 and write a justification explaining what details are missing (e.g., "Context insufficient. Please share the experience and domain expertise of your founding team.").
+6. For dimensions where details are present, the justification must be strictly grounded in the provided framework context. Do not invent reasoning.
 7. Do NOT use any emojis in your response.
 
 Respond in this exact JSON format and nothing else:
 {{
   "reply": "<Your conversational response to the user, answering questions and guiding them>",
-  "scores": {{
-    "market": {{
-      "score": <integer 1-10>,
-      "justification": "<justification sentences referencing framework rules>"
-    }}
-    // Include other dimensions ONLY if the user has provided enough information to evaluate them
+  "market": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
+  }},
+  "team": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
+  }},
+  "timing": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
+  }},
+  "competition": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
+  }},
+  "moat": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
+  }},
+  "execution": {{
+    "score": <integer 1-10>,
+    "justification": "<justification sentences>"
   }}
 }}"""
 
@@ -54,10 +71,12 @@ class ChatDimensionScore(BaseModel):
 
 class ChatAdvisorResponse(BaseModel):
     reply: str = Field(..., description="Conversational reply to the user, answering questions and giving advice.")
-    scores: Dict[str, ChatDimensionScore] = Field(
-        default_factory=dict,
-        description="Scores for evaluated dimensions. ONLY include a dimension if enough new details exist to score it. Keys must be one of: market, team, timing, competition, moat, execution."
-    )
+    market: ChatDimensionScore = Field(..., description="Evaluation of the Market dimension. Assign 5 if context is insufficient.")
+    team: ChatDimensionScore = Field(..., description="Evaluation of the Team dimension. Assign 5 if context is insufficient.")
+    timing: ChatDimensionScore = Field(..., description="Evaluation of the Timing dimension. Assign 5 if context is insufficient.")
+    competition: ChatDimensionScore = Field(..., description="Evaluation of the Competition dimension. Assign 5 if context is insufficient.")
+    moat: ChatDimensionScore = Field(..., description="Evaluation of the Moat dimension. Assign 5 if context is insufficient.")
+    execution: ChatDimensionScore = Field(..., description="Evaluation of the Execution dimension. Assign 5 if context is insufficient.")
 
 
 def resolve_model_name(model_name: str) -> str:
@@ -132,7 +151,7 @@ async def evaluate_chat_turn(
     """
     Process a single chat turn using LangChain.
     
-    1. Condense query for better RAG retrieval.
+    1. Condense query for RAG retrieval.
     2. Retrieves relevant framework chunks for the 6 dimensions.
     3. Constructs a conversational history prompt.
     4. Invokes ChatGoogleGenerativeAI with robust fallback support.
@@ -195,7 +214,14 @@ async def evaluate_chat_turn(
             })
             
             reply = result.reply
-            scores_dict = result.scores
+            scores_dict = {
+                "market": result.market,
+                "team": result.team,
+                "timing": result.timing,
+                "competition": result.competition,
+                "moat": result.moat,
+                "execution": result.execution,
+            }
             
             # Step 4: Deterministically attach RAG metadata in Python
             for dim_key, score_data in scores_dict.items():
@@ -319,7 +345,13 @@ async def evaluate_chat_turn_stream(
                             yield {"type": "token", "content": new_text}
                             last_reply = chunk.reply
             
-            scores_dict = final_result.scores if final_result else {}
+            scores_dict = {}
+            if final_result:
+                for dim in ["market", "team", "timing", "competition", "moat", "execution"]:
+                    val = getattr(final_result, dim, None)
+                    if val:
+                        scores_dict[dim] = val
+            
             evaluations = []
             
             # Deterministically attach RAG metadata
