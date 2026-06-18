@@ -38,6 +38,11 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
+          {isEvaluate && (
+            <Link href="/" className={getLinkClass("/")}>
+              Home
+            </Link>
+          )}
           <Link href="/methodology" className={getLinkClass("/methodology")}>
             Methodology
           </Link>
@@ -46,26 +51,8 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
-          {!isEvaluate && (
-            <Link
-              href="/evaluate"
-              className="inline-flex items-center px-6 py-3 rounded-full bg-accent text-accent-inverse text-[15px] font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Validate your Idea
-              <svg
-                className="ml-2 w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
-          )}
-        </div>
+        {/* Spacer to balance layout on desktop now that the CTA button is removed */}
+        <div className="hidden md:block w-[120px]" />
 
         {/* Mobile Hamburger Menu */}
         <button
@@ -104,6 +91,15 @@ export default function Navbar() {
             className="fixed inset-0 bg-bg z-40 flex flex-col pt-32 px-10 md:hidden"
           >
             <nav className="flex flex-col space-y-6">
+              {isEvaluate && (
+                <Link
+                  href="/"
+                  onClick={() => setIsOpen(false)}
+                  className="font-heading text-3xl font-medium text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  Home
+                </Link>
+              )}
               <Link
                 href="/methodology"
                 onClick={() => setIsOpen(false)}
@@ -117,13 +113,6 @@ export default function Navbar() {
                 className="font-heading text-3xl font-medium text-text-secondary hover:text-text-primary transition-colors"
               >
                 About
-              </Link>
-              <Link
-                href="/evaluate"
-                onClick={() => setIsOpen(false)}
-                className="font-heading text-3xl font-medium text-text-primary underline decoration-2 underline-offset-8"
-              >
-                Validate your Idea
               </Link>
             </nav>
           </motion.div>
