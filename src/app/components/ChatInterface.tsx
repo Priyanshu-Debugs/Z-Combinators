@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   evaluations?: any;
+  timestamp?: number;
 }
 
 interface ChatInterfaceProps {
@@ -21,6 +23,51 @@ const QUICK_ACTIONS = [
   "Help me evaluate my target market size.",
 ];
 
+function getRelativeTime(timestamp?: number): string {
+  if (!timestamp) return "";
+  const diff = Math.floor((Date.now() - timestamp) / 1000);
+  if (diff < 10) return "just now";
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+const messageVariants = {
+  hidden: (isUser: boolean) => ({
+    opacity: 0,
+    x: isUser ? 16 : -16,
+    scale: 0.97,
+  }),
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      duration: 0.35,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
+const suggestionsContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+  },
+};
+
+const suggestionItemVariants = {
+  hidden: { opacity: 0, y: 8, scale: 0.97 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+};
+
 export default function ChatInterface({
   messages,
   onSendMessage,
@@ -29,19 +76,37 @@ export default function ChatInterface({
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollFade, setShowScrollFade] = useState(false);
+  const [messagesWithTimestamps] = useState<Map<number, number>>(new Map());
+
+  // Track timestamps for newly appearing messages
+  useEffect(() => {
+    messages.forEach((_, i) => {
+      if (!messagesWithTimestamps.has(i)) {
+        messagesWithTimestamps.set(i, Date.now());
+      }
+    });
+  }, [messages, messagesWithTimestamps]);
 
   // Auto-scroll to the bottom of the chat logs
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // Track scroll position for fade gradient
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current) {
+      setShowScrollFade(scrollContainerRef.current.scrollTop > 24);
+    }
+  }, []);
+
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim() || isLoading) return;
     onSendMessage(inputValue.trim());
     setInputValue("");
-    
-    // Auto-adjust height back to single line
+
     if (inputRef.current) {
       inputRef.current.style.height = "auto";
     }
@@ -57,7 +122,6 @@ export default function ChatInterface({
   const handlePillClick = (actionText: string) => {
     setInputValue(actionText);
     inputRef.current?.focus();
-    // Auto-expand height if needed
     if (inputRef.current) {
       inputRef.current.style.height = "auto";
       setTimeout(() => {
@@ -68,7 +132,6 @@ export default function ChatInterface({
     }
   };
 
-  // Auto-resize textarea height as user types
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
     e.target.style.height = "auto";
@@ -76,14 +139,23 @@ export default function ChatInterface({
   };
 
   return (
-    <div
-      className="flex flex-col h-full w-full overflow-hidden"
-    >
+    <div className="flex flex-col h-full w-full overflow-hidden">
       {/* Chat Log Window */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 custom-scrollbar">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className={`flex-1 overflow-y-auto p-3 md:p-4 space-y-3 custom-scrollbar relative ${
+          showScrollFade ? "scroll-fade-top" : ""
+        }`}
+      >
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4">
-            <div className="w-14 h-14 rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-center text-accent shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4"
+          >
+            <div className="icon-breathe w-14 h-14 rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-center text-accent shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
@@ -96,81 +168,113 @@ export default function ChatInterface({
                 Share your idea to start the evaluation. Ask about target markets, moats, timing, or how to address customer pain points.
               </p>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          messages.map((msg, index) => {
-            const isUser = msg.role === "user";
-            return (
-              <div
-                key={index}
-                className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
-              >
-                <div className={`flex flex-col space-y-0.5 ${isUser ? "items-end max-w-[90%] md:max-w-[85%]" : "items-start max-w-[95%] md:max-w-[92%]"}`}>
-                  {/* Speaker Label */}
-                  <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none px-1">
-                    {isUser ? "You" : "Advisor"}
-                  </span>
-                  
-                  {/* Message Bubble */}
-                  <div
-                    className={`rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-[0_2px_8px_rgba(0,0,0,0.02)] border transition-all duration-200 ${
-                      isUser
-                        ? "bg-[#0A0A0A] text-white border-transparent rounded-tr-none hover:bg-[#151515]"
-                        : "bg-surface border-border/80 text-text-primary rounded-tl-none hover:border-border"
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap font-body font-medium">{msg.content}</p>
+          <AnimatePresence mode="popLayout">
+            {messages.map((msg, index) => {
+              const isUser = msg.role === "user";
+              const timestamp = messagesWithTimestamps.get(index);
+              return (
+                <motion.div
+                  key={`${index}-${msg.role}`}
+                  custom={isUser}
+                  variants={messageVariants}
+                  initial="hidden"
+                  animate="visible"
+                  layout
+                  className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
+                >
+                  <div className={`flex flex-col space-y-0.5 ${isUser ? "items-end max-w-[90%] md:max-w-[85%]" : "items-start max-w-[95%] md:max-w-[92%]"}`}>
+                    {/* Speaker Label */}
+                    <div className="flex items-center space-x-2 px-1">
+                      <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none">
+                        {isUser ? "You" : "Advisor"}
+                      </span>
+                      {timestamp && (
+                        <span className="text-[8px] text-text-tertiary select-none">
+                          {getRelativeTime(timestamp)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Message Bubble */}
+                    <div
+                      className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-[0_2px_8px_rgba(0,0,0,0.02)] border transition-all duration-200 ${
+                        isUser
+                          ? "bg-[#0A0A0A] text-white border-transparent rounded-tr-none hover:bg-[#151515]"
+                          : "bg-surface border-border/80 text-text-primary rounded-tl-none hover:border-border"
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap font-body font-medium">{msg.content}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         )}
 
-        {/* Loading Indicator */}
-        {isLoading && (
-          <div className="flex w-full justify-start">
-            <div className="flex flex-col space-y-0.5 items-start">
-              <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none px-1">
-                Advisor
-              </span>
-              <div className="bg-surface border border-border/85 rounded-2xl rounded-tl-none px-3.5 py-2 shadow-sm flex items-center space-x-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-accent/70 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-accent/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+        {/* Loading Indicator — smooth pulse dots */}
+        <AnimatePresence>
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0, x: -16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.3 }}
+              className="flex w-full justify-start"
+            >
+              <div className="flex flex-col space-y-0.5 items-start">
+                <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none px-1">
+                  Advisor
+                </span>
+                <div className="bg-surface border border-border/85 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-accent dot-pulse dot-pulse-1" />
+                  <span className="w-2 h-2 rounded-full bg-accent/70 dot-pulse dot-pulse-2" />
+                  <span className="w-2 h-2 rounded-full bg-accent/40 dot-pulse dot-pulse-3" />
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input & Quick Action Panel */}
       <div className="p-2.5 md:p-3 border-t bg-surface/50 backdrop-blur-md border-border space-y-2.5 flex-shrink-0">
-        {/* Suggestion Cards Grid (NotebookLM Style) - Hidden during active chat */}
+        {/* Suggestion Cards Grid — shown only when chat is empty */}
         {messages.length === 0 && (
-          <div className="w-full animate-fadeIn">
+          <motion.div
+            variants={suggestionsContainerVariants}
+            initial="hidden"
+            animate="show"
+            className="w-full"
+          >
             <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none block mb-1 px-0.5">
               Suggested Questions
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 w-full">
               {QUICK_ACTIONS.map((action, i) => (
-                <button
+                <motion.button
                   key={i}
+                  variants={suggestionItemVariants}
+                  whileHover={{ scale: 1.02, y: -1 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => handlePillClick(action)}
-                  className="px-2.5 py-1.5 text-left rounded-lg border border-border bg-surface text-text-secondary text-[10px] font-semibold transition-all duration-200 hover:border-accent/35 hover:bg-accent/5 hover:text-accent active:scale-98 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.01)] leading-normal flex items-start"
+                  className="px-2.5 py-1.5 text-left rounded-lg border border-border bg-surface text-text-secondary text-[10px] font-semibold transition-all duration-200 hover:border-accent/30 hover:bg-accent/5 hover:text-accent active:scale-98 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.01)] leading-normal flex items-start"
                 >
-                  <span className="mr-1 text-accent/40">•</span>
+                  <span className="mr-1 text-accent/30">•</span>
                   <span className="flex-1 line-clamp-1">{action}</span>
-                </button>
+                </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Message Input Box */}
         <form onSubmit={handleSubmit} className="flex items-end space-x-3 w-full">
-          <div className="flex-1 relative rounded-xl border border-border bg-surface focus-within:border-accent/60 focus-within:ring-2 focus-within:ring-accent/5 transition-all duration-200">
+          <div className="flex-1 relative rounded-xl border border-border bg-surface focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/5 transition-all duration-200">
             <textarea
               ref={inputRef}
               value={inputValue}
@@ -179,17 +283,25 @@ export default function ChatInterface({
               placeholder="Ask the advisor about your startup idea..."
               rows={1}
               className="w-full pl-4 pr-12 py-2.5 bg-transparent text-text-primary text-sm focus:outline-none resize-none font-body max-h-24 min-h-[40px] block overflow-y-auto custom-scrollbar"
+              style={{ transition: "height 150ms ease" }}
             />
+            {/* Character count — appears after 100 chars */}
+            {inputValue.length > 100 && (
+              <span className="absolute bottom-1.5 right-3 text-[9px] text-text-tertiary select-none">
+                {inputValue.length}
+              </span>
+            )}
           </div>
-          <button
+          <motion.button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
+            whileTap={{ scale: 0.88 }}
             className="p-2.5 rounded-xl bg-accent text-accent-inverse transition-all duration-200 hover:bg-[#1a1a1a] active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer flex items-center justify-center w-10 h-10 shrink-0 shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
           >
             <svg className="w-4.5 h-4.5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-          </button>
+          </motion.button>
         </form>
       </div>
     </div>

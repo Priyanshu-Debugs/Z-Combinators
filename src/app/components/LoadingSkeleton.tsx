@@ -23,9 +23,16 @@ export default function LoadingSkeleton() {
   return (
     <div className="w-full space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="font-heading text-2xl font-semibold text-text-primary">
-          Analyzing your idea...
-        </h2>
+        <div className="flex items-center justify-center space-x-2.5">
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+            className="w-2.5 h-2.5 rounded-full bg-accent"
+          />
+          <h2 className="font-heading text-2xl font-semibold text-text-primary">
+            Analyzing your idea...
+          </h2>
+        </div>
         <p className="text-text-secondary text-sm">
           Applying YC, a16z, and NFX evaluation frameworks to your pitch.
         </p>

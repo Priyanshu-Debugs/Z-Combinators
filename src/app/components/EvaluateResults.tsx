@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion, useSpring, useMotionValue } from "framer-motion";
 import RadarChart from "./RadarChart";
 import DimensionCard from "./DimensionCard";
 
@@ -84,6 +84,67 @@ const DIMENSION_HELPERS: Record<string, { prompt: string; icon: React.ReactNode 
   },
 };
 
+/* ===== Animated Score Counter Hook ===== */
+function AnimatedScore({ value }: { value: number }) {
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { stiffness: 60, damping: 20 });
+  const [display, setDisplay] = useState("0.0");
+
+  useEffect(() => {
+    motionValue.set(value);
+  }, [value, motionValue]);
+
+  useEffect(() => {
+    const unsubscribe = springValue.on("change", (v) => {
+      setDisplay((Math.round(v * 10) / 10).toFixed(1));
+    });
+    return unsubscribe;
+  }, [springValue]);
+
+  return <>{display}</>;
+}
+
+/* ===== Score Ring SVG ===== */
+function ScoreRing({ score, size = 100 }: { score: number | null; size?: number }) {
+  const radius = (size - 10) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const progress = score !== null ? (score / 10) * circumference : 0;
+  const offset = circumference - progress;
+
+  return (
+    <svg width={size} height={size} className="transform -rotate-90">
+      {/* Background ring */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="var(--color-border)"
+        strokeWidth="5"
+      />
+      {/* Progress ring */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="url(#scoreGradient)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        className="score-ring-circle"
+      />
+      <defs>
+        <linearGradient id="scoreGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0A0A0A" />
+          <stop offset="100%" stopColor="#3a3a3a" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
 export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
   // Map dimensions list by name for quick lookup
   const scoredMap = new Map<string, Dimension>();
@@ -117,60 +178,111 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
     };
   });
 
+  // Find strongest and weakest dimensions
+  const strongest = scoredDimensions.length > 0
+    ? scoredDimensions.reduce((a, b) => (a.score >= b.score ? a : b))
+    : null;
+  const weakest = scoredDimensions.length > 0
+    ? scoredDimensions.reduce((a, b) => (a.score <= b.score ? a : b))
+    : null;
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
+        staggerChildren: 0.08,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0, y: 20 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.35, ease: "easeOut" as const },
+      transition: { duration: 0.45, ease: "easeOut" as const },
     },
   };
 
   return (
     <div className="w-full space-y-8">
       {/* Radar Chart Visual */}
-      <div className="w-full p-6 rounded-2xl border bg-surface/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] border-border flex flex-col items-center justify-center min-h-[350px] relative overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        {/* Overall Score overlay */}
-        <div className="absolute top-5 left-6 text-left">
-          <span className="text-[10px] font-bold tracking-wider uppercase text-text-secondary block">
-            Overall Score
-          </span>
-          <span
-            className={`font-heading text-4xl md:text-5xl font-bold tracking-tight ${
-              overallScore ? getScoreColorClass(overallScore) : "text-text-secondary"
-            }`}
-          >
-            {overallScore !== null ? overallScore : "--"}
-          </span>
-          <span className="text-[10px] text-text-secondary block mt-1 font-semibold">
-            {scoredDimensions.length} of 6 dimensions scored
-          </span>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full p-6 rounded-2xl border bg-surface/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] border-border flex flex-col items-center justify-center min-h-[350px] relative overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+      >
+        {/* Overall Score with ring */}
+        <div className="absolute top-5 left-6 text-left flex items-start space-x-3">
+          <div className="relative">
+            <ScoreRing score={overallScore} size={72} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                className={`font-heading text-lg font-bold tracking-tight ${
+                  overallScore ? getScoreColorClass(overallScore) : "text-text-secondary"
+                }`}
+                style={{ transform: "rotate(90deg)" }}
+              >
+                {overallScore !== null ? <AnimatedScore value={overallScore} /> : "--"}
+              </span>
+            </div>
+          </div>
+          <div className="pt-1">
+            <span className="text-[10px] font-bold tracking-wider uppercase text-text-secondary block">
+              Overall Score
+            </span>
+            <span className="text-[10px] text-text-secondary block mt-0.5 font-semibold">
+              {scoredDimensions.length} of 6 dimensions scored
+            </span>
+          </div>
         </div>
+
         <div className="w-full pt-4">
           <RadarChart scores={radarScores} />
         </div>
-      </div>
+
+        {/* Strength / Weakness Summary */}
+        {strongest && weakest && scoredDimensions.length >= 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+            className="w-full flex flex-wrap items-center justify-center gap-3 pt-2 pb-1 text-[11px] font-semibold"
+          >
+            <span className="flex items-center space-x-1 text-score-high">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
+              <span>Strongest: {strongest.dimension} ({strongest.score})</span>
+            </span>
+            <span className="text-text-tertiary">|</span>
+            <span className="flex items-center space-x-1 text-score-low">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+              <span>Weakest: {weakest.dimension} ({weakest.score})</span>
+            </span>
+          </motion.div>
+        )}
+      </motion.div>
 
       {/* Grid of Dimension Details */}
       <div className="space-y-5">
-        <div className="border-b border-border pb-3">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="border-b border-border pb-3"
+        >
           <h2 className="font-heading text-xl font-bold text-text-primary tracking-tight">
             Dossier Evaluation Report
           </h2>
           <p className="text-text-secondary text-xs mt-1 leading-relaxed">
             The evaluations update dynamically as you share information about your idea in the chat.
           </p>
-        </div>
+        </motion.div>
 
         <motion.div
           variants={containerVariants}
@@ -202,7 +314,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
             return (
               <motion.div key={name} variants={itemVariants}>
                 <div
-                  className="rounded-2xl border border-border/80 bg-surface/20 hover:bg-surface/30 p-5 md:p-6 flex items-start space-x-4 transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:border-border"
+                  className="rounded-2xl border border-border/80 bg-surface/20 hover:bg-surface/30 p-5 md:p-6 flex items-start space-x-4 transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:border-border pending-breathe"
                 >
                   {/* Left Icon */}
                   <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-text-secondary/5 border border-text-secondary/10 flex items-center justify-center text-text-secondary/60">
@@ -223,7 +335,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
                     </div>
 
                     <p className="text-xs text-text-secondary leading-relaxed font-body font-medium">
-                      No evaluation yet. Share details about your startup's {name.toLowerCase()} in the chat.
+                      No evaluation yet. Share details about your startup&apos;s {name.toLowerCase()} in the chat.
                     </p>
 
                     {helper?.prompt && (

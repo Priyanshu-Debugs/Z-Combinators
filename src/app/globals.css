@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-heading: var(--font-heading), "Space Grotesk", sans-serif;
+  --font-heading: var(--font-inter), "Inter", sans-serif;
   --font-body: var(--font-inter), "Inter", sans-serif;
 
   --color-bg: #FAFAF8;
@@ -17,11 +17,17 @@
   --color-score-high: #16A34A;
   --color-score-mid: #CA8A04;
   --color-score-low: #DC2626;
+
+  /* === ACCENT THEME (matches landing page monochrome) === */
+  --color-accent-soft: rgba(10, 10, 10, 0.65);
+  --color-accent-glow: rgba(10, 10, 10, 0.12);
+  --color-accent-subtle: rgba(10, 10, 10, 0.04);
   --color-radar-fill: rgba(10, 10, 10, 0.08);
   --color-radar-stroke: #0A0A0A;
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-accent-glow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
   --radius-2xl: 16px;
 }
@@ -39,6 +45,166 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== ANIMATION KEYFRAMES ===== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px var(--color-accent-glow);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Chat typing indicator — smooth sequential pulse */
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.dot-pulse {
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+.dot-pulse-1 { animation-delay: 0ms; }
+.dot-pulse-2 { animation-delay: 200ms; }
+.dot-pulse-3 { animation-delay: 400ms; }
+
+/* Chat message entrance animations */
+@keyframes messageSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes messageSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.msg-enter-user {
+  animation: messageSlideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.msg-enter-assistant {
+  animation: messageSlideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Score ring animation */
+@keyframes scoreRingFill {
+  from {
+    stroke-dashoffset: 283;
+  }
+}
+
+.score-ring-circle {
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Empty state breathing icon */
+@keyframes iconBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+.icon-breathe {
+  animation: iconBreathe 3s ease-in-out infinite;
 }
 
 /* ===== TYPEWRITER CURSOR ===== */
@@ -104,6 +270,37 @@ body {
 .score-bg-mid { background-color: rgba(202, 138, 4, 0.1); }
 .score-bg-low { background-color: rgba(220, 38, 38, 0.1); }
 
+/* ===== PROGRESS BAR FILL ===== */
+.progress-fill {
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--color-accent);
+}
+
+/* ===== SCROLL FADE GRADIENT ===== */
+.scroll-fade-top {
+  mask-image: linear-gradient(to bottom, transparent, black 24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 24px);
+}
+
+/* ===== PENDING CARD BREATHING BORDER ===== */
+@keyframes borderBreathe {
+  0%, 100% {
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    border-color: rgba(0, 0, 0, 0.14);
+  }
+}
+
+.pending-breathe {
+  animation: borderBreathe 3s ease-in-out infinite;
+}
+
+/* ===== TAB INDICATOR ===== */
+.tab-indicator {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* ===== CUSTOM SCROLLBARS ===== */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -128,3 +325,33 @@ body {
   scrollbar-width: none;
 }
 
+/* ===== TOAST ANIMATION ===== */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+}
+
+.toast-enter {
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.toast-exit {
+  animation: toastOut 0.25s ease-in forwards;
+}

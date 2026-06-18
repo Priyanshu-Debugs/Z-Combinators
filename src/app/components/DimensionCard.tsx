@@ -23,7 +23,7 @@ export default function DimensionCard({
   // Use custom typewriter hook for the justification text
   const { displayed, done } = useTypewriter({
     text: justification,
-    speed: 12, // Faster typing speed for longer reports
+    speed: 12,
     startDelay: startDelay,
   });
 
@@ -50,7 +50,10 @@ export default function DimensionCard({
   const colors = getColorClasses(score);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.97, y: 8 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: startDelay / 1000 }}
       className={`rounded-2xl border bg-surface shadow-card transition-shadow duration-300 hover:shadow-card-hover p-6 md:p-8 space-y-4 ${colors.border}`}
       style={{ borderColor: "var(--color-border)" }}
     >
@@ -59,11 +62,19 @@ export default function DimensionCard({
         <h3 className="font-heading text-xl font-semibold text-text-primary">
           {dimension}
         </h3>
-        <span
+        <motion.span
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+            delay: (startDelay / 1000) + 0.2,
+          }}
           className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wider ${colors.badge}`}
         >
           {score}/10
-        </span>
+        </motion.span>
       </div>
 
       {/* Analysis text with typewriter effect */}
@@ -80,7 +91,7 @@ export default function DimensionCard({
           </p>
         </div>
 
-        {/* Cited Framework Context - fades in smoothly only after typewriter completes */}
+        {/* Cited Framework Context — fades in smoothly only after typewriter completes */}
         {sourceExcerpt && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -97,7 +108,7 @@ export default function DimensionCard({
               className="border-l-2 pl-4 py-1 text-sm text-text-secondary italic leading-relaxed"
               style={{ borderColor: "var(--color-border-strong)" }}
             >
-              <p className="mb-2">"{sourceExcerpt}"</p>
+              <p className="mb-2">&quot;{sourceExcerpt}&quot;</p>
               <span className="text-[12px] not-italic font-medium text-text-primary">
                 Source: {sourceFramework}
               </span>
@@ -105,6 +116,6 @@ export default function DimensionCard({
           </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

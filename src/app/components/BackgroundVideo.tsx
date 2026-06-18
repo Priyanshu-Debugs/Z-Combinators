@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 export default function BackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isReversing, setIsReversing] = useState(false);
-  
+
   const framesRef = useRef<ImageBitmap[]>([]);
   const lastCapturedTimeRef = useRef<number>(0);
   const directionRef = useRef<"forward" | "backward">("forward");
@@ -53,7 +54,7 @@ export default function BackgroundVideo() {
           directionRef.current = "backward";
           setIsReversing(true);
           video.pause();
-          
+
           reverseIndexRef.current = framesRef.current.length - 1;
           lastReverseTimeRef.current = performance.now();
         }
@@ -77,11 +78,11 @@ export default function BackgroundVideo() {
             // Reached start of clip, restart forward video playback
             directionRef.current = "forward";
             setIsReversing(false);
-            
+
             // Clean up bitmaps from GPU memory to prevent leaks
             framesRef.current.forEach((bitmap) => bitmap.close());
             framesRef.current = [];
-            
+
             lastCapturedTimeRef.current = 0;
             video.currentTime = 0;
             video.play().catch(() => {});
@@ -123,6 +124,16 @@ export default function BackgroundVideo() {
           isReversing ? "opacity-100" : "opacity-0"
         }`}
         style={{ objectPosition: "70% center" }}
+      />
+      {/* Animated gradient overlay — fades in to smooth the initial video flash */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "linear-gradient(135deg, rgba(250,250,248,0.35) 0%, rgba(250,250,248,0.05) 50%, rgba(250,250,248,0.25) 100%)",
+        }}
       />
     </div>
   );

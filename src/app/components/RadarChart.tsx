@@ -17,7 +17,6 @@ interface RadarChartProps {
 }
 
 export default function RadarChart({ scores }: RadarChartProps) {
-  // Format the data to fit Recharts requirements
   const data = scores.map((s) => ({
     subject: s.dimension,
     value: s.score,
@@ -28,6 +27,25 @@ export default function RadarChart({ scores }: RadarChartProps) {
     <div className="w-full max-w-sm mx-auto aspect-square flex items-center justify-center" style={{ minHeight: 0 }}>
       <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <RechartsRadarChart cx="50%" cy="50%" outerRadius="65%" data={data}>
+          {/* SVG defs for subtle glow filter */}
+          <defs>
+            <filter id="radarGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+              <feColorMatrix
+                in="blur"
+                type="matrix"
+                values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.25 0"
+              />
+              <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#0A0A0A" stopOpacity={0.1} />
+              <stop offset="100%" stopColor="#0A0A0A" stopOpacity={0.04} />
+            </linearGradient>
+          </defs>
           <PolarGrid stroke="var(--color-border)" />
           <PolarAngleAxis
             dataKey="subject"
@@ -47,12 +65,20 @@ export default function RadarChart({ scores }: RadarChartProps) {
           <Radar
             name="Evaluation"
             dataKey="value"
-            stroke="var(--color-radar-stroke)"
-            fill="var(--color-radar-fill)"
-            fillOpacity={0.6}
+            stroke="#0A0A0A"
+            strokeWidth={2}
+            fill="url(#radarFill)"
+            fillOpacity={1}
             isAnimationActive={true}
-            animationDuration={800}
-            dot={{ r: 3, fill: "var(--color-accent)" }}
+            animationDuration={1200}
+            animationEasing="ease-out"
+            dot={{
+              r: 3.5,
+              fill: "#0A0A0A",
+              stroke: "#FFFFFF",
+              strokeWidth: 2,
+            }}
+            filter="url(#radarGlow)"
           />
         </RechartsRadarChart>
       </ResponsiveContainer>
