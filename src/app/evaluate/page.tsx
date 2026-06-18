@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import PageTransition from "../components/PageTransition";
 import ChatInterface from "../components/ChatInterface";
 import EvaluateResults from "../components/EvaluateResults";
@@ -24,6 +24,50 @@ function EvaluateContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"chat" | "dossier">("chat");
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [leftWidth, setLeftWidth] = useState(50); // initial split 50/50
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+      // Constrain between 25% and 75%
+      setLeftWidth(Math.max(25, Math.min(75, newLeftWidth)));
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
 
   // Initialize session on mount
   useEffect(() => {
@@ -61,7 +105,11 @@ function EvaluateContent() {
         setMessages([]);
         setDossier([]);
       } catch (err) {
-        setError("Could not connect to the startup advisor server. Please check your connection.");
+        setError(
+          "Could not connect to the startup advisor server. " +
+          "Note: Render free tier databases and servers spin down after 15m of inactivity and can take 1-2 minutes to wake up. " +
+          "If this persists, verify you have added NEXT_PUBLIC_API_URL=https://z-combinator-backend.onrender.com to your Vercel Project Environment Variables, and set CORS_ORIGINS=https://z-combinators.vercel.app in your Render settings."
+        );
       } finally {
         setIsInitializing(false);
       }
@@ -147,11 +195,30 @@ function EvaluateContent() {
     );
   }
 
+  // Map dimensions list by name for quick lookup to compute overallScore for tab badge
+  const scoredMap = new Map<string, Dimension>();
+  dossier.forEach((d) => {
+    scoredMap.set(d.dimension.toLowerCase(), d);
+  });
+  const ALL_DIMENSIONS = ["Market", "Team", "Timing", "Competition", "Moat", "Execution"];
+  const scoredDimensions = ALL_DIMENSIONS.map((name) =>
+    scoredMap.get(name.toLowerCase())
+  ).filter(Boolean) as Dimension[];
+
+  const overallScore =
+    scoredDimensions.length > 0
+      ? Math.round(
+          (scoredDimensions.reduce((acc, curr) => acc + curr.score, 0) /
+            scoredDimensions.length) *
+            10
+        ) / 10
+      : null;
+
   return (
     <PageTransition>
-      <div className="flex-1 flex flex-col justify-between pt-24 md:pt-28 pb-16 px-4 sm:px-6 md:px-8 lg:px-12 max-w-6xl mx-auto w-full">
+      <div className="flex-grow flex flex-col pt-14 pb-0 px-0 mx-0 w-full max-w-full h-[calc(100vh-92px)] min-h-[550px] overflow-hidden">
         {error && (
-          <div className="mb-6 p-4 rounded-xl border border-score-low/30 bg-score-low/5 text-score-low text-xs flex items-center justify-between">
+          <div className="flex-shrink-0 mx-6 mt-4 p-4 rounded-xl border border-score-low/30 bg-score-low/5 text-score-low text-xs flex items-center justify-between">
             <span>{error}</span>
             <button 
               onClick={() => setError(null)} 
@@ -162,36 +229,95 @@ function EvaluateContent() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
-          {/* Left Panel: Chat Interface */}
-          <div className="lg:col-span-6 w-full flex flex-col space-y-4">
-            <div className="flex items-center justify-between pb-1">
-              <div>
-                <h1 className="font-heading text-2xl font-bold text-text-primary tracking-tight">
-                  Advisor Workspace
-                </h1>
-                <p className="text-text-secondary text-xs mt-0.5">
-                  Discuss your idea to compile the investment dossier report.
-                </p>
+        {/* Master Workspace Console Box */}
+        <div 
+          ref={containerRef}
+          className={`flex-grow w-full border-t border-b border-border bg-surface/15 backdrop-blur-xl overflow-hidden flex flex-col min-h-0 ${
+            isDragging ? "select-none cursor-col-resize" : ""
+          }`}
+        >
+          {/* Console Header Bar */}
+          <div className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface/50 backdrop-blur-md">
+            <div>
+              <h1 className="font-heading text-base font-bold text-text-primary tracking-tight">
+                Advisor Workspace
+              </h1>
+              <p className="hidden sm:block text-text-secondary text-[10.5px] mt-0.5 font-medium leading-none">
+                Discuss your startup idea with the AI to compile your investment dossier. Drag the middle divider to resize columns.
+              </p>
+            </div>
+            
+            <div className="flex items-center space-x-2.5">
+              {/* Tab Selector on mobile/tablet */}
+              <div className="flex lg:hidden bg-text-secondary/5 rounded-xl p-0.5 border border-border">
+                <button
+                  onClick={() => setActiveTab("chat")}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 ${
+                    activeTab === "chat"
+                      ? "bg-surface text-text-primary shadow-sm"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  Chat
+                </button>
+                <button
+                  onClick={() => setActiveTab("dossier")}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 ${
+                    activeTab === "dossier"
+                      ? "bg-surface text-text-primary shadow-sm"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  Dossier {overallScore !== null ? `(${overallScore})` : ""}
+                </button>
               </div>
+
               <button
                 onClick={handleResetSession}
-                className="px-3.5 py-1.5 rounded-full border border-border bg-surface/50 text-[10px] text-text-secondary hover:border-score-low/30 hover:bg-score-low/5 hover:text-score-low transition-all duration-200 cursor-pointer active:scale-95"
+                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-score-low/30 hover:bg-score-low/5 hover:text-score-low transition-all duration-200 cursor-pointer active:scale-95 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
               >
                 Reset Chat
               </button>
             </div>
-            
-            <ChatInterface
-              messages={messages}
-              onSendMessage={handleSendMessage}
-              isLoading={isLoading}
-            />
           </div>
 
-          {/* Right Panel: Sticky Evaluations Dashboard */}
-          <div className="lg:col-span-6 w-full lg:sticky lg:top-24">
-            <EvaluateResults dimensions={dossier} />
+          {/* Console Body workspace area */}
+          <div className="flex-grow flex overflow-hidden min-h-0 flex-col lg:flex-row items-stretch">
+            {/* Left Column: Chat Interface */}
+            <div
+              className={`h-full flex flex-col border-r border-border min-h-0 bg-transparent ${
+                activeTab === "chat" ? "flex" : "hidden lg:flex"
+              }`}
+              style={{ width: isDesktop ? `${leftWidth}%` : "100%" }}
+            >
+              <ChatInterface
+                messages={messages}
+                onSendMessage={handleSendMessage}
+                isLoading={isLoading}
+              />
+            </div>
+
+            {/* Draggable Divider Line (NotebookLM style) */}
+            <div
+              onMouseDown={handleMouseDown}
+              className={`hidden lg:block w-1.5 hover:w-2 active:w-2 h-full bg-border hover:bg-accent/40 active:bg-accent cursor-col-resize transition-all duration-200 z-30 relative`}
+            >
+              {/* Drag handle button */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-9 bg-surface border border-border rounded-full flex flex-col items-center justify-center space-y-0.5 shadow-md cursor-col-resize group active:bg-accent/5">
+                <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
+                <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
+              </div>
+            </div>
+
+            {/* Right Column: Dossier Results (internally scrollable) */}
+            <div
+              className={`h-full overflow-y-auto min-h-0 bg-surface/5 custom-scrollbar p-6 ${
+                activeTab === "dossier" ? "block" : "hidden lg:block"
+              }`}
+              style={{ width: isDesktop ? `${100 - leftWidth}%` : "100%" }}
+            >
+              <EvaluateResults dimensions={dossier} />
+            </div>
           </div>
         </div>
       </div>

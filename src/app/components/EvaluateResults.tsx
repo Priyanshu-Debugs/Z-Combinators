@@ -139,7 +139,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
   return (
     <div className="w-full space-y-8">
       {/* Radar Chart Visual */}
-      <div className="w-full p-6 rounded-2xl border bg-surface/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] border-border flex flex-col items-center justify-center min-h-[360px] relative overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="w-full p-6 rounded-2xl border bg-surface/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] border-border flex flex-col items-center justify-center min-h-[350px] relative overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         {/* Overall Score overlay */}
         <div className="absolute top-5 left-6 text-left">
           <span className="text-[10px] font-bold tracking-wider uppercase text-text-secondary block">
@@ -156,7 +156,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
             {scoredDimensions.length} of 6 dimensions scored
           </span>
         </div>
-        <div className="w-full pt-10">
+        <div className="w-full pt-4">
           <RadarChart scores={radarScores} />
         </div>
       </div>

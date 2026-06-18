@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isEvaluate = pathname === "/evaluate";
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -15,7 +16,8 @@ export default function Navbar() {
   // Link class depends on active page
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
-    const base = "font-heading text-[23px] transition-colors duration-200 hover:text-text-primary/70";
+    const sizeClass = isEvaluate ? "text-[15px]" : "text-[23px]";
+    const base = `font-heading ${sizeClass} transition-colors duration-200 hover:text-text-primary/70`;
     if (isActive) {
       return `${base} text-text-primary font-medium`;
     }
@@ -28,9 +30,9 @@ export default function Navbar() {
         isHome ? "bg-transparent" : "bg-bg/85 backdrop-blur-md border-b border-border"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-10 lg:px-16 h-20 flex items-center justify-between">
+      <div className={`max-w-7xl mx-auto px-5 sm:px-8 md:px-10 lg:px-16 flex items-center justify-between transition-all duration-300 ${isEvaluate ? "h-14" : "h-20"}`}>
         {/* Logo */}
-        <Link href="/" className="font-heading text-[21px] font-medium text-text-primary tracking-tight">
+        <Link href="/" className={`font-heading font-medium text-text-primary tracking-tight transition-all duration-300 ${isEvaluate ? "text-[18px]" : "text-[21px]"}`}>
           Z-Combinator
         </Link>
 
@@ -46,21 +48,23 @@ export default function Navbar() {
 
         {/* CTA Button */}
         <div className="hidden md:block">
-          <Link
-            href="/evaluate"
-            className="inline-flex items-center px-6 py-3 rounded-full bg-accent text-accent-inverse text-[15px] font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Validate your Idea
-            <svg
-              className="ml-2 w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
+          {!isEvaluate && (
+            <Link
+              href="/evaluate"
+              className="inline-flex items-center px-6 py-3 rounded-full bg-accent text-accent-inverse text-[15px] font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </Link>
+              Validate your Idea
+              <svg
+                className="ml-2 w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Hamburger Menu */}
