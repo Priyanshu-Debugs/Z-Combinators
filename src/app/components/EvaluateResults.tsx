@@ -276,7 +276,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
           className="border-b border-border pb-3"
         >
           <h2 className="font-heading text-xl font-bold text-text-primary tracking-tight">
-            Dossier Evaluation Report
+            Evaluation Report
           </h2>
           <p className="text-text-secondary text-xs mt-1 leading-relaxed">
             The evaluations update dynamically as you share information about your idea in the chat.

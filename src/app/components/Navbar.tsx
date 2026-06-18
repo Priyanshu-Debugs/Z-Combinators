@@ -37,15 +37,15 @@ export default function Navbar() {
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
     const sizeClass = isEvaluate ? "text-[15px]" : "text-[23px]";
-    const base = `relative font-heading ${sizeClass} transition-colors duration-200 hover:text-text-primary/70`;
+    const base = `relative font-heading ${sizeClass} transition-colors duration-200`;
     if (isActive) {
       return `${base} text-text-primary font-medium`;
     }
-    return `${base} text-text-secondary`;
+    return `${base} text-text-primary/70 hover:text-text-primary`;
   };
 
   const navLinks = [
-    ...(isEvaluate ? [{ href: "/", label: "Home" }] : []),
+    ...(!isHome ? [{ href: "/", label: "Home" }] : []),
     { href: "/methodology", label: "Methodology" },
     { href: "/about", label: "About" },
   ];
@@ -143,7 +143,7 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-heading text-3xl font-medium text-text-secondary hover:text-text-primary transition-colors block"
+                    className="font-heading text-3xl font-medium text-text-primary/70 hover:text-text-primary transition-colors block"
                   >
                     {link.label}
                   </Link>

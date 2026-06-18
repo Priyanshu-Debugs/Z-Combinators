@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 import ChatInterface from "../components/ChatInterface";
@@ -23,7 +23,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const WELCOME_MESSAGE = {
   role: "assistant" as const,
   content:
-    "Hi! I'm your Startup School Advisor. To help me evaluate your startup idea with the best results, tell me about:\n\n" +
+    "Hi! I'm your Startup Advisor. To help me evaluate your startup idea with the best results, tell me about:\n\n" +
     "1. **Market**: Who is your customer base and what is the market size?\n" +
     "2. **Team**: Who is on the founding team and what is their domain expertise?\n" +
     "3. **Timing**: Why is now the right time to build this? Any macro trends or tech shifts?\n" +
@@ -88,53 +88,82 @@ function EvaluateContent() {
     };
   }, [isDragging]);
 
-  // Initialize session on mount
-  useEffect(() => {
-    async function initSession() {
-      setError(null);
-      const cachedSessionId = localStorage.getItem("z_combinator_session_id");
+  const retryTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-      if (cachedSessionId) {
-        try {
-          const res = await fetch(`${API_URL}/api/chat/session/${cachedSessionId}`);
-          if (res.ok) {
-            const data = await res.json();
-            setSessionId(data.session_id);
-            setMessages(data.history.length > 0 ? data.history : [WELCOME_MESSAGE]);
-            setDossier(data.compiled_dossier);
-            setIsInitializing(false);
-            return;
-          }
-        } catch (err) {
-          console.warn("Failed to restore cached session, creating new session...", err);
-        }
-      }
+  // Initialize or retry session
+  const initSession = useCallback(async () => {
+    setError(null);
+    const cachedSessionId = localStorage.getItem("z_combinator_session_id");
 
+    if (cachedSessionId) {
       try {
-        const res = await fetch(`${API_URL}/api/chat/session`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!res.ok) throw new Error("Could not initialize session.");
+        const res = await fetch(`${API_URL}/api/chat/session/${cachedSessionId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setSessionId(data.session_id);
+          setMessages(data.history.length > 0 ? data.history : [WELCOME_MESSAGE]);
+          setDossier(data.compiled_dossier);
+          setError(null);
+          setIsInitializing(false);
+          if (retryTimerRef.current) {
+            clearInterval(retryTimerRef.current);
+            retryTimerRef.current = null;
+          }
+          return true;
+        }
+      } catch (err) {
+        console.warn("Failed to restore cached session, creating new session...", err);
+      }
+    }
 
+    try {
+      const res = await fetch(`${API_URL}/api/chat/session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.ok) {
         const data = await res.json();
         setSessionId(data.session_id);
         localStorage.setItem("z_combinator_session_id", data.session_id);
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
-      } catch (err) {
-        setError(
-          "Could not connect to the startup advisor server. " +
-          "Note: Render free tier databases and servers spin down after 15m of inactivity and can take 1-2 minutes to wake up. " +
-          "If this persists, verify you have added NEXT_PUBLIC_API_URL=https://z-combinator-backend.onrender.com to your Vercel Project Environment Variables, and set CORS_ORIGINS=https://z-combinators.vercel.app in your Render settings."
-        );
-      } finally {
+        setError(null);
         setIsInitializing(false);
+        if (retryTimerRef.current) {
+          clearInterval(retryTimerRef.current);
+          retryTimerRef.current = null;
+        }
+        return true;
       }
+    } catch (err) {
+      setError(
+        "Advisor service is currently booting up (typical for free hosting, takes 1-2 minutes). We are retrying connection automatically..."
+      );
     }
-
-    initSession();
+    setIsInitializing(false);
+    return false;
   }, []);
+
+  // Poll for connection if it fails
+  useEffect(() => {
+    initSession();
+
+    // Set up background retry interval
+    retryTimerRef.current = setInterval(async () => {
+      const success = await initSession();
+      if (success && retryTimerRef.current) {
+        clearInterval(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+    }, 6000);
+
+    return () => {
+      if (retryTimerRef.current) {
+        clearInterval(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+    };
+  }, [initSession]);
 
   // Save evaluation to history when dimensions change significantly
   useEffect(() => {
@@ -154,7 +183,11 @@ function EvaluateContent() {
   }, [dossier, messages]);
 
   const handleSendMessage = async (content: string) => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      setError("Advisor service is currently booting up. Please wait, attempting to establish connection...");
+      initSession();
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -263,10 +296,10 @@ function EvaluateContent() {
   const overallScore =
     scoredDimensions.length > 0
       ? Math.round(
-          (scoredDimensions.reduce((acc, curr) => acc + curr.score, 0) /
-            scoredDimensions.length) *
-            10
-        ) / 10
+        (scoredDimensions.reduce((acc, curr) => acc + curr.score, 0) /
+          scoredDimensions.length) *
+        10
+      ) / 10
       : null;
 
   return (
@@ -279,12 +312,18 @@ function EvaluateContent() {
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="flex-shrink-0 mx-6 mt-4 p-4 rounded-xl border border-score-low/30 bg-score-low/5 text-score-low text-xs flex items-center justify-between"
+              className="flex-shrink-0 mx-6 mt-4 p-3.5 rounded-xl border border-border bg-surface/50 text-text-primary text-xs flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
             >
-              <span>{error}</span>
+              <div className="flex items-center space-x-2.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-text-secondary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-text-secondary"></span>
+                </span>
+                <span className="font-medium text-text-secondary leading-relaxed">{error}</span>
+              </div>
               <button
                 onClick={() => setError(null)}
-                className="text-score-low font-bold hover:opacity-80 ml-2"
+                className="text-text-secondary hover:text-text-primary font-bold hover:opacity-80 ml-4 cursor-pointer"
               >
                 ✕
               </button>
@@ -295,9 +334,8 @@ function EvaluateContent() {
         {/* Master Workspace Console Box */}
         <div
           ref={containerRef}
-          className={`flex-grow w-full border-t border-b border-border bg-surface/15 backdrop-blur-xl overflow-hidden flex flex-col min-h-0 ${
-            isDragging ? "select-none cursor-col-resize" : ""
-          }`}
+          className={`flex-grow w-full border-t border-b border-border bg-surface/15 backdrop-blur-xl overflow-hidden flex flex-col min-h-0 ${isDragging ? "select-none cursor-col-resize" : ""
+            }`}
         >
           {/* Console Header Bar */}
           <div className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface/50 backdrop-blur-md">
@@ -321,21 +359,19 @@ function EvaluateContent() {
               <div className="flex lg:hidden bg-text-secondary/5 rounded-xl p-0.5 border border-border relative">
                 <button
                   onClick={() => setActiveTab("chat")}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${
-                    activeTab === "chat"
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "chat"
                       ? "text-text-primary"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Chat
                 </button>
                 <button
                   onClick={() => setActiveTab("dossier")}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${
-                    activeTab === "dossier"
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "dossier"
                       ? "text-text-primary"
                       : "text-text-secondary hover:text-text-primary"
-                  }`}
+                    }`}
                 >
                   Dossier {overallScore !== null ? `(${overallScore})` : ""}
                 </button>
@@ -391,9 +427,8 @@ function EvaluateContent() {
           <div className="flex-grow flex overflow-hidden min-h-0 flex-col lg:flex-row items-stretch">
             {/* Left Column: Chat Interface */}
             <div
-              className={`h-full flex flex-col border-r border-border min-h-0 bg-transparent ${
-                activeTab === "chat" ? "flex" : "hidden lg:flex"
-              }`}
+              className={`h-full flex flex-col border-r border-border min-h-0 bg-transparent ${activeTab === "chat" ? "flex" : "hidden lg:flex"
+                }`}
               style={{ width: isDesktop ? `${leftWidth}%` : "100%" }}
             >
               <ChatInterface
@@ -416,9 +451,8 @@ function EvaluateContent() {
 
             {/* Right Column: Dossier Results */}
             <div
-              className={`h-full overflow-y-auto min-h-0 bg-surface/5 custom-scrollbar p-6 ${
-                activeTab === "dossier" ? "block" : "hidden lg:block"
-              }`}
+              className={`h-full overflow-y-auto min-h-0 bg-surface/5 custom-scrollbar p-6 ${activeTab === "dossier" ? "block" : "hidden lg:block"
+                }`}
               style={{ width: isDesktop ? `${100 - leftWidth}%` : "100%" }}
             >
               <EvaluateResults dimensions={dossier} />

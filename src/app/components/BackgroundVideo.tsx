@@ -111,9 +111,7 @@ export default function BackgroundVideo() {
         muted
         playsInline
         preload="auto"
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-150 ${
-          isReversing ? "opacity-0" : "opacity-100"
-        }`}
+        className="absolute inset-0 w-full h-full object-cover opacity-100"
         style={{ objectPosition: "70% center" }}
       >
         <source src="/hero-bg.mp4" type="video/mp4" />

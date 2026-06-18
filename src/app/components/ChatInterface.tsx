@@ -34,10 +34,14 @@ function getRelativeTime(timestamp?: number): string {
 }
 
 /* ===== Custom Markdown Renderer for bold text and bullet/numbered lists ===== */
-function renderMessageContent(text: string) {
+function renderMessageContent(text: string, isDone: boolean = true) {
   const paragraphs = text.split("\n\n");
+  const cursorNode = !isDone ? (
+    <span key="cursor" className="typewriter-cursor" />
+  ) : null;
   
   return paragraphs.map((para, pIdx) => {
+    const isLastParagraph = pIdx === paragraphs.length - 1;
     const lines = para.split("\n");
     const isList = lines.some(line => 
       line.trim().startsWith("•") || 
@@ -50,6 +54,9 @@ function renderMessageContent(text: string) {
       return (
         <div key={pIdx} className="space-y-1.5 my-2">
           {lines.map((line, lIdx) => {
+            const isLastLine = lIdx === lines.length - 1;
+            const appendCursor = isLastParagraph && isLastLine && !isDone;
+            
             const isBullet = line.trim().startsWith("•") || line.trim().startsWith("*") || line.trim().startsWith("-");
             const isNumbered = /^\d+\.\s/.test(line.trim());
             
@@ -67,16 +74,23 @@ function renderMessageContent(text: string) {
               }
             }
 
+            // Normalize uneven asterisks during typing
+            let normalizedContent = content;
+            const starCount = (content.match(/\*\*/g) || []).length;
+            if (starCount % 2 !== 0) {
+              normalizedContent = content + "**";
+            }
+
             // Parse bold text **word**
-            const parts = [];
+            const parts: any[] = [];
             const regex = /\*\*(.*?)\*\*/g;
             let match;
             let lastIndex = 0;
             
-            while ((match = regex.exec(content)) !== null) {
+            while ((match = regex.exec(normalizedContent)) !== null) {
               const matchIndex = match.index;
               if (matchIndex > lastIndex) {
-                parts.push(content.substring(lastIndex, matchIndex));
+                parts.push(normalizedContent.substring(lastIndex, matchIndex));
               }
               parts.push(
                 <strong key={matchIndex} className="font-bold text-text-primary">
@@ -85,11 +99,15 @@ function renderMessageContent(text: string) {
               );
               lastIndex = regex.lastIndex;
             }
-            if (lastIndex < content.length) {
-              parts.push(content.substring(lastIndex));
+            if (lastIndex < normalizedContent.length) {
+              parts.push(normalizedContent.substring(lastIndex));
             }
 
-            const renderedLine = parts.length > 0 ? parts : content;
+            if (appendCursor) {
+              parts.push(cursorNode);
+            }
+
+            const renderedLine = parts.length > 0 ? parts : [content, appendCursor && cursorNode];
 
             if (isBullet) {
               return (
@@ -117,16 +135,22 @@ function renderMessageContent(text: string) {
       );
     }
 
-    // Standard paragraph, just parse bold **word**
-    const parts = [];
+    // Standard paragraph, normalize uneven asterisks
+    let normalizedPara = para;
+    const starCount = (para.match(/\*\*/g) || []).length;
+    if (starCount % 2 !== 0) {
+      normalizedPara = para + "**";
+    }
+
+    const parts: any[] = [];
     const regex = /\*\*(.*?)\*\*/g;
     let match;
     let lastIndex = 0;
     
-    while ((match = regex.exec(para)) !== null) {
+    while ((match = regex.exec(normalizedPara)) !== null) {
       const matchIndex = match.index;
       if (matchIndex > lastIndex) {
-        parts.push(para.substring(lastIndex, matchIndex));
+        parts.push(normalizedPara.substring(lastIndex, matchIndex));
       }
       parts.push(
         <strong key={matchIndex} className="font-bold text-text-primary">
@@ -135,13 +159,19 @@ function renderMessageContent(text: string) {
       );
       lastIndex = regex.lastIndex;
     }
-    if (lastIndex < para.length) {
-      parts.push(para.substring(lastIndex));
+    if (lastIndex < normalizedPara.length) {
+      parts.push(normalizedPara.substring(lastIndex));
     }
+
+    if (isLastParagraph && !isDone) {
+      parts.push(cursorNode);
+    }
+
+    const renderedPara = parts.length > 0 ? parts : [para, !isDone && cursorNode];
 
     return (
       <p key={pIdx} className="text-text-primary text-sm leading-relaxed font-body font-medium">
-        {parts.length > 0 ? parts : para}
+        {renderedPara}
       </p>
     );
   });
@@ -163,6 +193,12 @@ function TypewriterChatMessage({
   const [isDone, setIsDone] = useState(!shouldAnimate);
 
   useEffect(() => {
+    if (isDone && shouldAnimate) {
+      onComplete?.();
+    }
+  }, [isDone, shouldAnimate, onComplete]);
+
+  useEffect(() => {
     if (!shouldAnimate) {
       setDisplayedText(content);
       setIsDone(true);
@@ -175,27 +211,26 @@ function TypewriterChatMessage({
     let index = 0;
     const interval = setInterval(() => {
       setDisplayedText((prev) => {
-        const nextIndex = index + 1;
+        const remaining = content.length - index;
+        const step = remaining > 350 ? 3 : remaining > 150 ? 2 : 1;
+        const nextIndex = index + step;
+        
         if (nextIndex >= content.length) {
           clearInterval(interval);
           setIsDone(true);
-          onComplete?.();
           return content;
         }
         index = nextIndex;
         return content.slice(0, nextIndex);
       });
-    }, 7);
+    }, 18);
 
     return () => clearInterval(interval);
-  }, [content, shouldAnimate, onComplete]);
+  }, [content, shouldAnimate]);
 
   return (
     <div className="w-full relative">
-      <div className="inline-block w-full">{renderMessageContent(displayedText)}</div>
-      {!isDone && (
-        <span className="typewriter-cursor inline-block w-1.5 h-4 bg-accent/70 rounded-sm ml-1 align-middle animate-pulse" />
-      )}
+      <div className="inline-block w-full">{renderMessageContent(displayedText, isDone)}</div>
     </div>
   );
 }
@@ -330,7 +365,7 @@ export default function ChatInterface({
             </div>
             <div className="space-y-2">
               <h3 className="font-heading text-lg md:text-xl font-semibold text-text-primary tracking-tight">
-                Startup School Advisor Chat
+                Startup Advisor
               </h3>
               <p className="text-text-secondary text-sm max-w-sm leading-relaxed font-body">
                 Share your idea to start the evaluation. Ask about target markets, moats, timing, or how to address customer pain points.
