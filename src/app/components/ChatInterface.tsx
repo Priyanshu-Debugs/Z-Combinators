@@ -437,7 +437,7 @@ export default function ChatInterface({
           </AnimatePresence>
         )}
 
-        {/* Loading Indicator — smooth pulse dots */}
+        {/* Loading Indicator — Thinking / Evaluating */}
         <AnimatePresence>
           {isLoading && (
             <motion.div
@@ -447,14 +447,16 @@ export default function ChatInterface({
               transition={{ duration: 0.3 }}
               className="flex w-full justify-start"
             >
-              <div className="flex flex-col space-y-0.5 items-start">
+              <div className="flex flex-col space-y-1 items-start">
                 <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none px-1">
                   Advisor
                 </span>
-                <div className="bg-transparent px-1 py-1 flex items-center space-x-2">
-                  <span className="w-2 h-2 rounded-full bg-accent dot-pulse dot-pulse-1" />
-                  <span className="w-2 h-2 rounded-full bg-accent/70 dot-pulse dot-pulse-2" />
-                  <span className="w-2 h-2 rounded-full bg-accent/40 dot-pulse dot-pulse-3" />
+                <div className="bg-transparent px-1 py-1 flex items-center space-x-2.5 text-text-secondary">
+                  <svg className="animate-spin h-3.5 w-3.5 text-text-secondary/70" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span className="text-xs font-medium italic animate-pulse">Thinking / Evaluating...</span>
                 </div>
               </div>
             </motion.div>
