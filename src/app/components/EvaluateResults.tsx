@@ -223,7 +223,6 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
                 className={`font-heading text-lg font-bold tracking-tight ${
                   overallScore ? getScoreColorClass(overallScore) : "text-text-secondary"
                 }`}
-                style={{ transform: "rotate(90deg)" }}
               >
                 {overallScore !== null ? <AnimatedScore value={overallScore} /> : "--"}
               </span>

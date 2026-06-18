@@ -33,6 +33,173 @@ function getRelativeTime(timestamp?: number): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
+/* ===== Custom Markdown Renderer for bold text and bullet/numbered lists ===== */
+function renderMessageContent(text: string) {
+  const paragraphs = text.split("\n\n");
+  
+  return paragraphs.map((para, pIdx) => {
+    const lines = para.split("\n");
+    const isList = lines.some(line => 
+      line.trim().startsWith("•") || 
+      line.trim().startsWith("*") || 
+      line.trim().startsWith("-") || 
+      /^\d+\.\s/.test(line.trim())
+    );
+
+    if (isList) {
+      return (
+        <div key={pIdx} className="space-y-1.5 my-2">
+          {lines.map((line, lIdx) => {
+            const isBullet = line.trim().startsWith("•") || line.trim().startsWith("*") || line.trim().startsWith("-");
+            const isNumbered = /^\d+\.\s/.test(line.trim());
+            
+            let content = line;
+            if (isBullet) {
+              content = line.replace(/^\s*[•*-]\s*/, "");
+            }
+            
+            let bulletNum = "";
+            if (isNumbered) {
+              const numMatch = line.match(/^\s*(\d+)\.\s*(.*)/);
+              if (numMatch) {
+                bulletNum = numMatch[1];
+                content = numMatch[2];
+              }
+            }
+
+            // Parse bold text **word**
+            const parts = [];
+            const regex = /\*\*(.*?)\*\*/g;
+            let match;
+            let lastIndex = 0;
+            
+            while ((match = regex.exec(content)) !== null) {
+              const matchIndex = match.index;
+              if (matchIndex > lastIndex) {
+                parts.push(content.substring(lastIndex, matchIndex));
+              }
+              parts.push(
+                <strong key={matchIndex} className="font-bold text-text-primary">
+                  {match[1]}
+                </strong>
+              );
+              lastIndex = regex.lastIndex;
+            }
+            if (lastIndex < content.length) {
+              parts.push(content.substring(lastIndex));
+            }
+
+            const renderedLine = parts.length > 0 ? parts : content;
+
+            if (isBullet) {
+              return (
+                <div key={lIdx} className="flex items-start space-x-2 pl-4">
+                  <span className="text-text-tertiary select-none font-medium">•</span>
+                  <span className="text-text-secondary text-sm leading-relaxed font-body font-medium">{renderedLine}</span>
+                </div>
+              );
+            }
+            if (isNumbered) {
+              return (
+                <div key={lIdx} className="flex items-start space-x-2 pl-2">
+                  <span className="text-text-secondary font-semibold text-sm select-none">{bulletNum}.</span>
+                  <span className="text-text-secondary text-sm leading-relaxed font-body font-medium">{renderedLine}</span>
+                </div>
+              );
+            }
+            return (
+              <p key={lIdx} className="text-text-primary text-sm leading-relaxed font-body font-medium">
+                {renderedLine}
+              </p>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Standard paragraph, just parse bold **word**
+    const parts = [];
+    const regex = /\*\*(.*?)\*\*/g;
+    let match;
+    let lastIndex = 0;
+    
+    while ((match = regex.exec(para)) !== null) {
+      const matchIndex = match.index;
+      if (matchIndex > lastIndex) {
+        parts.push(para.substring(lastIndex, matchIndex));
+      }
+      parts.push(
+        <strong key={matchIndex} className="font-bold text-text-primary">
+          {match[1]}
+        </strong>
+      );
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < para.length) {
+      parts.push(para.substring(lastIndex));
+    }
+
+    return (
+      <p key={pIdx} className="text-text-primary text-sm leading-relaxed font-body font-medium">
+        {parts.length > 0 ? parts : para}
+      </p>
+    );
+  });
+}
+
+/* ===== Typewriter Animation Component for Advisor Messages ===== */
+interface TypewriterChatMessageProps {
+  content: string;
+  onComplete?: () => void;
+  shouldAnimate: boolean;
+}
+
+function TypewriterChatMessage({
+  content,
+  onComplete,
+  shouldAnimate,
+}: TypewriterChatMessageProps) {
+  const [displayedText, setDisplayedText] = useState(shouldAnimate ? "" : content);
+  const [isDone, setIsDone] = useState(!shouldAnimate);
+
+  useEffect(() => {
+    if (!shouldAnimate) {
+      setDisplayedText(content);
+      setIsDone(true);
+      return;
+    }
+
+    setDisplayedText("");
+    setIsDone(false);
+
+    let index = 0;
+    const interval = setInterval(() => {
+      setDisplayedText((prev) => {
+        const nextIndex = index + 1;
+        if (nextIndex >= content.length) {
+          clearInterval(interval);
+          setIsDone(true);
+          onComplete?.();
+          return content;
+        }
+        index = nextIndex;
+        return content.slice(0, nextIndex);
+      });
+    }, 7);
+
+    return () => clearInterval(interval);
+  }, [content, shouldAnimate, onComplete]);
+
+  return (
+    <div className="w-full relative">
+      <div className="inline-block w-full">{renderMessageContent(displayedText)}</div>
+      {!isDone && (
+        <span className="typewriter-cursor inline-block w-1.5 h-4 bg-accent/70 rounded-sm ml-1 align-middle animate-pulse" />
+      )}
+    </div>
+  );
+}
+
 const messageVariants = {
   hidden: (isUser: boolean) => ({
     opacity: 0,
@@ -79,6 +246,7 @@ export default function ChatInterface({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollFade, setShowScrollFade] = useState(false);
   const [messagesWithTimestamps] = useState<Map<number, number>>(new Map());
+  const [animatedMessageIndices, setAnimatedMessageIndices] = useState<Set<number>>(new Set());
 
   // Track timestamps for newly appearing messages
   useEffect(() => {
@@ -174,6 +342,18 @@ export default function ChatInterface({
             {messages.map((msg, index) => {
               const isUser = msg.role === "user";
               const timestamp = messagesWithTimestamps.get(index);
+              
+              const isLatestMessage = index === messages.length - 1;
+              const shouldAnimate = !isUser && isLatestMessage && !animatedMessageIndices.has(index);
+
+              const handleComplete = () => {
+                setAnimatedMessageIndices((prev) => {
+                  const next = new Set(prev);
+                  next.add(index);
+                  return next;
+                });
+              };
+
               return (
                 <motion.div
                   key={`${index}-${msg.role}`}
@@ -184,7 +364,7 @@ export default function ChatInterface({
                   layout
                   className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`flex flex-col space-y-0.5 ${isUser ? "items-end max-w-[90%] md:max-w-[85%]" : "items-start max-w-[95%] md:max-w-[92%]"}`}>
+                  <div className={`flex flex-col space-y-0.5 ${isUser ? "items-end max-w-[85%] md:max-w-[80%]" : "items-start w-full max-w-[95%] md:max-w-[92%]"}`}>
                     {/* Speaker Label */}
                     <div className="flex items-center space-x-2 px-1">
                       <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none">
@@ -197,15 +377,23 @@ export default function ChatInterface({
                       )}
                     </div>
 
-                    {/* Message Bubble */}
+                    {/* Message Body — Gemini/Claude style: clean background-less styling for AI responses, elegant pill box for user */}
                     <div
-                      className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-[0_2px_8px_rgba(0,0,0,0.02)] border transition-all duration-200 ${
+                      className={`text-sm leading-relaxed transition-all duration-200 ${
                         isUser
-                          ? "bg-[#0A0A0A] text-white border-transparent rounded-tr-none hover:bg-[#151515]"
-                          : "bg-surface border-border/80 text-text-primary rounded-tl-none hover:border-border"
+                          ? "bg-surface border border-border/60 text-text-primary rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] hover:bg-surface-hover/30"
+                          : "bg-transparent border-transparent text-text-primary shadow-none px-1 py-1 w-full"
                       }`}
                     >
-                      <p className="whitespace-pre-wrap font-body font-medium">{msg.content}</p>
+                      {isUser ? (
+                        <p className="whitespace-pre-wrap font-body font-medium">{msg.content}</p>
+                      ) : (
+                        <TypewriterChatMessage
+                          content={msg.content}
+                          shouldAnimate={shouldAnimate}
+                          onComplete={handleComplete}
+                        />
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -228,7 +416,7 @@ export default function ChatInterface({
                 <span className="text-[9px] font-bold tracking-wider text-text-secondary uppercase select-none px-1">
                   Advisor
                 </span>
-                <div className="bg-surface border border-border/85 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center space-x-2">
+                <div className="bg-transparent px-1 py-1 flex items-center space-x-2">
                   <span className="w-2 h-2 rounded-full bg-accent dot-pulse dot-pulse-1" />
                   <span className="w-2 h-2 rounded-full bg-accent/70 dot-pulse dot-pulse-2" />
                   <span className="w-2 h-2 rounded-full bg-accent/40 dot-pulse dot-pulse-3" />

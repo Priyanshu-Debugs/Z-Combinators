@@ -20,9 +20,24 @@ interface Dimension {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+const WELCOME_MESSAGE = {
+  role: "assistant" as const,
+  content:
+    "Hi! I'm your Startup School Advisor. To help me evaluate your startup idea with the best results, tell me about:\n\n" +
+    "1. **Market**: Who is your customer base and what is the market size?\n" +
+    "2. **Team**: Who is on the founding team and what is their domain expertise?\n" +
+    "3. **Timing**: Why is now the right time to build this? Any macro trends or tech shifts?\n" +
+    "4. **Competition**: Who are your main competitors and how do you differentiate?\n" +
+    "5. **Moat**: What is your unfair advantage, defensibility, or network effects?\n" +
+    "6. **Execution**: What is your go-to-market plan, pricing, and distribution model?\n\n" +
+    "You can describe your startup idea in a few sentences, or answer any of these specific dimensions to start!",
+};
+
 function EvaluateContent() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
+    WELCOME_MESSAGE,
+  ]);
   const [dossier, setDossier] = useState<Dimension[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
@@ -85,7 +100,7 @@ function EvaluateContent() {
           if (res.ok) {
             const data = await res.json();
             setSessionId(data.session_id);
-            setMessages(data.history);
+            setMessages(data.history.length > 0 ? data.history : [WELCOME_MESSAGE]);
             setDossier(data.compiled_dossier);
             setIsInitializing(false);
             return;
@@ -105,7 +120,7 @@ function EvaluateContent() {
         const data = await res.json();
         setSessionId(data.session_id);
         localStorage.setItem("z_combinator_session_id", data.session_id);
-        setMessages([]);
+        setMessages([WELCOME_MESSAGE]);
         setDossier([]);
       } catch (err) {
         setError(
@@ -191,7 +206,7 @@ function EvaluateContent() {
         const data = await res.json();
         setSessionId(data.session_id);
         localStorage.setItem("z_combinator_session_id", data.session_id);
-        setMessages([]);
+        setMessages([WELCOME_MESSAGE]);
         setDossier([]);
       }
     } catch (err) {
