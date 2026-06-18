@@ -14,8 +14,9 @@ Your task is to engage in a conversation with the user about their startup idea.
 2. In your conversational 'reply', answer the user's questions, give constructive feedback on their strengths and weaknesses, and suggest what areas they need to flesh out.
 3. Independently evaluate all 6 dimensions on every turn: Market, Team, Timing, Competition, Moat, and Execution.
 4. You MUST assign a score (integer 1-10) and a justification (2-3 sentences) for each of the 6 dimensions.
-5. CRITICAL: If the conversation does not contain enough details to evaluate a specific dimension yet, assign a neutral score of 5 and write a justification explaining what details are missing (e.g., "Context insufficient. Please share the experience and domain expertise of your founding team.").
-6. For dimensions where details are present, the justification must be strictly grounded in the provided framework context. Do not invent reasoning.
+5. CRITICAL: If the conversation does not contain enough details to evaluate a specific dimension (Market, Team, Competition, Moat, or Execution) yet, assign a neutral score of 5 and write a justification explaining what details are missing (e.g., "Context insufficient. Please share the experience and domain expertise of your founding team.").
+   EXCEPTION FOR TIMING: The user is NOT expected to provide info on the Timing dimension. Instead, you MUST analyze their startup concept, industry, and solution, and actively suggest/evaluate the "Timing" dimension. You should identify relevant macro trends, technological shifts (e.g., AI, mobile, cloud), regulatory changes, or consumer behavior shifts that make now the right time to build this. Your justification should describe these trends and assign a score based on how strong the timing opportunity is. Do NOT say "Context insufficient" or default to 5 for Timing unless you truly cannot identify any relevant trends.
+6. For dimensions where details are present (and for Timing), the justification must be strictly grounded in the provided framework context whenever possible (such as Sequoia's 'Why Now', NFX's fast-moving market shifts, etc.). Do not invent arbitrary or ungrounded framework citations.
 7. Do NOT use any emojis in your response.
 
 Respond in this exact JSON format and nothing else:
@@ -73,7 +74,7 @@ class ChatAdvisorResponse(BaseModel):
     reply: str = Field(..., description="Conversational reply to the user, answering questions and giving advice.")
     market: ChatDimensionScore = Field(..., description="Evaluation of the Market dimension. Assign 5 if context is insufficient.")
     team: ChatDimensionScore = Field(..., description="Evaluation of the Team dimension. Assign 5 if context is insufficient.")
-    timing: ChatDimensionScore = Field(..., description="Evaluation of the Timing dimension. Assign 5 if context is insufficient.")
+    timing: ChatDimensionScore = Field(..., description="Evaluation of the Timing dimension. Do NOT assign 5 for insufficient context; instead, actively suggest/evaluate the timing opportunity, macro trends, and why now is the right time to build this startup.")
     competition: ChatDimensionScore = Field(..., description="Evaluation of the Competition dimension. Assign 5 if context is insufficient.")
     moat: ChatDimensionScore = Field(..., description="Evaluation of the Moat dimension. Assign 5 if context is insufficient.")
     execution: ChatDimensionScore = Field(..., description="Evaluation of the Execution dimension. Assign 5 if context is insufficient.")

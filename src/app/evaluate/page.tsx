@@ -26,10 +26,10 @@ const WELCOME_MESSAGE = {
     "Hi! I'm your Startup Advisor. To help me evaluate your startup idea with the best results, tell me about:\n\n" +
     "1. **Market**: Who is your customer base and what is the market size?\n" +
     "2. **Team**: Who is on the founding team and what is their domain expertise?\n" +
-    "3. **Timing**: Why is now the right time to build this? Any macro trends or tech shifts?\n" +
-    "4. **Competition**: Who are your main competitors and how do you differentiate?\n" +
-    "5. **Moat**: What is your unfair advantage, defensibility, or network effects?\n" +
-    "6. **Execution**: What is your go-to-market plan, pricing, and distribution model?\n\n" +
+    "3. **Competition**: Who are your main competitors and how do you differentiate?\n" +
+    "4. **Moat**: What is your unfair advantage, defensibility, or network effects?\n" +
+    "5. **Execution**: What is your go-to-market plan, pricing, and distribution model?\n\n" +
+    "Don't worry if you don't know the **Timing** (why now is the right time, macro trends, or tech shifts) — I will analyze your industry/concept and suggest/evaluate the timing dimension for you!\n\n" +
     "You can describe your startup idea in a few sentences, or answer any of these specific dimensions to start!",
 };
 
@@ -92,27 +92,6 @@ function EvaluateContent() {
   // Initialize or retry session
   const initSession = useCallback(async () => {
     setError(null);
-    const cachedSessionId = localStorage.getItem("z_combinator_session_id");
-
-    if (cachedSessionId) {
-      try {
-        const res = await fetch(`${API_URL}/api/chat/session/${cachedSessionId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setSessionId(data.session_id);
-          setMessages(data.history.length > 0 ? data.history : [WELCOME_MESSAGE]);
-          setDossier(data.compiled_dossier);
-          setError(null);
-          if (retryTimerRef.current) {
-            clearInterval(retryTimerRef.current);
-            retryTimerRef.current = null;
-          }
-          return true;
-        }
-      } catch (err) {
-        console.warn("Failed to restore cached session, creating new session...", err);
-      }
-    }
 
     try {
       const res = await fetch(`${API_URL}/api/chat/session`, {
@@ -122,7 +101,6 @@ function EvaluateContent() {
       if (res.ok) {
         const data = await res.json();
         setSessionId(data.session_id);
-        localStorage.setItem("z_combinator_session_id", data.session_id);
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
         setError(null);
@@ -278,7 +256,7 @@ function EvaluateContent() {
     }
   };
 
-  const handleResetSession = async () => {
+  const handleNewChat = async () => {
     setError(null);
     try {
       const res = await fetch(`${API_URL}/api/chat/session`, {
@@ -288,12 +266,11 @@ function EvaluateContent() {
       if (res.ok) {
         const data = await res.json();
         setSessionId(data.session_id);
-        localStorage.setItem("z_combinator_session_id", data.session_id);
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
       }
     } catch (err) {
-      setError("Failed to reset session.");
+      setError("Failed to start new chat.");
     }
   };
 
@@ -471,10 +448,10 @@ function EvaluateContent() {
               <motion.button
                 whileHover={{ scale: 1.04, y: -1 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleResetSession}
-                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-score-low/30 hover:bg-score-low/5 hover:text-score-low transition-all duration-200 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                onClick={handleNewChat}
+                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
               >
-                Reset Chat
+                New Chat
               </motion.button>
             </div>
           </div>
