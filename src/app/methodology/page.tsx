@@ -101,7 +101,7 @@ export default function MethodologyPage() {
           className="space-y-4"
         >
           <h1 className="font-heading text-3xl md:text-4xl font-semibold text-text-primary tracking-tight">
-            How Z-Combinator evaluates your idea
+            How Z-Combinators evaluates your idea
           </h1>
           <p className="text-text-secondary text-base md:text-lg max-w-2xl leading-relaxed">
             Every score is grounded in frameworks from the world&apos;s top startup accelerators and investors. Here is exactly what we look at.

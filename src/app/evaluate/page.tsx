@@ -285,7 +285,7 @@ function EvaluateContent() {
       .map((d) => `${d.dimension}: ${d.score}/10`)
       .join(" | ");
 
-    const text = `Z-Combinator Evaluation: ${overallScore}/10\n${dimScores}\n\nEvaluate your startup idea at z-combinator.com`;
+    const text = `Z-Combinators Evaluation: ${overallScore}/10\n${dimScores}\n\nEvaluate your startup idea at Z-Combinators.com`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopyToast(true);
@@ -388,8 +388,8 @@ function EvaluateContent() {
                 <button
                   onClick={() => setActiveTab("chat")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "chat"
-                      ? "text-text-primary"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-text-primary"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Chat
@@ -397,8 +397,8 @@ function EvaluateContent() {
                 <button
                   onClick={() => setActiveTab("dossier")}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "dossier"
-                      ? "text-text-primary"
-                      : "text-text-secondary hover:text-text-primary"
+                    ? "text-text-primary"
+                    : "text-text-secondary hover:text-text-primary"
                     }`}
                 >
                   Dossier {overallScore !== null ? `(${overallScore})` : ""}

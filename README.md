@@ -1,6 +1,6 @@
-# Z-Combinator: AI Startup Pitch Evaluator & RAG Chat Advisor 🚀
+# Z-Combinators: AI Startup Pitch Evaluator & RAG Chat Advisor 🚀
 
-Z-Combinator is a premium, AI-powered startup pitch evaluator and conversational advisor. It allows startup founders to iterate on their ideas and compile investment dossiers by cross-referencing pitches against **150+ frameworks** from top venture capital firms and startup thinkers including **Y Combinator (YC Startup School)**, **Andreessen Horowitz (a16z)**, **Sequoia Capital**, **NFX**, **First Round Review**, and **Naval Ravikant**.
+Z-Combinators is a premium, AI-powered startup pitch evaluator and conversational advisor. It allows startup founders to iterate on their ideas and compile investment dossiers by cross-referencing pitches against **150+ frameworks** from top venture capital firms and startup thinkers including **Y Combinator (YC Startup School)**, **Andreessen Horowitz (a16z)**, **Sequoia Capital**, **NFX**, **First Round Review**, and **Naval Ravikant**.
 
 The application utilizes a high-performance **RAG (Retrieval-Augmented Generation)** pipeline to evaluate pitches across 6 dimensions, streaming responses in real-time and compiling a dynamic evaluation dossier.
 
@@ -8,7 +8,7 @@ The application utilizes a high-performance **RAG (Retrieval-Augmented Generatio
 
 ## 🏗️ System Architecture
 
-Z-Combinator is built using a decoupled architecture, separating a responsive Next.js frontend from a robust Python/FastAPI backend backed by a multi-database storage layer.
+Z-Combinators is built using a decoupled architecture, separating a responsive Next.js frontend from a robust Python/FastAPI backend backed by a multi-database storage layer.
 
 ```mermaid
 graph TD

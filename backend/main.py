@@ -29,7 +29,7 @@ from database import (
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
-    title="Z-Combinator API",
+    title="Z-Combinators API",
     description="AI-powered startup idea evaluation and chat advisor using RAG.",
     version="1.0.0",
 )

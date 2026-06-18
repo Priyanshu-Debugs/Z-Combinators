@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Z-Combinator -- AI-Powered Startup Evaluation",
+  title: "Z-Combinators -- AI-Powered Startup Evaluation",
   description:
     "Cross-reference your startup pitch against 150+ frameworks from YC, a16z, and NFX. Get unvarnished, cited feedback in seconds.",
 };

@@ -72,7 +72,7 @@ export default function Navbar() {
       <div className={`max-w-7xl mx-auto px-5 sm:px-8 md:px-10 lg:px-16 flex items-center justify-between transition-all duration-300 ${isEvaluate ? "h-14" : "h-20"}`}>
         {/* Logo */}
         <Link href="/" className={`font-heading font-medium text-text-primary tracking-tight transition-all duration-300 ${isEvaluate ? "text-[18px]" : "text-[21px]"}`}>
-          Z-Combinator
+          Z-Combinators
         </Link>
 
         {/* Desktop Navigation */}
@@ -95,7 +95,7 @@ export default function Navbar() {
         {/* Social Actions */}
         <div className="hidden md:flex items-center justify-end space-x-5 w-[160px]">
           <a
-            href="https://github.com/Priyanshu-Debugs/Z-Combinator"
+            href="https://github.com/Priyanshu-Debugs/Z-Combinators"
             target="_blank"
             rel="noopener noreferrer"
             title="GitHub Repository"
@@ -141,19 +141,16 @@ export default function Navbar() {
         >
           <div className="w-6 h-5 flex flex-col justify-between">
             <span
-              className={`w-full h-0.5 bg-current rounded-full transition-transform duration-300 origin-left ${
-                isOpen ? "rotate-45 translate-x-1" : ""
-              }`}
+              className={`w-full h-0.5 bg-current rounded-full transition-transform duration-300 origin-left ${isOpen ? "rotate-45 translate-x-1" : ""
+                }`}
             />
             <span
-              className={`w-full h-0.5 bg-current rounded-full transition-opacity duration-300 ${
-                isOpen ? "opacity-0" : ""
-              }`}
+              className={`w-full h-0.5 bg-current rounded-full transition-opacity duration-300 ${isOpen ? "opacity-0" : ""
+                }`}
             />
             <span
-              className={`w-full h-0.5 bg-current rounded-full transition-transform duration-300 origin-left ${
-                isOpen ? "-rotate-45 translate-x-1" : ""
-              }`}
+              className={`w-full h-0.5 bg-current rounded-full transition-transform duration-300 origin-left ${isOpen ? "-rotate-45 translate-x-1" : ""
+                }`}
             />
           </div>
         </button>
@@ -198,7 +195,7 @@ export default function Navbar() {
               className="flex items-center space-x-6 mt-12 pt-6 border-t border-border"
             >
               <a
-                href="https://github.com/Priyanshu-Debugs/Z-Combinator"
+                href="https://github.com/Priyanshu-Debugs/Z-Combinators"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}
