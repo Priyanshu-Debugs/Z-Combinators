@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from config import settings
+from rag.key_manager import key_manager, is_rate_limit_error
 from rag.vector_store import retrieve_for_dimension
 from models import DimensionResult
 
@@ -129,20 +130,27 @@ async def condense_query(user_message: str, history: list[dict]) -> str:
     )
     
     primary_model = resolve_model_name(settings.GEMINI_MODEL)
-    try:
-        llm = ChatGoogleGenerativeAI(
-            model=primary_model,
-            temperature=0.0,
-            max_tokens=60,
-            api_key=settings.GEMINI_API_KEY or None,
-        )
-        response = await llm.ainvoke(prompt_text)
-        condensed = response.content.strip()
-        condensed = condensed.replace("`", "").replace('"', "").replace("'", "")
-        return condensed if condensed else user_message
-    except Exception as e:
-        print(f"Error during query condensation: {e}")
-        return user_message
+    max_attempts = max(3, len(key_manager.keys))
+    
+    for attempt in range(max_attempts):
+        active_key = key_manager.get_current_key()
+        try:
+            llm = ChatGoogleGenerativeAI(
+                model=primary_model,
+                temperature=0.0,
+                max_tokens=60,
+                api_key=active_key or None,
+            )
+            response = await llm.ainvoke(prompt_text)
+            condensed = response.content.strip()
+            condensed = condensed.replace("`", "").replace('"', "").replace("'", "")
+            return condensed if condensed else user_message
+        except Exception as e:
+            if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                key_manager.rotate_key()
+                continue
+            print(f"Error during query condensation: {e}")
+            return user_message
 
 
 async def evaluate_chat_turn(
@@ -194,83 +202,92 @@ async def evaluate_chat_turn(
     last_error = None
     reply = "I apologize, but I encountered an error. Please try again."
     evaluations = []
+    max_attempts = max(3, len(key_manager.keys))
 
-    for model_name in models_to_try:
-        try:
-            llm = ChatGoogleGenerativeAI(
-                model=model_name,
-                temperature=0.3,
-                max_tokens=500,
-                api_key=settings.GEMINI_API_KEY or None,
-            )
-            
-            # LangChain chain with structured output
-            structured_llm = llm.with_structured_output(ChatAdvisorResponse)
-            chain = prompt | structured_llm
-            
-            result = await chain.ainvoke({
-                "chat_history": chat_history,
-                "user_message": user_message,
-                "framework_context": framework_context
-            })
-            
-            reply = result.reply
-            scores_dict = {
-                "market": result.market,
-                "team": result.team,
-                "timing": result.timing,
-                "competition": result.competition,
-                "moat": result.moat,
-                "execution": result.execution,
-            }
-            
-            # Step 4: Deterministically attach RAG metadata in Python
-            for dim_key, score_data in scores_dict.items():
-                dim_clean = dim_key.lower().strip()
-                if dim_clean not in ["market", "team", "timing", "competition", "moat", "execution"]:
-                    continue
-                
-                score = int(score_data.score)
-                justification = score_data.justification
-                
-                # Fetch RAG source info from the top chunk retrieved
-                chunks = retrieved_chunks.get(dim_clean, [])
-                if chunks:
-                    best_chunk = chunks[0]
-                    confidence = determine_confidence(best_chunk["distance"])
-                    source_excerpt = best_chunk["text"][:500]
-                    source_org_display = {
-                        "yc": "YC",
-                        "a16z": "a16z",
-                        "nfx": "NFX",
-                        "sequoia": "Sequoia",
-                        "firstround": "First Round Review",
-                        "naval": "Naval Ravikant"
-                    }.get(best_chunk["source_org"], best_chunk["source_org"].upper())
-                    source_framework = f"{source_org_display} -- {best_chunk['source_title']}"
-                else:
-                    confidence = "low"
-                    source_excerpt = "No matching context available."
-                    source_framework = "N/A"
-                
-                evaluations.append(
-                    DimensionResult(
-                        dimension=dim_clean.title(),
-                        score=score,
-                        justification=justification,
-                        source_excerpt=source_excerpt,
-                        source_framework=source_framework,
-                        confidence=confidence
-                    )
+    for attempt in range(max_attempts):
+        active_key = key_manager.get_current_key()
+        rotated = False
+        for model_name in models_to_try:
+            try:
+                llm = ChatGoogleGenerativeAI(
+                    model=model_name,
+                    temperature=0.3,
+                    max_tokens=500,
+                    api_key=active_key or None,
                 )
                 
-            return reply, evaluations
+                # LangChain chain with structured output
+                structured_llm = llm.with_structured_output(ChatAdvisorResponse)
+                chain = prompt | structured_llm
+                
+                result = await chain.ainvoke({
+                    "chat_history": chat_history,
+                    "user_message": user_message,
+                    "framework_context": framework_context
+                })
+                
+                reply = result.reply
+                scores_dict = {
+                    "market": result.market,
+                    "team": result.team,
+                    "timing": result.timing,
+                    "competition": result.competition,
+                    "moat": result.moat,
+                    "execution": result.execution,
+                }
+                
+                # Step 4: Deterministically attach RAG metadata in Python
+                for dim_key, score_data in scores_dict.items():
+                    dim_clean = dim_key.lower().strip()
+                    if dim_clean not in ["market", "team", "timing", "competition", "moat", "execution"]:
+                        continue
+                    
+                    score = int(score_data.score)
+                    justification = score_data.justification
+                    
+                    # Fetch RAG source info from the top chunk retrieved
+                    chunks = retrieved_chunks.get(dim_clean, [])
+                    if chunks:
+                        best_chunk = chunks[0]
+                        confidence = determine_confidence(best_chunk["distance"])
+                        source_excerpt = best_chunk["text"][:500]
+                        source_org_display = {
+                            "yc": "YC",
+                            "a16z": "a16z",
+                            "nfx": "NFX",
+                            "sequoia": "Sequoia",
+                            "firstround": "First Round Review",
+                            "naval": "Naval Ravikant"
+                        }.get(best_chunk["source_org"], best_chunk["source_org"].upper())
+                        source_framework = f"{source_org_display} -- {best_chunk['source_title']}"
+                    else:
+                        confidence = "low"
+                        source_excerpt = "No matching context available."
+                        source_framework = "N/A"
+                    
+                    evaluations.append(
+                        DimensionResult(
+                            dimension=dim_clean.title(),
+                            score=score,
+                            justification=justification,
+                            source_excerpt=source_excerpt,
+                            source_framework=source_framework,
+                            confidence=confidence
+                        )
+                    )
+                    
+                return reply, evaluations
 
-        except Exception as e:
-            last_error = e
-            continue
+            except Exception as e:
+                last_error = e
+                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                    key_manager.rotate_key()
+                    rotated = True
+                    break
+        if not rotated:
+            break
 
-    # Return error reply if all models fail
+    # Return error reply if all attempts fail
     reply = f"Evaluation failed. Error: {str(last_error)}"
     return reply, evaluations
 
@@ -317,90 +334,101 @@ async def evaluate_chat_turn_stream(
 
     last_error = None
     success = False
+    max_attempts = max(3, len(key_manager.keys))
     
-    for model_name in models_to_try:
-        try:
-            llm = ChatGoogleGenerativeAI(
-                model=model_name,
-                temperature=0.3,
-                max_tokens=500,
-                api_key=settings.GEMINI_API_KEY or None,
-            )
-            
-            structured_llm = llm.with_structured_output(ChatAdvisorResponse)
-            chain = prompt | structured_llm
-            
-            last_reply = ""
-            final_result = None
-            
-            async for chunk in chain.astream({
-                "chat_history": chat_history,
-                "user_message": user_message,
-                "framework_context": framework_context
-            }):
-                if chunk:
-                    final_result = chunk
-                    if hasattr(chunk, "reply") and chunk.reply:
-                        new_text = chunk.reply[len(last_reply):]
-                        if new_text:
-                            yield {"type": "token", "content": new_text}
-                            last_reply = chunk.reply
-            
-            scores_dict = {}
-            if final_result:
-                for dim in ["market", "team", "timing", "competition", "moat", "execution"]:
-                    val = getattr(final_result, dim, None)
-                    if val:
-                        scores_dict[dim] = val
-            
-            evaluations = []
-            
-            # Deterministically attach RAG metadata
-            for dim_key, score_data in scores_dict.items():
-                dim_clean = dim_key.lower().strip()
-                if dim_clean not in ["market", "team", "timing", "competition", "moat", "execution"]:
-                    continue
-                
-                score = int(score_data.score)
-                justification = score_data.justification
-                
-                chunks = retrieved_chunks.get(dim_clean, [])
-                if chunks:
-                    best_chunk = chunks[0]
-                    confidence = determine_confidence(best_chunk["distance"])
-                    source_excerpt = best_chunk["text"][:500]
-                    source_org_display = {
-                        "yc": "YC",
-                        "a16z": "a16z",
-                        "nfx": "NFX",
-                        "sequoia": "Sequoia",
-                        "firstround": "First Round Review",
-                        "naval": "Naval Ravikant"
-                    }.get(best_chunk["source_org"], best_chunk["source_org"].upper())
-                    source_framework = f"{source_org_display} -- {best_chunk['source_title']}"
-                else:
-                    confidence = "low"
-                    source_excerpt = "No matching context available."
-                    source_framework = "N/A"
-                
-                evaluations.append(
-                    DimensionResult(
-                        dimension=dim_clean.title(),
-                        score=score,
-                        justification=justification,
-                        source_excerpt=source_excerpt,
-                        source_framework=source_framework,
-                        confidence=confidence
-                    )
+    for attempt in range(max_attempts):
+        active_key = key_manager.get_current_key()
+        rotated = False
+        for model_name in models_to_try:
+            try:
+                llm = ChatGoogleGenerativeAI(
+                    model=model_name,
+                    temperature=0.3,
+                    max_tokens=500,
+                    api_key=active_key or None,
                 )
                 
-            yield {"type": "evaluations", "evaluations": evaluations}
-            success = True
-            break
+                structured_llm = llm.with_structured_output(ChatAdvisorResponse)
+                chain = prompt | structured_llm
+                
+                last_reply = ""
+                final_result = None
+                
+                async for chunk in chain.astream({
+                    "chat_history": chat_history,
+                    "user_message": user_message,
+                    "framework_context": framework_context
+                }):
+                    if chunk:
+                        final_result = chunk
+                        if hasattr(chunk, "reply") and chunk.reply:
+                            new_text = chunk.reply[len(last_reply):]
+                            if new_text:
+                                yield {"type": "token", "content": new_text}
+                                last_reply = chunk.reply
+                
+                scores_dict = {}
+                if final_result:
+                    for dim in ["market", "team", "timing", "competition", "moat", "execution"]:
+                        val = getattr(final_result, dim, None)
+                        if val:
+                            scores_dict[dim] = val
+                
+                evaluations = []
+                
+                # Deterministically attach RAG metadata
+                for dim_key, score_data in scores_dict.items():
+                    dim_clean = dim_key.lower().strip()
+                    if dim_clean not in ["market", "team", "timing", "competition", "moat", "execution"]:
+                        continue
+                    
+                    score = int(score_data.score)
+                    justification = score_data.justification
+                    
+                    chunks = retrieved_chunks.get(dim_clean, [])
+                    if chunks:
+                        best_chunk = chunks[0]
+                        confidence = determine_confidence(best_chunk["distance"])
+                        source_excerpt = best_chunk["text"][:500]
+                        source_org_display = {
+                            "yc": "YC",
+                            "a16z": "a16z",
+                            "nfx": "NFX",
+                            "sequoia": "Sequoia",
+                            "firstround": "First Round Review",
+                            "naval": "Naval Ravikant"
+                        }.get(best_chunk["source_org"], best_chunk["source_org"].upper())
+                        source_framework = f"{source_org_display} -- {best_chunk['source_title']}"
+                    else:
+                        confidence = "low"
+                        source_excerpt = "No matching context available."
+                        source_framework = "N/A"
+                    
+                    evaluations.append(
+                        DimensionResult(
+                            dimension=dim_clean.title(),
+                            score=score,
+                            justification=justification,
+                            source_excerpt=source_excerpt,
+                            source_framework=source_framework,
+                            confidence=confidence
+                        )
+                    )
+                    
+                yield {"type": "evaluations", "evaluations": evaluations}
+                success = True
+                break
 
-        except Exception as e:
-            last_error = e
-            continue
+            except Exception as e:
+                last_error = e
+                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                    key_manager.rotate_key()
+                    rotated = True
+                    break
+        if success:
+            break
+        if not rotated:
+            break
 
     if not success:
         yield {"type": "token", "content": f"\n\nEvaluation failed. Error: {str(last_error)}"}

@@ -5,6 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 from config import settings
+from rag.key_manager import key_manager, is_rate_limit_error
 
 SYSTEM_PROMPT = """You are an expert startup evaluator. You evaluate startup ideas by applying established frameworks from Y Combinator, Andreessen Horowitz (a16z), and NFX.
 
@@ -79,35 +80,48 @@ async def evaluate_dimension(
             models_to_try.append(fallback)
 
     last_error = None
-    for model_name in models_to_try:
-        try:
-            llm = ChatGoogleGenerativeAI(
-                model=model_name,
-                temperature=0.3,
-                max_tokens=300,
-                api_key=settings.GEMINI_API_KEY or None,
-            )
-
-            # LangChain chain with structured output
-            structured_llm = llm.with_structured_output(DimensionEvaluation)
-            chain = prompt | structured_llm
-
-            # Async invoke using LangChain standard ainvoke
-            result = await chain.ainvoke({
-                "dimension": dimension.upper(),
-                "idea": idea,
-                "context_text": context_text,
-            })
-
-            score = int(result.score)
-            score = max(1, min(10, score))
-            justification = result.justification
-
-            return {"score": score, "justification": justification}
-
-        except Exception as e:
-            last_error = e
-            continue
+    max_attempts = max(3, len(key_manager.keys))
+    
+    for attempt in range(max_attempts):
+        active_key = key_manager.get_current_key()
+        rotated = False
+        for model_name in models_to_try:
+            try:
+                llm = ChatGoogleGenerativeAI(
+                    model=model_name,
+                    temperature=0.3,
+                    max_tokens=300,
+                    api_key=active_key or None,
+                )
+    
+                # LangChain chain with structured output
+                structured_llm = llm.with_structured_output(DimensionEvaluation)
+                chain = prompt | structured_llm
+    
+                # Async invoke using LangChain standard ainvoke
+                result = await chain.ainvoke({
+                    "dimension": dimension.upper(),
+                    "idea": idea,
+                    "context_text": context_text,
+                })
+    
+                score = int(result.score)
+                score = max(1, min(10, score))
+                justification = result.justification
+    
+                return {"score": score, "justification": justification}
+    
+            except Exception as e:
+                last_error = e
+                if is_rate_limit_error(e) and key_manager.has_multiple_keys():
+                    key_manager.rotate_key()
+                    rotated = True
+                    break
+        
+        # If we didn't rotate the key, it means we either succeeded or failed for non-rate-limit reasons,
+        # so we break out of the attempts loop.
+        if not rotated:
+            break
 
     # If all model execution attempts fail, return a structured error result
     return {

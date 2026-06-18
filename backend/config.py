@@ -9,6 +9,9 @@ load_dotenv(dotenv_path=env_path)
 
 class Settings:
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    GEMINI_API_KEYS: list[str] = [
+        k.strip() for k in os.getenv("GEMINI_API_KEYS", "").split(",") if k.strip()
+    ]
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
     CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "./chroma_data")
     RATE_LIMIT: str = os.getenv("RATE_LIMIT", "10/minute")
