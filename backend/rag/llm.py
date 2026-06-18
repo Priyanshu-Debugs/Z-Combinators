@@ -3,6 +3,7 @@ import asyncio
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+from pydantic import BaseModel, Field
 from config import settings
 
 SYSTEM_PROMPT = """You are an expert startup evaluator. You evaluate startup ideas by applying established frameworks from Y Combinator, Andreessen Horowitz (a16z), and NFX.
@@ -38,6 +39,11 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_PROMPT),
     ("human", HUMAN_PROMPT_TEMPLATE)
 ])
+
+
+class DimensionEvaluation(BaseModel):
+    score: int = Field(..., ge=1, le=10, description="Evaluation score, integer between 1 and 10.")
+    justification: str = Field(..., description="2-4 sentences explaining the score, strictly grounded in the provided framework context.")
 
 
 def resolve_model_name(model_name: str) -> str:
@@ -79,11 +85,12 @@ async def evaluate_dimension(
                 model=model_name,
                 temperature=0.3,
                 max_tokens=300,
-                google_api_key=settings.GEMINI_API_KEY or None,
+                api_key=settings.GEMINI_API_KEY or None,
             )
 
-            # LangChain chain
-            chain = prompt | llm | JsonOutputParser()
+            # LangChain chain with structured output
+            structured_llm = llm.with_structured_output(DimensionEvaluation)
+            chain = prompt | structured_llm
 
             # Async invoke using LangChain standard ainvoke
             result = await chain.ainvoke({
@@ -92,11 +99,9 @@ async def evaluate_dimension(
                 "context_text": context_text,
             })
 
-            score = int(result.get("score", 5))
+            score = int(result.score)
             score = max(1, min(10, score))
-            justification = result.get(
-                "justification", "Evaluation could not be completed."
-            )
+            justification = result.justification
 
             return {"score": score, "justification": justification}
 

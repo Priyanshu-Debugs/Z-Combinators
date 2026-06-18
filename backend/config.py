@@ -1,7 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env relative to the config.py directory
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 
 class Settings:
@@ -14,6 +17,7 @@ class Settings:
     ).split(",")
     EMBEDDING_MODEL: str = "gemini-embedding-2"
     RETRIEVAL_TOP_K: int = 3
+    DISTANCE_THRESHOLD: float = 0.9
     DIMENSIONS: list[str] = [
         "market",
         "team",

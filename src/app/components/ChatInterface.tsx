@@ -182,23 +182,40 @@ interface TypewriterChatMessageProps {
   content: string;
   onComplete?: () => void;
   shouldAnimate: boolean;
+  isStreaming?: boolean;
 }
 
 function TypewriterChatMessage({
   content,
   onComplete,
   shouldAnimate,
+  isStreaming = false,
 }: TypewriterChatMessageProps) {
   const [displayedText, setDisplayedText] = useState(shouldAnimate ? "" : content);
   const [isDone, setIsDone] = useState(!shouldAnimate);
 
+  const prevStreamingRef = useRef(isStreaming);
   useEffect(() => {
-    if (isDone && shouldAnimate) {
+    if (prevStreamingRef.current && !isStreaming) {
+      setIsDone(true);
       onComplete?.();
     }
-  }, [isDone, shouldAnimate, onComplete]);
+    prevStreamingRef.current = isStreaming;
+  }, [isStreaming, onComplete]);
 
   useEffect(() => {
+    if (isDone && shouldAnimate && !isStreaming) {
+      onComplete?.();
+    }
+  }, [isDone, shouldAnimate, isStreaming, onComplete]);
+
+  useEffect(() => {
+    if (isStreaming) {
+      setDisplayedText(content);
+      setIsDone(false);
+      return;
+    }
+
     if (!shouldAnimate) {
       setDisplayedText(content);
       setIsDone(true);
@@ -226,7 +243,7 @@ function TypewriterChatMessage({
     }, 18);
 
     return () => clearInterval(interval);
-  }, [content, shouldAnimate]);
+  }, [content, shouldAnimate, isStreaming]);
 
   return (
     <div className="w-full relative">
@@ -380,6 +397,7 @@ export default function ChatInterface({
               
               const isLatestMessage = index === messages.length - 1;
               const shouldAnimate = !isUser && isLatestMessage && !animatedMessageIndices.has(index);
+              const isStreamingMessage = !isUser && isLatestMessage && isLoading;
 
               const handleComplete = () => {
                 setAnimatedMessageIndices((prev) => {
@@ -416,8 +434,8 @@ export default function ChatInterface({
                     <div
                       className={`text-sm leading-relaxed transition-all duration-200 ${
                         isUser
-                          ? "bg-surface border border-border/60 text-text-primary rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] hover:bg-surface-hover/30"
-                          : "bg-transparent border-transparent text-text-primary shadow-none px-1 py-1 w-full"
+                           ? "bg-surface border border-border/60 text-text-primary rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] hover:bg-surface-hover/30"
+                           : "bg-transparent border-transparent text-text-primary shadow-none px-1 py-1 w-full"
                       }`}
                     >
                       {isUser ? (
@@ -426,6 +444,7 @@ export default function ChatInterface({
                         <TypewriterChatMessage
                           content={msg.content}
                           shouldAnimate={shouldAnimate}
+                          isStreaming={isStreamingMessage}
                           onComplete={handleComplete}
                         />
                       )}

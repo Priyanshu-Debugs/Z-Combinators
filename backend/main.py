@@ -1,6 +1,8 @@
 import uuid
+import json
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -14,7 +16,7 @@ from models import (
     ChatMessage
 )
 from rag.evaluator import evaluate_idea
-from rag.chat import evaluate_chat_turn
+from rag.chat import evaluate_chat_turn, evaluate_chat_turn_stream
 from database import (
     init_db,
     create_session,
@@ -139,3 +141,53 @@ async def post_message_endpoint(request: Request, body: MessageRequest):
         history=history,
         compiled_dossier=compiled
     )
+
+
+@app.post("/api/chat/message/stream")
+@limiter.limit(settings.RATE_LIMIT)
+async def post_message_stream_endpoint(request: Request, body: MessageRequest):
+    """
+    Post a message to the chat advisor and stream the response.
+    
+    1. Fetch context history.
+    2. Save user message.
+    3. Stream evaluation through LangChain RAG.
+    4. Save assistant response and evaluations.
+    5. Emit final compiled evaluations.
+    """
+    session_id = body.session_id
+    content = body.content
+    
+    # 1. Fetch current history for RAG context
+    history_raw = get_session_messages(session_id)
+    
+    # 2. Save user message to database
+    save_message(session_id, "user", content)
+    
+    async def event_generator():
+        full_reply = ""
+        final_evals = []
+        
+        try:
+            async for event in evaluate_chat_turn_stream(content, history_raw):
+                if event["type"] == "token":
+                    full_reply += event["content"]
+                    yield f"data: {json.dumps(event)}\n\n"
+                elif event["type"] == "evaluations":
+                    final_evals = event["evaluations"]
+            
+            # Save assistant response and evaluations to database
+            evals_json = [ev.model_dump() for ev in final_evals]
+            save_message(session_id, "assistant", full_reply, evals_json)
+            
+            # Fetch updated compiled dossier
+            compiled = get_compiled_evaluations(session_id)
+            compiled_json = [ev.model_dump() for ev in compiled]
+            
+            # Send completion signal with final data
+            yield f"data: {json.dumps({'type': 'done', 'evaluations': evals_json, 'compiled_dossier': compiled_json})}\n\n"
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+            
+    return StreamingResponse(event_generator(), media_type="text/event-stream")

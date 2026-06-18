@@ -190,7 +190,7 @@ function EvaluateContent() {
     setMessages(updatedMessages);
 
     try {
-      const res = await fetch(`${API_URL}/api/chat/message`, {
+      const res = await fetch(`${API_URL}/api/chat/message/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session_id: sessionId, content }),
@@ -203,10 +203,67 @@ function EvaluateContent() {
         throw new Error("Failed to evaluate message. Please try again.");
       }
 
-      const data = await res.json();
+      if (!res.body) {
+        throw new Error("Failed to initialize response stream.");
+      }
 
-      setMessages([...updatedMessages, { role: "assistant" as const, content: data.reply }]);
-      setDossier(data.compiled_dossier);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let streamFinished = false;
+      let assistantReply = "";
+
+      // Append initial empty assistant message that will be populated via stream
+      setMessages([...updatedMessages, { role: "assistant" as const, content: "" }]);
+
+      let buffer = "";
+
+      while (!streamFinished) {
+        const { value, done } = await reader.read();
+        if (done) {
+          streamFinished = true;
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        // Process SSE lines
+        const lines = buffer.split("\n\n");
+        // Keep the last partial line in the buffer
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith("data: ")) {
+            const dataStr = trimmed.slice(6).trim();
+            if (!dataStr) continue;
+
+            try {
+              const parsed = JSON.parse(dataStr);
+              if (parsed.type === "token") {
+                assistantReply += parsed.content;
+                setMessages((prev) => {
+                  const next = [...prev];
+                  if (next.length > 0) {
+                    next[next.length - 1] = {
+                      ...next[next.length - 1],
+                      content: assistantReply,
+                    };
+                  }
+                  return next;
+                });
+              } else if (parsed.type === "done") {
+                setDossier(parsed.compiled_dossier);
+                streamFinished = true;
+              } else if (parsed.type === "error") {
+                throw new Error(parsed.content);
+              }
+            } catch (jsonErr) {
+              console.warn("Failed to parse SSE line", jsonErr, trimmed);
+            }
+          }
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
       setMessages([

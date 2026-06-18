@@ -48,13 +48,15 @@ def retrieve_for_dimension(
     chunks = []
     if results["documents"] and results["documents"][0]:
         for i in range(len(results["documents"][0])):
-            chunks.append(
-                {
-                    "text": results["documents"][0][i],
-                    "source_org": results["metadatas"][0][i]["source_org"],
-                    "source_title": results["metadatas"][0][i]["source_title"],
-                    "distance": results["distances"][0][i],
-                }
-            )
+            distance = results["distances"][0][i]
+            if distance < settings.DISTANCE_THRESHOLD:
+                chunks.append(
+                    {
+                        "text": results["documents"][0][i],
+                        "source_org": results["metadatas"][0][i]["source_org"],
+                        "source_title": results["metadatas"][0][i]["source_title"],
+                        "distance": distance,
+                    }
+                )
 
     return chunks
