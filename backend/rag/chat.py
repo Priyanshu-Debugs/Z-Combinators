@@ -215,7 +215,7 @@ async def evaluate_chat_turn(
                 llm = ChatGoogleGenerativeAI(
                     model=model_name,
                     temperature=0.3,
-                    max_tokens=500,
+                    max_tokens=1500,
                     api_key=active_key or None,
                 )
                 
@@ -347,7 +347,7 @@ async def evaluate_chat_turn_stream(
                 llm = ChatGoogleGenerativeAI(
                     model=model_name,
                     temperature=0.3,
-                    max_tokens=500,
+                    max_tokens=1500,
                     api_key=active_key or None,
                 )
                 
