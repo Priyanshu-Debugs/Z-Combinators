@@ -35,6 +35,14 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  // Pre-warm the backend on initial mount
+  useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    fetch(`${API_URL}/health`, { method: "GET" }).catch(() => {
+      // Silently catch errors during the wake-up pings
+    });
+  }, []);
+
   // Determine background style based on page and scroll
   const getBgClass = () => {
     if (isHome) {

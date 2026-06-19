@@ -18,7 +18,7 @@ interface Dimension {
   confidence: "high" | "medium" | "low";
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 const WELCOME_MESSAGE = {
   role: "assistant" as const,
@@ -31,11 +31,16 @@ const WELCOME_MESSAGE = {
     "5. **Execution**: What is your go-to-market plan, pricing, and distribution model?\n\n" +
     "Don't worry if you don't know the **Timing** (why now is the right time, macro trends, or tech shifts) — I will analyze your industry/concept and suggest/evaluate the timing dimension for you!\n\n" +
     "You can describe your startup idea in a few sentences, or answer any of these specific dimensions to start!",
+  suggested_followups: [
+    "Evaluate my AI SaaS startup idea",
+    "What details do you need for a full evaluation?",
+    "Explain the scoring methodology"
+  ]
 };
 
 function EvaluateContent() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; suggested_followups?: string[] }[]>([
     WELCOME_MESSAGE,
   ]);
   const [dossier, setDossier] = useState<Dimension[]>([]);
@@ -234,6 +239,18 @@ function EvaluateContent() {
                 });
               } else if (parsed.type === "done") {
                 setDossier(parsed.compiled_dossier);
+                if (parsed.suggested_followups) {
+                  setMessages((prev) => {
+                    const next = [...prev];
+                    if (next.length > 0 && next[next.length - 1].role === "assistant") {
+                      next[next.length - 1] = {
+                        ...next[next.length - 1],
+                        suggested_followups: parsed.suggested_followups,
+                      };
+                    }
+                    return next;
+                  });
+                }
                 streamFinished = true;
               } else if (parsed.type === "error") {
                 throw new Error(parsed.content);
@@ -245,12 +262,22 @@ function EvaluateContent() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
+      const isConnectionRefused = err instanceof Error && (
+        err.message.includes("Failed to fetch") || 
+        err.message.includes("NetworkError") || 
+        err.message.includes("refused")
+      );
+      
+      const professionalErrorMsg = isConnectionRefused 
+        ? "We apologize for the inconvenience. Our connection to the evaluation service was interrupted or the server is temporarily offline. Please verify that the backend is running and try again."
+        : (err instanceof Error ? err.message : "We are sorry for the inconvenience, but an unexpected error occurred while processing your request.");
+
+      setError(professionalErrorMsg);
       setMessages([
         ...updatedMessages,
         {
           role: "assistant" as const,
-          content: "I ran into a server error processing your message. Please check that the API is running and try again."
+          content: professionalErrorMsg
         }
       ]);
     } finally {

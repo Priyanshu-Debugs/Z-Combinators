@@ -31,6 +31,7 @@ class ChatMessage(BaseModel):
     role: Literal["user", "assistant"]
     content: str
     evaluations: Optional[list[DimensionResult]] = None
+    suggested_followups: Optional[list[str]] = None
 
 
 class MessageRequest(BaseModel):

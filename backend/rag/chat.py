@@ -21,11 +21,17 @@ Your task is to engage in a conversation with the user about their startup idea.
 5. CRITICAL: If the conversation does not contain enough details to evaluate a specific dimension (Market, Team, Competition, Moat, or Execution) yet, assign a neutral score of 5 and write a justification explaining what details are missing (e.g., "Context insufficient. Please share the experience and domain expertise of your founding team.").
    EXCEPTION FOR TIMING: The user is NOT expected to provide info on the Timing dimension. Instead, you MUST analyze their startup concept, industry, and solution, and actively suggest/evaluate the "Timing" dimension. You should identify relevant macro trends, technological shifts (e.g., AI, mobile, cloud), regulatory changes, or consumer behavior shifts that make now the right time to build this. Your justification should describe these trends and assign a score based on how strong the timing opportunity is. Do NOT say "Context insufficient" or default to 5 for Timing unless you truly cannot identify any relevant trends.
 6. For dimensions where details are present (and for Timing), the justification must be strictly grounded in the provided framework context whenever possible (such as Sequoia's 'Why Now', NFX's fast-moving market shifts, etc.). Do not invent arbitrary or ungrounded framework citations.
-7. Do NOT use any emojis in your response.
+7. You MUST generate exactly 3 short, context-specific follow-up questions or prompts that the user could ask next to continue their evaluation (e.g., questions asking for details on specific missing dimensions, or deep-diving into a risk you highlighted). Keep them concise (under 12 words each) and highly actionable.
+8. Do NOT use any emojis in your response.
 
 Respond in this exact JSON format and nothing else:
 {{
   "reply": "<Your conversational response to the user, answering questions and guiding them>",
+  "suggested_followups": [
+    "<follow-up prompt 1>",
+    "<follow-up prompt 2>",
+    "<follow-up prompt 3>"
+  ],
   "market": {{
     "score": <integer 1-10>,
     "justification": "<justification sentences>"
@@ -76,6 +82,7 @@ class ChatDimensionScore(BaseModel):
 
 class ChatAdvisorResponse(BaseModel):
     reply: str = Field(..., description="Conversational reply to the user, answering questions and giving advice.")
+    suggested_followups: list[str] = Field(..., description="Exactly 3 short, context-specific follow-up questions or prompts under 12 words each.")
     market: ChatDimensionScore = Field(..., description="Evaluation of the Market dimension. Assign 5 if context is insufficient.")
     team: ChatDimensionScore = Field(..., description="Evaluation of the Team dimension. Assign 5 if context is insufficient.")
     timing: ChatDimensionScore = Field(..., description="Evaluation of the Timing dimension. Do NOT assign 5 for insufficient context; instead, actively suggest/evaluate the timing opportunity, macro trends, and why now is the right time to build this startup.")
@@ -159,7 +166,7 @@ async def condense_query(user_message: str, history: list[dict]) -> str:
 async def evaluate_chat_turn(
     user_message: str,
     history: list[dict],
-) -> tuple[str, list[DimensionResult]]:
+) -> tuple[str, list[DimensionResult], list[str]]:
     """
     Process a single chat turn using LangChain.
     
@@ -205,6 +212,7 @@ async def evaluate_chat_turn(
     last_error = None
     reply = "I apologize, but I encountered an error. Please try again."
     evaluations = []
+    suggested = []
     max_attempts = max(3, len(key_manager.keys))
 
     for attempt in range(max_attempts):
@@ -230,6 +238,7 @@ async def evaluate_chat_turn(
                 })
                 
                 reply = result.reply
+                suggested = result.suggested_followups if hasattr(result, "suggested_followups") else []
                 scores_dict = {
                     "market": result.market,
                     "team": result.team,
@@ -279,7 +288,7 @@ async def evaluate_chat_turn(
                         )
                     )
                     
-                return reply, evaluations
+                return reply, evaluations, suggested
 
             except Exception as e:
                 last_error = e
@@ -291,8 +300,8 @@ async def evaluate_chat_turn(
             break
 
     # Return error reply if all attempts fail
-    reply = f"Evaluation failed. Error: {str(last_error)}"
-    return reply, evaluations
+    reply = "We are sorry for the inconvenience, but our AI evaluation service is temporarily unavailable or experiencing high request volumes. Please try again in a few moments."
+    return reply, evaluations, []
 
 
 async def evaluate_chat_turn_stream(
@@ -427,7 +436,8 @@ async def evaluate_chat_turn_stream(
                         )
                     )
                     
-                yield {"type": "evaluations", "evaluations": evaluations}
+                suggested = final_result.suggested_followups if final_result and hasattr(final_result, "suggested_followups") else []
+                yield {"type": "evaluations", "evaluations": evaluations, "suggested_followups": suggested}
                 success = True
                 break
 
@@ -443,5 +453,5 @@ async def evaluate_chat_turn_stream(
             break
 
     if not success:
-        yield {"type": "token", "content": f"\n\nEvaluation failed. Error: {str(last_error)}"}
-        yield {"type": "evaluations", "evaluations": []}
+        yield {"type": "token", "content": "\n\nWe are sorry for the inconvenience, but our AI evaluation service is temporarily unavailable or experiencing high request volumes. Please try again in a few moments."}
+        yield {"type": "evaluations", "evaluations": [], "suggested_followups": []}

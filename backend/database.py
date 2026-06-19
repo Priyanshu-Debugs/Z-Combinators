@@ -48,6 +48,7 @@ class ChatMessageTable(Base):
     role = Column(String(50), nullable=False)  # 'user' or 'assistant'
     content = Column(Text, nullable=False)
     evaluations = Column(JSON, nullable=True)  # JSON list of newly scored dimensions
+    suggested_followups = Column(JSON, nullable=True)  # JSON list of follow-up questions
     created_at = Column(DateTime, default=datetime.utcnow)
 
     session = relationship("ChatSessionTable", back_populates="messages")
@@ -56,6 +57,26 @@ class ChatMessageTable(Base):
 def init_db():
     """Create all tables in the database if they do not exist."""
     Base.metadata.create_all(bind=engine)
+    
+    # Run automatic, non-destructive migration to add suggested_followups column
+    from sqlalchemy import inspect, text
+    try:
+        inspector = inspect(engine)
+        if inspector.has_table('chat_messages'):
+            columns = [col['name'] for col in inspector.get_columns('chat_messages')]
+            if 'suggested_followups' not in columns:
+                db = SessionLocal()
+                try:
+                    db.execute(text("ALTER TABLE chat_messages ADD COLUMN suggested_followups JSON"))
+                    db.commit()
+                    print("Successfully migrated database schema: added suggested_followups column.")
+                except Exception as migration_error:
+                    db.rollback()
+                    print(f"Migration warning: {migration_error}")
+                finally:
+                    db.close()
+    except Exception as e:
+        print(f"Migration inspection warning: {e}")
 
 
 def create_session(session_id: str, title: str = "New Evaluation Session"):
@@ -69,7 +90,7 @@ def create_session(session_id: str, title: str = "New Evaluation Session"):
         db.close()
 
 
-def save_message(session_id: str, role: str, content: str, evaluations: list = None):
+def save_message(session_id: str, role: str, content: str, evaluations: list = None, suggested_followups: list = None):
     """Save a user or assistant message to the database."""
     db = SessionLocal()
     try:
@@ -84,7 +105,8 @@ def save_message(session_id: str, role: str, content: str, evaluations: list = N
             session_id=session_id,
             role=role,
             content=content,
-            evaluations=evaluations
+            evaluations=evaluations,
+            suggested_followups=suggested_followups
         )
         db.add(message)
         db.commit()
@@ -106,7 +128,8 @@ def get_session_messages(session_id: str) -> list[dict]:
             {
                 "role": m.role,
                 "content": m.content,
-                "evaluations": m.evaluations if m.evaluations else None
+                "evaluations": m.evaluations if m.evaluations else None,
+                "suggested_followups": m.suggested_followups if m.suggested_followups else None
             }
             for m in messages
         ]
@@ -149,5 +172,106 @@ def get_compiled_evaluations(session_id: str) -> list[dict]:
                             compiled_evals[dim_name.title()] = ev
 
         return list(compiled_evals.values())
+    finally:
+        db.close()
+
+
+def get_admin_metrics_data() -> dict:
+    """
+    Compile the aggregate metrics and recent pitch evaluations for the admin panel.
+    """
+    db = SessionLocal()
+    try:
+        # Get all sessions
+        sessions = db.query(ChatSessionTable).all()
+        recent_evals = []
+        
+        # Track averages for the 6 dimensions
+        dim_totals = {d: 0 for d in ["Market", "Team", "Timing", "Competition", "Moat", "Execution"]}
+        dim_counts = {d: 0 for d in ["Market", "Team", "Timing", "Competition", "Moat", "Execution"]}
+        
+        for s in sessions:
+            # 1. Fetch the first user message as the startup "pitch"
+            first_user = db.query(ChatMessageTable).filter(
+                ChatMessageTable.session_id == s.id,
+                ChatMessageTable.role == "user"
+            ).order_by(ChatMessageTable.created_at.asc()).first()
+            
+            pitch = first_user.content if first_user else "No pitch submitted yet"
+            
+            # 2. Get all messages to compile the dossier and count turns
+            messages = db.query(ChatMessageTable).filter(
+                ChatMessageTable.session_id == s.id
+            ).order_by(ChatMessageTable.created_at.asc()).all()
+            
+            compiled_evals = {}
+            for m in messages:
+                if m.evaluations:
+                    evals_list = m.evaluations
+                    if isinstance(evals_list, str):
+                        try:
+                            evals_list = json.loads(evals_list)
+                        except Exception:
+                            continue
+                    if isinstance(evals_list, list):
+                        for ev in evals_list:
+                            dim_name = ev.get("dimension")
+                            if dim_name:
+                                compiled_evals[dim_name.title()] = ev
+            
+            # Calculate overall score for this session (average of compiled dossier)
+            if compiled_evals:
+                scores = [ev["score"] for ev in compiled_evals.values()]
+                avg_score = round(sum(scores) / len(scores), 1) if scores else 0
+                
+                # Add to dimension aggregation totals
+                for dim_name, ev in compiled_evals.items():
+                    if dim_name in dim_totals:
+                        dim_totals[dim_name] += ev["score"]
+                        dim_counts[dim_name] += 1
+            else:
+                avg_score = 0
+                
+            recent_evals.append({
+                "session_id": s.id,
+                "title": s.title or "Evaluation Session",
+                "pitch": pitch,
+                "overall_score": avg_score,
+                "created_at": s.created_at.isoformat() if s.created_at else None,
+                "message_count": len(messages)
+            })
+            
+        # Sort recent evaluations desc (latest first)
+        recent_evals.sort(key=lambda x: x["created_at"] or "", reverse=True)
+        
+        # Calculate dimension averages list
+        dim_averages = []
+        for dim, total in dim_totals.items():
+            count = dim_counts[dim]
+            avg = round(total / count, 1) if count > 0 else 0
+            dim_averages.append({"dimension": dim, "score": avg})
+            
+        # Calculate global average overall score
+        valid_scores = [e["overall_score"] for e in recent_evals if e["overall_score"] > 0]
+        global_avg = round(sum(valid_scores) / len(valid_scores), 1) if valid_scores else 0
+        
+        # Score distribution buckets: low (<5), mid (5-7), high (>=8)
+        distribution = {"low": 0, "mid": 0, "high": 0}
+        for score in valid_scores:
+            if score < 5.0:
+                distribution["low"] += 1
+            elif score < 8.0:
+                distribution["mid"] += 1
+            else:
+                distribution["high"] += 1
+                
+        return {
+            "total_sessions": len(sessions),
+            "total_messages": db.query(ChatMessageTable).count(),
+            "global_average": global_avg,
+            "dimension_averages": dim_averages,
+            "score_distribution": distribution,
+            "recent_evaluations": recent_evals[:50]  # Limit to top 50 recent
+        }
     finally:
         db.close()

@@ -1,6 +1,9 @@
 import uuid
 import json
-from fastapi import FastAPI, Request
+import logging
+
+logger = logging.getLogger("uvicorn.error")
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -22,7 +25,8 @@ from database import (
     create_session,
     save_message,
     get_session_messages,
-    get_compiled_evaluations
+    get_compiled_evaluations,
+    get_admin_metrics_data
 )
 
 # Rate limiter setup
@@ -85,7 +89,12 @@ async def get_session_endpoint(session_id: str):
     compiled = get_compiled_evaluations(session_id)
     
     history = [
-        ChatMessage(role=m["role"], content=m["content"], evaluations=m["evaluations"])
+        ChatMessage(
+            role=m["role"],
+            content=m["content"],
+            evaluations=m["evaluations"],
+            suggested_followups=m.get("suggested_followups")
+        )
         for m in messages
     ]
     
@@ -120,16 +129,21 @@ async def post_message_endpoint(request: Request, body: MessageRequest):
     save_message(session_id, "user", content)
     
     # 3. Call LangChain RAG chat pipeline
-    reply, evaluations = await evaluate_chat_turn(content, history_raw)
+    reply, evaluations, suggested_followups = await evaluate_chat_turn(content, history_raw)
     
     # 4. Save assistant response and evaluations to database
     evals_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in evaluations]
-    save_message(session_id, "assistant", reply, evals_json)
+    save_message(session_id, "assistant", reply, evals_json, suggested_followups)
     
     # 5. Fetch updated logs and compiled dossier
     updated_history_raw = get_session_messages(session_id)
     history = [
-        ChatMessage(role=m["role"], content=m["content"], evaluations=m["evaluations"])
+        ChatMessage(
+            role=m["role"],
+            content=m["content"],
+            evaluations=m["evaluations"],
+            suggested_followups=m.get("suggested_followups")
+        )
         for m in updated_history_raw
     ]
     compiled = get_compiled_evaluations(session_id)
@@ -167,6 +181,7 @@ async def post_message_stream_endpoint(request: Request, body: MessageRequest):
     async def event_generator():
         full_reply = ""
         final_evals = []
+        suggested_followups = []
         
         try:
             async for event in evaluate_chat_turn_stream(content, history_raw):
@@ -175,19 +190,42 @@ async def post_message_stream_endpoint(request: Request, body: MessageRequest):
                     yield f"data: {json.dumps(event)}\n\n"
                 elif event["type"] == "evaluations":
                     final_evals = event["evaluations"]
+                    suggested_followups = event.get("suggested_followups", [])
             
             # Save assistant response and evaluations to database
             evals_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in final_evals]
-            save_message(session_id, "assistant", full_reply, evals_json)
+            save_message(session_id, "assistant", full_reply, evals_json, suggested_followups)
             
             # Fetch updated compiled dossier
             compiled = get_compiled_evaluations(session_id)
             compiled_json = [ev.model_dump() if hasattr(ev, "model_dump") else ev for ev in compiled]
             
             # Send completion signal with final data
-            yield f"data: {json.dumps({'type': 'done', 'evaluations': evals_json, 'compiled_dossier': compiled_json})}\n\n"
+            yield f"data: {json.dumps({
+                'type': 'done',
+                'evaluations': evals_json,
+                'compiled_dossier': compiled_json,
+                'suggested_followups': suggested_followups
+            })}\n\n"
             
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'content': str(e)})}\n\n"
+            logger.error(f"Streaming evaluation error: {e}", exc_info=True)
+            yield f"data: {json.dumps({'type': 'error', 'content': 'We are sorry for the inconvenience, but we encountered an unexpected error while processing your request. Please try again shortly.'})}\n\n"
             
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+@app.get("/api/admin/metrics")
+async def get_admin_metrics(secret_code: str):
+    """
+    Retrieve aggregated evaluation metrics and recent pitches.
+    Only accessible using the correct secret code.
+    """
+    if secret_code != "Priyaanshu-Debugs":
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    try:
+        data = get_admin_metrics_data()
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
