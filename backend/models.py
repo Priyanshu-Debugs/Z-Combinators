@@ -14,7 +14,7 @@ class EvaluateRequest(BaseModel):
 
 class DimensionResult(BaseModel):
     dimension: str
-    score: int = Field(..., ge=1, le=10)
+    score: int = Field(..., ge=0, le=10)
     justification: str
     source_excerpt: str
     source_framework: str

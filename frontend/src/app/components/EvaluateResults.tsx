@@ -155,7 +155,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
   // Calculate overall score (average of only the scored dimensions)
   const scoredDimensions = ALL_DIMENSIONS.map((name) =>
     scoredMap.get(name.toLowerCase())
-  ).filter(Boolean) as Dimension[];
+  ).filter((d) => d && d.score > 0) as Dimension[];
 
   const overallScore =
     scoredDimensions.length > 0
@@ -293,7 +293,7 @@ export default function EvaluateResults({ dimensions }: EvaluateResultsProps) {
             const d = scoredMap.get(name.toLowerCase());
             const helper = DIMENSION_HELPERS[name.toLowerCase()];
 
-            if (d) {
+            if (d && d.score > 0) {
               // Dimension is Scored
               return (
                 <motion.div key={name} variants={itemVariants}>

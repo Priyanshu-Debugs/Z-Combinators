@@ -8,6 +8,7 @@ import EvaluateResults from "../components/EvaluateResults";
 import Disclaimer from "../components/Disclaimer";
 import ScoreSummaryBar from "../components/ScoreSummaryBar";
 import EvaluationHistory, { saveEvaluation } from "../components/EvaluationHistory";
+import jsPDF from "jspdf";
 
 interface Dimension {
   dimension: string;
@@ -40,7 +41,7 @@ const WELCOME_MESSAGE = {
 
 function EvaluateContent() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; suggested_followups?: string[] }[]>([
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; suggested_followups?: string[]; wasStreamed?: boolean }[]>([
     WELCOME_MESSAGE,
   ]);
   const [dossier, setDossier] = useState<Dimension[]>([]);
@@ -48,7 +49,6 @@ function EvaluateContent() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "dossier">("chat");
   const [showHistory, setShowHistory] = useState(false);
-  const [copyToast, setCopyToast] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [leftWidth, setLeftWidth] = useState(50);
@@ -121,36 +121,37 @@ function EvaluateContent() {
     return false;
   }, []);
 
-  // Poll for connection if it fails
   useEffect(() => {
-    Promise.resolve().then(() => {
-      initSession();
-    });
-
-    // Set up background retry interval
-    retryTimerRef.current = setInterval(async () => {
+    let retryTimer: NodeJS.Timeout | null = null;
+    
+    const tryConnect = async () => {
       const success = await initSession();
-      if (success && retryTimerRef.current) {
-        clearInterval(retryTimerRef.current);
-        retryTimerRef.current = null;
+      if (!success) {
+        retryTimer = setInterval(async () => {
+          const ok = await initSession();
+          if (ok && retryTimer) {
+            clearInterval(retryTimer);
+            retryTimer = null;
+          }
+        }, 6000);
       }
-    }, 6000);
-
+    };
+    
+    tryConnect();
+    
     return () => {
-      if (retryTimerRef.current) {
-        clearInterval(retryTimerRef.current);
-        retryTimerRef.current = null;
-      }
+      if (retryTimer) clearInterval(retryTimer);
     };
   }, [initSession]);
 
   // Save evaluation to history when dimensions change significantly
   useEffect(() => {
-    if (dossier.length >= 3 && messages.length > 0) {
+    const validDossier = dossier.filter((d) => d.score > 0);
+    if (validDossier.length >= 1 && messages.length > 0) {
       const firstUserMsg = messages.find((m) => m.role === "user");
       if (firstUserMsg) {
         const overallScore = Math.round(
-          (dossier.reduce((acc, d) => acc + d.score, 0) / dossier.length) * 10
+          (validDossier.reduce((acc, d) => acc + d.score, 0) / validDossier.length) * 10
         ) / 10;
         saveEvaluation(
           firstUserMsg.content,
@@ -239,18 +240,17 @@ function EvaluateContent() {
                 });
               } else if (parsed.type === "done") {
                 setDossier(parsed.compiled_dossier);
-                if (parsed.suggested_followups) {
-                  setMessages((prev) => {
-                    const next = [...prev];
-                    if (next.length > 0 && next[next.length - 1].role === "assistant") {
-                      next[next.length - 1] = {
-                        ...next[next.length - 1],
-                        suggested_followups: parsed.suggested_followups,
-                      };
-                    }
-                    return next;
-                  });
-                }
+                setMessages((prev) => {
+                  const next = [...prev];
+                  if (next.length > 0 && next[next.length - 1].role === "assistant") {
+                    next[next.length - 1] = {
+                      ...next[next.length - 1],
+                      suggested_followups: parsed.suggested_followups,
+                      wasStreamed: true,
+                    };
+                  }
+                  return next;
+                });
                 streamFinished = true;
               } else if (parsed.type === "error") {
                 throw new Error(parsed.content);
@@ -303,23 +303,128 @@ function EvaluateContent() {
     }
   };
 
-  const handleCopyResults = () => {
+  const handleExportReport = () => {
     if (dossier.length === 0) return;
 
-    const overallScore = Math.round(
-      (dossier.reduce((acc, d) => acc + d.score, 0) / dossier.length) * 10
-    ) / 10;
+    // Only average dimensions that have score > 0
+    const validDossier = dossier.filter(d => d.score > 0);
+    const calculatedOverall = validDossier.length > 0
+      ? Math.round(
+          (validDossier.reduce((acc, d) => acc + d.score, 0) / validDossier.length) * 10
+        ) / 10
+      : 0;
 
-    const dimScores = dossier
-      .map((d) => `${d.dimension}: ${d.score}/10`)
-      .join(" | ");
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
 
-    const text = `Z-Combinators Evaluation: ${overallScore}/10\n${dimScores}\n\nEvaluate your startup idea at Z-Combinators.com`;
+    // Title / Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("Z-Combinators", 20, y);
+    y += 8;
 
-    navigator.clipboard.writeText(text).then(() => {
-      setCopyToast(true);
-      setTimeout(() => setCopyToast(false), 2500);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text("Startup Evaluation & Advisor Report", 20, y);
+    y += 6;
+
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, y);
+    y += 10;
+
+    // Draw horizontal separator line
+    doc.setDrawColor(220, 220, 220);
+    doc.line(20, y, pageWidth - 20, y);
+    y += 12;
+
+    // Overall Score Banner
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Overall Score: ${calculatedOverall}/10`, 20, y);
+    y += 8;
+
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(10);
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Based on ${validDossier.length} scored dimensions`, 20, y);
+    y += 12;
+
+    // Individual Dimension Details
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Dimension Score Summary", 20, y);
+    y += 8;
+
+    dossier.forEach((d) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      const isScored = d.score > 0;
+      doc.text(`${d.dimension}: ${isScored ? `${d.score}/10` : "Pending Info (0/10)"}`, 20, y);
+      y += 5;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(60, 60, 60);
+
+      const justificationText = isScored 
+        ? d.justification 
+        : `No evaluation yet. Share details about your startup's ${d.dimension.toLowerCase()} in the chat.`;
+      
+      const lines = doc.splitTextToSize(justificationText, pageWidth - 40);
+      doc.text(lines, 20, y);
+      y += lines.length * 4.5 + 3;
+
+      if (isScored) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Framework Citation: ${d.source_framework}`, 20, y);
+        y += 6;
+      }
+      y += 2;
     });
+
+    // Chat Transcript Page
+    doc.addPage();
+    y = 20;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Advisor Chat Transcript", 20, y);
+    y += 8;
+
+    messages.forEach((msg) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+
+      const label = msg.role === "user" ? "YOU" : "ADVISOR";
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(msg.role === "user" ? 60 : 0, msg.role === "user" ? 110 : 0, msg.role === "user" ? 200 : 0);
+      doc.text(label, 20, y);
+      y += 4.5;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      const msgLines = doc.splitTextToSize(msg.content, pageWidth - 40);
+      doc.text(msgLines, 20, y);
+      y += msgLines.length * 4.5 + 6;
+    });
+
+    doc.save(`z-combinator-report-${Date.now()}.pdf`);
   };
 
   // Compute overallScore for tab badge
@@ -330,7 +435,7 @@ function EvaluateContent() {
   const ALL_DIMENSIONS = ["Market", "Team", "Timing", "Competition", "Moat", "Execution"];
   const scoredDimensions = ALL_DIMENSIONS.map((name) =>
     scoredMap.get(name.toLowerCase())
-  ).filter(Boolean) as Dimension[];
+  ).filter((d) => d && d.score > 0) as Dimension[];
 
   const overallScore =
     scoredDimensions.length > 0
@@ -444,20 +549,20 @@ function EvaluateContent() {
                 />
               </div>
 
-              {/* Copy Results Button */}
+              {/* Export PDF Button */}
               {dossier.length > 0 && (
                 <motion.button
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   whileHover={{ scale: 1.04, y: -1 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={handleCopyResults}
+                  onClick={handleExportReport}
                   className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <span>Copy</span>
+                  <span>Export Report</span>
                 </motion.button>
               )}
 
@@ -527,22 +632,7 @@ function EvaluateContent() {
       {/* History Drawer */}
       <EvaluationHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
 
-      {/* Copy Toast */}
-      <AnimatePresence>
-        {copyToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.95 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-accent text-accent-inverse px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg flex items-center space-x-2"
-          >
-            <svg className="w-3.5 h-3.5 text-score-high" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Results copied to clipboard</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
     </PageTransition>
   );
 }

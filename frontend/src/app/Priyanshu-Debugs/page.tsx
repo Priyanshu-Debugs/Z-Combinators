@@ -3,14 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/PageTransition";
-import {
-  ResponsiveContainer,
-  RadarChart as RechartsRadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const AdminRadarChart = dynamic(() => import("./AdminRadarChart"), {
+  ssr: false,
+  loading: () => <div className="text-text-secondary text-xs">Loading profile data...</div>,
+});
 
 interface Dimension {
   dimension: string;
@@ -226,7 +224,6 @@ export default function AdminPage() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [metrics, setMetrics] = useState<MetricData | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
 
   // Inspector Modal states
   const [sessionPitch, setSessionPitch] = useState<string>("");
@@ -236,11 +233,6 @@ export default function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [modalTab, setModalTab] = useState<"chat" | "dossier">("chat");
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsMounted(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
 
   const fetchMetrics = useCallback(async (code: string) => {
     setIsLoading(true);
@@ -525,52 +517,7 @@ export default function AdminPage() {
                   </div>
 
                   <div className="flex-1 flex items-center justify-center w-full min-h-[260px]">
-                    {isMounted ? (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height={260}>
-                          <RechartsRadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                            <defs>
-                              <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stopColor="#0A0A0A" stopOpacity={0.1} />
-                                <stop offset="100%" stopColor="#0A0A0A" stopOpacity={0.03} />
-                              </linearGradient>
-                            </defs>
-                            <PolarGrid stroke="var(--color-border)" />
-                            <PolarAngleAxis
-                              dataKey="subject"
-                              tick={{
-                                fill: "var(--color-text-primary)",
-                                fontSize: 10,
-                                fontWeight: 500,
-                                fontFamily: "var(--font-heading), sans-serif",
-                              }}
-                            />
-                            <PolarRadiusAxis
-                              angle={30}
-                              domain={[0, 10]}
-                              tickCount={6}
-                              tick={{ fill: "var(--color-text-secondary)", fontSize: 9 }}
-                            />
-                            <Radar
-                              name="Platform Average"
-                              dataKey="value"
-                              stroke="#0A0A0A"
-                              strokeWidth={2}
-                              fill="url(#radarFill)"
-                              fillOpacity={1}
-                              dot={{
-                                r: 3,
-                                fill: "#0A0A0A",
-                                stroke: "#FFFFFF",
-                                strokeWidth: 1.5,
-                              }}
-                            />
-                          </RechartsRadarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    ) : (
-                      <div className="text-text-secondary text-xs">Loading profile data...</div>
-                    )}
+                    <AdminRadarChart data={radarData} />
                   </div>
                 </div>
 

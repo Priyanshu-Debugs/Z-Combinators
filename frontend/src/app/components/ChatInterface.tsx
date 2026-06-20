@@ -9,6 +9,7 @@ interface ChatMessage {
   evaluations?: unknown;
   timestamp?: number;
   suggested_followups?: string[];
+  wasStreamed?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -296,6 +297,14 @@ export default function ChatInterface({
   const [messagesWithTimestamps] = useState<Map<number, number>>(new Map());
   const [animatedMessageIndices, setAnimatedMessageIndices] = useState<Set<number>>(new Set());
 
+  const [prevMessagesLength, setPrevMessagesLength] = useState(messages.length);
+  if (messages.length !== prevMessagesLength) {
+    setPrevMessagesLength(messages.length);
+    if (messages.length <= 1) {
+      setAnimatedMessageIndices(new Set());
+    }
+  }
+
   // Track timestamps for newly appearing messages
   useEffect(() => {
     messages.forEach((_, i) => {
@@ -404,7 +413,7 @@ export default function ChatInterface({
               const timestamp = messagesWithTimestamps.get(index);
               
               const isLatestMessage = index === messages.length - 1;
-              const shouldAnimate = !isUser && isLatestMessage && !animatedMessageIndices.has(index);
+              const shouldAnimate = !isUser && isLatestMessage && !animatedMessageIndices.has(index) && !msg.wasStreamed;
               const isStreamingMessage = !isUser && isLatestMessage && isLoading;
 
               const handleComplete = () => {
@@ -467,6 +476,17 @@ export default function ChatInterface({
                       >
                         {isUser ? (
                           <p className="whitespace-pre-wrap font-body font-medium">{msg.content}</p>
+                        ) : isStreamingMessage && msg.content === "" ? (
+                          <div className="flex items-center space-x-2 text-text-secondary py-1">
+                            <span className="text-xs font-semibold italic animate-pulse">
+                              Evaluating your startup idea...
+                            </span>
+                            <span className="typewriter-cursor" />
+                          </div>
+                        ) : isStreamingMessage ? (
+                          <div className="w-full relative">
+                            <div className="inline-block w-full">{renderMessageContent(msg.content, false)}</div>
+                          </div>
                         ) : (
                           <TypewriterChatMessage
                             content={msg.content}
@@ -554,37 +574,7 @@ export default function ChatInterface({
           </AnimatePresence>
         )}
 
-        {/* Loading Indicator — Thinking / Evaluating */}
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.3 }}
-              className="flex w-full justify-start mb-4"
-            >
-              <div className="flex items-start space-x-3.5 max-w-[92%]">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border select-none bg-gradient-to-tr from-accent to-[#2b2b2b] border-[#1a1a1a] text-white">
-                  <svg className="w-4 h-4 text-white animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                </div>
-                <div className="flex flex-col items-start">
-                  <div className="flex items-center space-x-2 mb-1 px-1">
-                    <span className="text-[10px] font-bold tracking-wider text-text-primary uppercase select-none">
-                      Advisor
-                    </span>
-                  </div>
-                  <div className="bg-transparent px-1 py-1 flex items-center space-x-2 text-text-secondary">
-                    <span className="text-xs font-semibold italic animate-pulse">Running startup evaluation...</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
         <div ref={messagesEndRef} />
       </div>

@@ -12,7 +12,7 @@ SYSTEM_PROMPT = """You are an expert startup evaluator. You evaluate startup ide
 Rules:
 - You MUST base your evaluation ONLY on the provided framework context below.
 - You MUST NOT invent reasoning that is not grounded in the provided context.
-- If the provided context does not adequately address this dimension for the given idea, explicitly state "Context insufficient" and assign a score of 5 (median).
+- If the provided context does not adequately address this dimension for the given idea, explicitly state "Context insufficient" and assign a score of 0 (zero).
 - Your justification MUST reference specific points from the provided framework context.
 - Be direct and specific. Name concrete strengths or weaknesses.
 - Do NOT hedge to safe middle scores (6-7) unless genuinely warranted by the context.
@@ -20,10 +20,10 @@ Rules:
 - Do NOT use any emojis in your response.
 
 Respond in this exact JSON format and nothing else:
-{{
-  "score": <integer 1-10>,
+{
+  "score": <integer 0-10>,
   "justification": "<2-4 sentences explaining the score, referencing the framework context>"
-}}"""
+}"""
 
 HUMAN_PROMPT_TEMPLATE = """DIMENSION TO EVALUATE: {dimension}
 
@@ -43,7 +43,7 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 class DimensionEvaluation(BaseModel):
-    score: int = Field(..., ge=1, le=10, description="Evaluation score, integer between 1 and 10.")
+    score: int = Field(..., ge=0, le=10, description="Evaluation score, integer between 0 and 10.")
     justification: str = Field(..., description="2-4 sentences explaining the score, strictly grounded in the provided framework context.")
 
 
@@ -106,7 +106,7 @@ async def evaluate_dimension(
                 })
     
                 score = int(result.score)
-                score = max(1, min(10, score))
+                score = max(0, min(10, score))
                 justification = result.justification
     
                 return {"score": score, "justification": justification}

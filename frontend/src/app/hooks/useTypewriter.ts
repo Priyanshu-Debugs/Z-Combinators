@@ -1,47 +1,58 @@
-"use client";
-
 import { useState, useEffect } from "react";
 
-interface UseTypewriterOptions {
+interface UseTypewriterProps {
   text: string;
   speed?: number;
   startDelay?: number;
 }
 
-interface UseTypewriterReturn {
-  displayed: string;
-  done: boolean;
-}
-
 export function useTypewriter({
   text,
-  speed = 38,
-  startDelay = 600,
-}: UseTypewriterOptions): UseTypewriterReturn {
-  const [charIndex, setCharIndex] = useState(0);
-  const [started, setStarted] = useState(false);
+  speed = 20,
+  startDelay = 0,
+}: UseTypewriterProps) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+  const [prevText, setPrevText] = useState(text);
+
+  if (text !== prevText) {
+    setPrevText(text);
+    setDisplayed("");
+    setDone(false);
+  }
 
   useEffect(() => {
-    const timeout = setTimeout(() => setStarted(true), startDelay);
-    return () => clearTimeout(timeout);
-  }, [startDelay]);
+    let isCancelled = false;
+    let index = 0;
+    let timer: NodeJS.Timeout;
 
-  useEffect(() => {
-    if (!started) return;
-    const interval = setInterval(() => {
-      setCharIndex((prev) => {
-        if (prev >= text.length) {
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, speed);
-    return () => clearInterval(interval);
-  }, [started, text, speed]);
+    const startTimer = setTimeout(() => {
+      if (isCancelled) return;
 
-  return {
-    displayed: text.slice(0, charIndex),
-    done: charIndex >= text.length,
-  };
+      const type = () => {
+        if (isCancelled) return;
+        
+        setDisplayed(() => {
+          const next = text.slice(0, index + 1);
+          index++;
+          if (index >= text.length) {
+            setDone(true);
+            return text;
+          }
+          timer = setTimeout(type, speed);
+          return next;
+        });
+      };
+
+      type();
+    }, startDelay);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(startTimer);
+      clearTimeout(timer);
+    };
+  }, [text, speed, startDelay]);
+
+  return { displayed, done };
 }

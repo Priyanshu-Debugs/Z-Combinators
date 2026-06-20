@@ -18,6 +18,7 @@ class Settings:
     CORS_ORIGINS: list[str] = os.getenv(
         "CORS_ORIGINS", "http://localhost:3000"
     ).split(",")
+    ADMIN_PASSCODE: str = os.getenv("ADMIN_PASSCODE", "Priyaanshu-Debugs")
     EMBEDDING_MODEL: str = "gemini-embedding-2"
     RETRIEVAL_TOP_K: int = 3
     DISTANCE_THRESHOLD: float = 0.9

@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, String, Integer, Text, DateTime, JSON, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from dotenv import load_dotenv
@@ -35,7 +35,7 @@ class ChatSessionTable(Base):
 
     id = Column(String(255), primary_key=True)
     title = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     messages = relationship("ChatMessageTable", back_populates="session", cascade="all, delete-orphan")
 
@@ -49,7 +49,7 @@ class ChatMessageTable(Base):
     content = Column(Text, nullable=False)
     evaluations = Column(JSON, nullable=True)  # JSON list of newly scored dimensions
     suggested_followups = Column(JSON, nullable=True)  # JSON list of follow-up questions
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     session = relationship("ChatSessionTable", back_populates="messages")
 
@@ -168,8 +168,13 @@ def get_compiled_evaluations(session_id: str) -> list[dict]:
                 if isinstance(evals_list, list):
                     for ev in evals_list:
                         dim_name = ev.get("dimension")
+                        score = ev.get("score", 0)
                         if dim_name:
-                            compiled_evals[dim_name.title()] = ev
+                            dim_title = dim_name.title()
+                            existing = compiled_evals.get(dim_title)
+                            # Only overwrite if new score is > 0, OR if there's no existing score
+                            if score > 0 or existing is None:
+                                compiled_evals[dim_title] = ev
 
         return list(compiled_evals.values())
     finally:
@@ -184,6 +189,19 @@ def get_admin_metrics_data() -> dict:
     try:
         # Get all sessions
         sessions = db.query(ChatSessionTable).all()
+        
+        # Get all messages ordered chronologically
+        all_messages = (
+            db.query(ChatMessageTable)
+            .order_by(ChatMessageTable.created_at.asc())
+            .all()
+        )
+        
+        # Group messages by session_id in Python (O(N) instead of O(N*M))
+        messages_by_session = {}
+        for m in all_messages:
+            messages_by_session.setdefault(m.session_id, []).append(m)
+            
         recent_evals = []
         
         # Track averages for the 6 dimensions
@@ -191,21 +209,15 @@ def get_admin_metrics_data() -> dict:
         dim_counts = {d: 0 for d in ["Market", "Team", "Timing", "Competition", "Moat", "Execution"]}
         
         for s in sessions:
-            # 1. Fetch the first user message as the startup "pitch"
-            first_user = db.query(ChatMessageTable).filter(
-                ChatMessageTable.session_id == s.id,
-                ChatMessageTable.role == "user"
-            ).order_by(ChatMessageTable.created_at.asc()).first()
+            s_messages = messages_by_session.get(s.id, [])
             
+            # 1. Fetch the first user message as the startup "pitch"
+            first_user = next((m for m in s_messages if m.role == "user"), None)
             pitch = first_user.content if first_user else "No pitch submitted yet"
             
-            # 2. Get all messages to compile the dossier and count turns
-            messages = db.query(ChatMessageTable).filter(
-                ChatMessageTable.session_id == s.id
-            ).order_by(ChatMessageTable.created_at.asc()).all()
-            
+            # Compile the dossier from this session's messages
             compiled_evals = {}
-            for m in messages:
+            for m in s_messages:
                 if m.evaluations:
                     evals_list = m.evaluations
                     if isinstance(evals_list, str):
@@ -216,17 +228,21 @@ def get_admin_metrics_data() -> dict:
                     if isinstance(evals_list, list):
                         for ev in evals_list:
                             dim_name = ev.get("dimension")
+                            score = ev.get("score", 0)
                             if dim_name:
-                                compiled_evals[dim_name.title()] = ev
+                                dim_title = dim_name.title()
+                                existing = compiled_evals.get(dim_title)
+                                if score > 0 or existing is None:
+                                    compiled_evals[dim_title] = ev
             
-            # Calculate overall score for this session (average of compiled dossier)
+            # Calculate overall score for this session (average of compiled dossier, filtering out scores <= 0)
             if compiled_evals:
-                scores = [ev["score"] for ev in compiled_evals.values()]
+                scores = [ev["score"] for ev in compiled_evals.values() if ev.get("score", 0) > 0]
                 avg_score = round(sum(scores) / len(scores), 1) if scores else 0
                 
                 # Add to dimension aggregation totals
                 for dim_name, ev in compiled_evals.items():
-                    if dim_name in dim_totals:
+                    if dim_name in dim_totals and ev.get("score", 0) > 0:
                         dim_totals[dim_name] += ev["score"]
                         dim_counts[dim_name] += 1
             else:
@@ -238,7 +254,7 @@ def get_admin_metrics_data() -> dict:
                 "pitch": pitch,
                 "overall_score": avg_score,
                 "created_at": s.created_at.isoformat() if s.created_at else None,
-                "message_count": len(messages)
+                "message_count": len(s_messages)
             })
             
         # Sort recent evaluations desc (latest first)
@@ -267,7 +283,7 @@ def get_admin_metrics_data() -> dict:
                 
         return {
             "total_sessions": len(sessions),
-            "total_messages": db.query(ChatMessageTable).count(),
+            "total_messages": len(all_messages),
             "global_average": global_avg,
             "dimension_averages": dim_averages,
             "score_distribution": distribution,

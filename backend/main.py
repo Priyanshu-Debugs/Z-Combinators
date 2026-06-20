@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from contextlib import asynccontextmanager
 
 from config import settings
 from models import (
@@ -32,10 +33,18 @@ from database import (
 # Rate limiter setup
 limiter = Limiter(key_func=get_remote_address)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run database table initialization on startup."""
+    init_db()
+    yield
+
+
 app = FastAPI(
     title="Z-Combinators API",
     description="AI-powered startup idea evaluation and chat advisor using RAG.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Rate limit error handler
@@ -50,12 +59,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Run database table initialization on startup."""
-    init_db()
 
 
 @app.get("/health")
@@ -221,7 +224,7 @@ async def get_admin_metrics(secret_code: str):
     Retrieve aggregated evaluation metrics and recent pitches.
     Only accessible using the correct secret code.
     """
-    if secret_code != "Priyaanshu-Debugs":
+    if secret_code != settings.ADMIN_PASSCODE:
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
         data = get_admin_metrics_data()
