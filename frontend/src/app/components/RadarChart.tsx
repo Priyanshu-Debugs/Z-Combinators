@@ -36,7 +36,7 @@ export default function RadarChart({ scores }: RadarChartProps) {
   }));
 
   return (
-    <div className="w-full max-w-sm mx-auto aspect-square flex items-center justify-center" style={{ minHeight: 0 }}>
+    <div id="evaluation-radar-chart" className="w-full max-w-sm mx-auto aspect-square flex items-center justify-center" style={{ minHeight: 0 }}>
       <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <RechartsRadarChart cx="50%" cy="50%" outerRadius="65%" data={data}>
           {/* SVG defs for subtle glow filter */}

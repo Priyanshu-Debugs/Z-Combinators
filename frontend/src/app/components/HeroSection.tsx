@@ -28,7 +28,7 @@ const childVariants = {
 };
 
 export default function HeroSection() {
-  const { displayed, done } = useTypewriter({
+  const { displayed } = useTypewriter({
     text: TYPEWRITER_TEXT,
     speed: 38,
     startDelay: 600,
@@ -67,7 +67,6 @@ export default function HeroSection() {
           }}
         >
           {displayed}
-          {!done && <span className="typewriter-cursor" />}
         </motion.p>
 
         <motion.div variants={childVariants}>

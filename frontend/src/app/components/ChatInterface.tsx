@@ -28,8 +28,23 @@ function getRelativeTime(timestamp?: number): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-/* ===== Custom Markdown Helper: Parsers for bold & inline code ===== */
-function parseTextWithFormatting(text: string, isDone: boolean = true, isLast: boolean = false) {
+/* ===== Custom Markdown Helper: Parsers for bold & inline code with delicate fade-in ===== */
+function wrapWordsInFadeSpans(text: string, baseKey: string, isDone: boolean) {
+  const tokens = text.split(/(\s+)/);
+  return tokens.map((token, index) => {
+    if (!token) return null;
+    return (
+      <span
+        key={`${baseKey}-${index}`}
+        className={isDone ? "" : "word-print-fade"}
+      >
+        {token}
+      </span>
+    );
+  });
+}
+
+function parseTextWithFormatting(text: string, isDone: boolean = true) {
   let content = text;
   const starCount = (text.match(/\*\*/g) || []).length;
   if (starCount % 2 !== 0) {
@@ -45,7 +60,7 @@ function parseTextWithFormatting(text: string, isDone: boolean = true, isLast: b
       const boldText = token.slice(2, -2);
       parts.push(
         <strong key={idx} className="font-bold text-text-primary">
-          {boldText}
+          {wrapWordsInFadeSpans(boldText, `bold-${idx}`, isDone)}
         </strong>
       );
     } else if (token.startsWith("`") && token.endsWith("`")) {
@@ -56,13 +71,12 @@ function parseTextWithFormatting(text: string, isDone: boolean = true, isLast: b
         </code>
       );
     } else {
-      parts.push(token);
+      const wrapped = wrapWordsInFadeSpans(token, `text-${idx}`, isDone);
+      wrapped.forEach((w) => {
+        if (w) parts.push(w);
+      });
     }
   });
-
-  if (isLast && !isDone) {
-    parts.push(<span key="cursor" className="typewriter-cursor" />);
-  }
 
   return parts;
 }
@@ -72,28 +86,27 @@ function renderMessageContent(text: string, isDone: boolean = true) {
   const paragraphs = text.split("\n\n");
   
   return paragraphs.map((para, pIdx) => {
-    const isLastParagraph = pIdx === paragraphs.length - 1;
     const cleanPara = para.trim();
     
     // Headings
     if (cleanPara.startsWith("### ")) {
       return (
         <h3 key={pIdx} className="font-heading text-sm font-bold text-text-primary tracking-tight mt-4 mb-2 first:mt-1">
-          {parseTextWithFormatting(cleanPara.slice(4), isDone, isLastParagraph)}
+          {parseTextWithFormatting(cleanPara.slice(4), isDone)}
         </h3>
       );
     }
     if (cleanPara.startsWith("## ")) {
       return (
         <h2 key={pIdx} className="font-heading text-base font-bold text-text-primary tracking-tight mt-5 mb-2 first:mt-1">
-          {parseTextWithFormatting(cleanPara.slice(3), isDone, isLastParagraph)}
+          {parseTextWithFormatting(cleanPara.slice(3), isDone)}
         </h2>
       );
     }
     if (cleanPara.startsWith("# ")) {
       return (
         <h1 key={pIdx} className="font-heading text-lg font-bold text-text-primary tracking-tight mt-6 mb-2 first:mt-1">
-          {parseTextWithFormatting(cleanPara.slice(2), isDone, isLastParagraph)}
+          {parseTextWithFormatting(cleanPara.slice(2), isDone)}
         </h1>
       );
     }
@@ -102,7 +115,7 @@ function renderMessageContent(text: string, isDone: boolean = true) {
     if (cleanPara.startsWith("> ")) {
       return (
         <blockquote key={pIdx} className="border-l-2 border-accent/25 pl-4 py-1 italic text-text-secondary my-3 bg-accent/[0.01] rounded-r-lg">
-          {parseTextWithFormatting(cleanPara.slice(2), isDone, isLastParagraph)}
+          {parseTextWithFormatting(cleanPara.slice(2), isDone)}
         </blockquote>
       );
     }
@@ -125,9 +138,6 @@ function renderMessageContent(text: string, isDone: boolean = true) {
       return (
         <div key={pIdx} className="space-y-1.5 my-2.5 pl-1">
           {lines.map((line, lIdx) => {
-            const isLastLine = lIdx === lines.length - 1;
-            const appendCursor = isLastParagraph && isLastLine && !isDone;
-            
             const trimmedLine = line.trim();
             const isBullet = trimmedLine.startsWith("•") || trimmedLine.startsWith("*") || trimmedLine.startsWith("-");
             const isNumbered = /^\d+\.\s/.test(trimmedLine);
@@ -146,7 +156,7 @@ function renderMessageContent(text: string, isDone: boolean = true) {
               }
             }
 
-            const parsedLine = parseTextWithFormatting(content, isDone, appendCursor);
+            const parsedLine = parseTextWithFormatting(content, isDone);
 
             if (isBullet) {
               return (
@@ -177,13 +187,13 @@ function renderMessageContent(text: string, isDone: boolean = true) {
     // Standard paragraph
     return (
       <p key={pIdx} className="text-text-primary text-sm leading-relaxed font-body font-medium my-2 first:mt-0 last:mb-0">
-        {parseTextWithFormatting(para, isDone, isLastParagraph)}
+        {parseTextWithFormatting(para, isDone)}
       </p>
     );
   });
 }
 
-/* ===== Typewriter Animation Component for Advisor Messages ===== */
+/* ===== Paced Token Typewriter Component for Delicate, Paced Word Printing ===== */
 interface TypewriterChatMessageProps {
   content: string;
   onComplete?: () => void;
@@ -200,62 +210,59 @@ function TypewriterChatMessage({
   const [displayedText, setDisplayedText] = useState(shouldAnimate ? "" : content);
   const [isDone, setIsDone] = useState(!shouldAnimate);
 
-  const prevStreamingRef = useRef(isStreaming);
+  const displayedTokensCountRef = useRef(shouldAnimate ? 0 : -1);
+  const allTokensRef = useRef<string[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Split text by space sequences and newlines to extract tokens
   useEffect(() => {
-    if (prevStreamingRef.current && !isStreaming) {
+    if (!shouldAnimate && displayedTokensCountRef.current <= 0) {
+      setDisplayedText(content);
       setIsDone(true);
-      onComplete?.();
-    }
-    prevStreamingRef.current = isStreaming;
-  }, [isStreaming, onComplete]);
-
-  useEffect(() => {
-    if (isDone && shouldAnimate && !isStreaming) {
-      onComplete?.();
-    }
-  }, [isDone, shouldAnimate, isStreaming, onComplete]);
-
-  useEffect(() => {
-    if (isStreaming) {
-      Promise.resolve().then(() => {
-        setDisplayedText(content);
-        setIsDone(false);
-      });
       return;
     }
 
-    if (!shouldAnimate) {
-      Promise.resolve().then(() => {
-        setDisplayedText(content);
-        setIsDone(true);
-      });
-      return;
-    }
+    const tokens = content.split(/(\s+)/);
+    allTokensRef.current = tokens;
+  }, [content, shouldAnimate]);
 
-    Promise.resolve().then(() => {
-      setDisplayedText("");
-      setIsDone(false);
-    });
+  // Handle printing animation loop
+  useEffect(() => {
+    if (!shouldAnimate && displayedTokensCountRef.current <= 0) return;
 
-    let index = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(() => {
-        const remaining = content.length - index;
-        const step = remaining > 350 ? 3 : remaining > 150 ? 2 : 1;
-        const nextIndex = index + step;
-        
-        if (nextIndex >= content.length) {
-          clearInterval(interval);
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        const tokens = allTokensRef.current;
+        const currentCount = displayedTokensCountRef.current;
+
+        if (currentCount < tokens.length) {
+          const nextCount = currentCount + 1;
+          displayedTokensCountRef.current = nextCount;
+          
+          const assembly = tokens.slice(0, nextCount).join("");
+          setDisplayedText(assembly);
+        } else if (!isStreaming) {
+          // Stream completed and all words printed
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
           setIsDone(true);
-          return content;
+          onComplete?.();
         }
-        index = nextIndex;
-        return content.slice(0, nextIndex);
-      });
-    }, 18);
+      }, 35); // Deliberate speed: 35ms per token
+    }
+  }, [shouldAnimate, isStreaming, onComplete]);
 
-    return () => clearInterval(interval);
-  }, [content, shouldAnimate, isStreaming]);
+  // Complete cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="w-full relative">
@@ -481,16 +488,11 @@ export default function ChatInterface({
                             <span className="text-xs font-semibold italic animate-pulse">
                               Evaluating your startup idea...
                             </span>
-                            <span className="typewriter-cursor" />
-                          </div>
-                        ) : isStreamingMessage ? (
-                          <div className="w-full relative">
-                            <div className="inline-block w-full">{renderMessageContent(msg.content, false)}</div>
                           </div>
                         ) : (
                           <TypewriterChatMessage
                             content={msg.content}
-                            shouldAnimate={shouldAnimate}
+                            shouldAnimate={shouldAnimate || isStreamingMessage}
                             isStreaming={isStreamingMessage}
                             onComplete={handleComplete}
                           />

@@ -85,9 +85,6 @@ export default function DimensionCard({
           </h4>
           <p className="text-base text-text-primary leading-relaxed font-body min-h-[40px]">
             {displayed}
-            {!done && displayed.length > 0 && (
-              <span className="typewriter-cursor" />
-            )}
           </p>
         </div>
 
