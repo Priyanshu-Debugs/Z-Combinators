@@ -14,6 +14,9 @@ if not DATABASE_URL:
 
 # Setup engine and connection
 if DATABASE_URL.startswith("postgresql"):
+    # Normalize driver: ensure we use psycopg2 explicitly (not psycopg v3)
+    if DATABASE_URL.startswith("postgresql://"):
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
     # Ensure SSL mode is enabled for Neon Postgres if not specified
     if "sslmode" not in DATABASE_URL:
         separator = "&" if "?" in DATABASE_URL else "?"
