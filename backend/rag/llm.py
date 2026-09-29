@@ -103,6 +103,10 @@ async def evaluate_dimension(
                     "dimension": dimension.upper(),
                     "idea": idea,
                     "context_text": context_text,
+                }, config={
+                    "run_name": f"evaluate_{dimension}",
+                    "tags": ["static_eval", dimension],
+                    "metadata": {"dimension": dimension}
                 })
     
                 score = int(result.score)

@@ -1,4 +1,5 @@
 import asyncio
+from langsmith import traceable
 from models import EvaluateResponse, DimensionResult
 from rag.vector_store import retrieve_for_dimension
 from rag.llm import evaluate_dimension
@@ -15,6 +16,7 @@ def determine_confidence(distance: float) -> str:
         return "low"
 
 
+@traceable(name="evaluate_idea_static", tags=["static_eval", "full_pipeline"])
 async def evaluate_idea(idea: str) -> EvaluateResponse:
     """
     Run the full 6-dimension RAG evaluation pipeline.

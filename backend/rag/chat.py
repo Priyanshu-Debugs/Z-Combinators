@@ -2,6 +2,7 @@ import json
 import re
 import logging
 from typing import Dict, Optional, AsyncGenerator
+from langsmith import traceable
 from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -193,7 +194,10 @@ async def condense_query(user_message: str, history: list[dict]) -> str:
                 max_tokens=60,
                 api_key=active_key or None,
             )
-            response = await llm.ainvoke(prompt_text)
+            response = await llm.ainvoke(
+                prompt_text,
+                config={"run_name": "condense_query", "tags": ["rag"]}
+            )
             condensed = extract_text_content(response.content).strip()
             condensed = condensed.replace("`", "").replace('"', "").replace("'", "")
             return condensed if condensed else user_message
@@ -246,7 +250,10 @@ Is the user describing/asking about a specific startup idea or seeking feedback 
 Respond with exactly one of these words: "pitch", "greeting", or "off_topic".
 
 Classification:"""
-        response = await llm.ainvoke(prompt_text)
+        response = await llm.ainvoke(
+            prompt_text,
+            config={"run_name": "classify_intent", "tags": ["intent"]}
+        )
         result = extract_text_content(response.content).strip().lower()
         if "greeting" in result:
             return "greeting"
@@ -258,6 +265,7 @@ Classification:"""
         logger.error(f"Error in LLM intent classification: {e}")
         return "pitch"  # Default to pitch to avoid blocking valid inputs
 
+@traceable(name="evaluate_chat_turn", tags=["chat", "full_pipeline"])
 async def evaluate_chat_turn(
     user_message: str,
     history: list[dict],
@@ -319,7 +327,7 @@ async def evaluate_chat_turn(
                     "chat_history": chat_history,
                     "user_message": user_message,
                     "framework_context": framework_context
-                })
+                }, config={"run_name": "advisor_reply", "tags": ["phase1", "chat"]})
                 reply = extract_text_content(res.content).strip()
                 success = True
                 break
@@ -382,7 +390,7 @@ async def evaluate_chat_turn(
                     "chat_history": chat_history,
                     "user_message": user_message,
                     "framework_context": framework_context
-                })
+                }, config={"run_name": "eval_dimensions", "tags": ["phase2", "evaluation"]})
                 
                 suggested = result.suggested_followups
                 scores_dict = {
@@ -457,6 +465,7 @@ async def evaluate_chat_turn(
             
     return reply, evaluations, suggested
 
+@traceable(name="evaluate_chat_turn_stream", tags=["chat", "stream", "full_pipeline"])
 async def evaluate_chat_turn_stream(
     user_message: str,
     history: list[dict],
@@ -519,7 +528,7 @@ async def evaluate_chat_turn_stream(
                     "chat_history": chat_history,
                     "user_message": user_message,
                     "framework_context": framework_context
-                }):
+                }, config={"run_name": "advisor_reply_stream", "tags": ["phase1", "chat", "stream"]}):
                     if chunk and hasattr(chunk, "content"):
                         text = extract_text_content(chunk.content)
                         if text:
@@ -591,7 +600,7 @@ async def evaluate_chat_turn_stream(
                     "chat_history": chat_history,
                     "user_message": user_message,
                     "framework_context": framework_context
-                })
+                }, config={"run_name": "eval_dimensions_stream", "tags": ["phase2", "evaluation"]})
                 
                 suggested = result.suggested_followups
                 scores_dict = {
