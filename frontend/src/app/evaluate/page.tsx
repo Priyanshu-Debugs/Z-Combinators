@@ -10,7 +10,7 @@ import ChatInterface from "../components/ChatInterface";
 import EvaluateResults from "../components/EvaluateResults";
 import Disclaimer from "../components/Disclaimer";
 import ScoreSummaryBar from "../components/ScoreSummaryBar";
-import WorkspaceSidebar from "../components/WorkspaceSidebar";
+import WorkspaceSidebar, { SidebarToggleIcon } from "../components/WorkspaceSidebar";
 import { saveEvaluation } from "../components/EvaluationHistory";
 import jsPDF from "jspdf";
 import RadarChart from "../components/RadarChart";
@@ -57,6 +57,26 @@ function EvaluateContent() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "dossier">("chat");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("z_combinator_sidebar_open");
+      if (saved !== null) {
+        setIsSidebarOpen(saved === "true");
+      }
+    } catch {}
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setIsSidebarOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("z_combinator_sidebar_open", String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
   const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportViewMode, setReportViewMode] = useState<"prompt" | "preview">("prompt");
@@ -357,7 +377,6 @@ function EvaluateContent() {
     setDossier([]);
     window.history.replaceState(null, "", "/evaluate");
     setSidebarRefreshKey((k) => k + 1);
-    setIsSidebarOpen(false);
   };
 
   const handleExportReport = () => {
@@ -642,8 +661,8 @@ function EvaluateContent() {
 
   return (
     <PageTransition>
-      <div className="w-full h-[100dvh] flex flex-col justify-between overflow-hidden bg-[#FAFAF8] select-none">
-        {/* Workspace Slidebar Drawer (Pitch History) */}
+      <div className="w-full h-[100dvh] flex flex-row overflow-hidden bg-[#FAFAF8] select-none">
+        {/* Workspace Sidebar (ChatGPT-style Small Bar & Sliding Drawer) */}
         <WorkspaceSidebar
           currentSessionId={sessionId}
           onSelectSession={(id) => {
@@ -651,7 +670,7 @@ function EvaluateContent() {
           }}
           onNewChat={handleNewChat}
           isOpen={isSidebarOpen}
-          onToggle={() => setIsSidebarOpen((prev) => !prev)}
+          onToggle={toggleSidebar}
           refreshTrigger={sidebarRefreshKey}
         />
 
@@ -717,13 +736,15 @@ function EvaluateContent() {
 
               {/* Slidebar Drawer Toggle Button */}
               <button
-                onClick={() => setIsSidebarOpen((prev) => !prev)}
-                title="Open Pitch History (Ctrl+B)"
-                className="px-2.5 py-1 rounded-lg border border-black/10 bg-[#F4F4F2] hover:bg-neutral-200 text-neutral-800 transition flex items-center space-x-1.5 text-xs font-semibold cursor-pointer shrink-0 shadow-2xs"
+                onClick={toggleSidebar}
+                title={isSidebarOpen ? "Collapse Pitches (Ctrl+B)" : "Expand Pitches (Ctrl+B)"}
+                className={`px-2.5 py-1 rounded-lg border transition flex items-center space-x-1.5 text-xs font-semibold cursor-pointer shrink-0 shadow-2xs ${
+                  isSidebarOpen
+                    ? "border-black/20 bg-black/5 text-black font-bold"
+                    : "border-black/10 bg-[#F4F4F2] hover:bg-neutral-200 text-neutral-800"
+                }`}
               >
-                <svg className="w-3.5 h-3.5 text-neutral-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <SidebarToggleIcon isOpen={isSidebarOpen} className="w-3.5 h-3.5 text-neutral-700" />
                 <span>Pitches</span>
               </button>
 
