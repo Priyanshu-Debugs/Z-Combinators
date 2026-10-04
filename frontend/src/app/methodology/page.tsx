@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useAuth, SignInButton } from "@clerk/nextjs";
 import PageTransition from "../components/PageTransition";
 import Disclaimer from "../components/Disclaimer";
 
@@ -212,25 +213,54 @@ export default function MethodologyPage() {
             className="inline-block"
             transition={{ type: "spring", stiffness: 450, damping: 15 }}
           >
-            <Link
-              href="/evaluate"
-              className="group inline-flex items-center px-8 py-3.5 rounded-full bg-accent text-accent-inverse text-base font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer"
-            >
-              Validate your Idea
-              <svg
-                className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
+            <AuthEvaluateButton />
           </motion.div>
         </motion.div>
       </div>
       <Disclaimer />
     </PageTransition>
+  );
+}
+
+function AuthEvaluateButton() {
+  const { isSignedIn } = useAuth();
+  
+  if (isSignedIn) {
+    return (
+      <Link
+        href="/evaluate"
+        className="group inline-flex items-center px-8 py-3.5 rounded-full bg-accent text-accent-inverse text-base font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer"
+      >
+        Evaluate your Idea
+        <svg
+          className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </Link>
+    );
+  }
+
+  return (
+    <SignInButton mode="modal" forceRedirectUrl="/evaluate">
+      <button
+        className="group inline-flex items-center px-8 py-3.5 rounded-full bg-accent text-accent-inverse text-base font-medium transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer"
+      >
+        Evaluate your Idea
+        <svg
+          className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </SignInButton>
   );
 }

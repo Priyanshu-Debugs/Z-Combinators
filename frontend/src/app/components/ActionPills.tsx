@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useAuth, SignInButton } from "@clerk/nextjs";
 
 const PILLS = [
   { label: "See our methodology", href: "/methodology", primary: false },
@@ -30,6 +31,8 @@ const pillItemVariants = {
 };
 
 export default function ActionPills() {
+  const { isSignedIn } = useAuth();
+
   return (
     <motion.div
       variants={pillContainerVariants}
@@ -37,28 +40,47 @@ export default function ActionPills() {
       animate="show"
       className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5"
     >
-      {/* Large prominent Validate Idea Button */}
+      {/* Large prominent Evaluate Idea Button */}
       <motion.div
         variants={pillItemVariants}
         whileHover={{ scale: 1.03, y: -2 }}
         whileTap={{ scale: 0.97 }}
         transition={{ type: "spring", stiffness: 450, damping: 15 }}
       >
-        <Link
-          href="/evaluate"
-          className="group inline-flex items-center justify-center bg-black text-white border border-black rounded-full text-base sm:text-lg md:text-xl px-8 py-3.5 sm:px-10 sm:py-4 hover:bg-white hover:text-black hover:border-black transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl font-bold active:scale-95 w-full sm:w-auto text-center"
-        >
-          Validate your Idea
-          <svg
-            className="ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2.5"
+        {isSignedIn ? (
+          <Link
+            href="/evaluate"
+            className="group inline-flex items-center justify-center bg-black text-white border border-black rounded-full text-base sm:text-lg md:text-xl px-8 py-3.5 sm:px-10 sm:py-4 hover:bg-white hover:text-black hover:border-black transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl font-bold active:scale-95 w-full sm:w-auto text-center"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
+            Evaluate your Idea
+            <svg
+              className="ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
+        ) : (
+          <SignInButton mode="modal" forceRedirectUrl="/evaluate">
+            <button
+              className="group inline-flex items-center justify-center bg-black text-white border border-black rounded-full text-base sm:text-lg md:text-xl px-8 py-3.5 sm:px-10 sm:py-4 hover:bg-white hover:text-black hover:border-black transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl font-bold active:scale-95 w-full sm:w-auto text-center"
+            >
+              Evaluate your Idea
+              <svg
+                className="ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </SignInButton>
+        )}
       </motion.div>
 
       {/* Secondary pills */}

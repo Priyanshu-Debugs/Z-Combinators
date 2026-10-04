@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useRef, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 import ChatInterface from "../components/ChatInterface";
 import EvaluateResults from "../components/EvaluateResults";
 import Disclaimer from "../components/Disclaimer";
 import ScoreSummaryBar from "../components/ScoreSummaryBar";
-import EvaluationHistory, { saveEvaluation } from "../components/EvaluationHistory";
+import WorkspaceSidebar from "../components/WorkspaceSidebar";
+import { saveEvaluation } from "../components/EvaluationHistory";
 import jsPDF from "jspdf";
 import RadarChart from "../components/RadarChart";
 
@@ -43,7 +44,7 @@ const WELCOME_MESSAGE = {
 };
 
 function EvaluateContent() {
-  const { isSignedIn, getToken } = useAuth();
+  const { isLoaded, isSignedIn, getToken } = useAuth();
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; suggested_followups?: string[]; wasStreamed?: boolean }[]>([
@@ -53,7 +54,8 @@ function EvaluateContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"chat" | "dossier">("chat");
-  const [showHistory, setShowHistory] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [sidebarRefreshKey, setSidebarRefreshKey] = useState(0);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportViewMode, setReportViewMode] = useState<"prompt" | "preview">("prompt");
   const [isExporting, setIsExporting] = useState(false);
@@ -330,6 +332,7 @@ function EvaluateContent() {
                   return next;
                 });
                 streamFinished = true;
+                setSidebarRefreshKey((k) => k + 1);
               } else if (parsed.type === "error") {
                 throw new Error(parsed.content);
               }
@@ -382,6 +385,7 @@ function EvaluateContent() {
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
         window.history.replaceState(null, "", "/evaluate");
+        setSidebarRefreshKey((k) => k + 1);
       }
     } catch {
       setError("Failed to start new chat.");
@@ -621,195 +625,255 @@ function EvaluateContent() {
       ) / 10
       : null;
 
-  return (
-    <PageTransition>
-      <div className="flex-grow flex flex-col pt-14 pb-0 px-0 mx-0 w-full max-w-full h-[calc(100dvh-92px)] min-h-[550px] overflow-hidden">
-        {/* Connection status bar */}
-        <AnimatePresence>
-          {!sessionId && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="flex-shrink-0 bg-black text-white text-[11px] font-medium py-2 px-6 flex items-center justify-center space-x-2 w-full select-none"
-            >
-              <svg className="animate-spin h-3.5 w-3.5 text-white/80" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+  if (isLoaded && !isSignedIn) {
+    return (
+      <PageTransition>
+        <div className="flex-1 min-h-[calc(100dvh-120px)] flex flex-col items-center justify-center px-4 pt-16 pb-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-md w-full p-8 sm:p-10 rounded-2xl border border-zinc-800 bg-[#0d0e11]/95 backdrop-blur-xl shadow-2xl space-y-6"
+          >
+            <div className="w-14 h-14 mx-auto rounded-full bg-zinc-800/80 border border-zinc-700 flex items-center justify-center text-white">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
               </svg>
-              <span>Connecting to the backend. Getting ready might take 1-2 minutes...</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Error Banner */}
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="flex-shrink-0 mx-6 mt-4 p-3.5 rounded-xl border border-border bg-surface/50 text-text-primary text-xs flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
-            >
-              <div className="flex items-center space-x-2.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-text-secondary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-text-secondary"></span>
-                </span>
-                <span className="font-medium text-text-secondary leading-relaxed">{error}</span>
-              </div>
-              <button
-                onClick={() => setError(null)}
-                className="text-text-secondary hover:text-text-primary font-bold hover:opacity-80 ml-4 cursor-pointer"
-              >
-                ✕
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Master Workspace Console Box */}
-        <div
-          ref={containerRef}
-          className={`flex-grow w-full border-t border-b border-border bg-surface/15 backdrop-blur-xl overflow-hidden flex flex-col min-h-0 ${isDragging ? "select-none cursor-col-resize" : ""
-            }`}
-        >
-          {/* Console Header Bar */}
-          <div className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface/50 backdrop-blur-md">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-3">
-                <h1 className="font-heading text-base font-bold text-text-primary tracking-tight shrink-0">
-                  Advisor Workspace
-                </h1>
-                {/* Score Summary Bar */}
-                <div className="hidden sm:block">
-                  <ScoreSummaryBar dimensions={dossier} />
-                </div>
-              </div>
-              <p className="hidden sm:block text-text-secondary text-[10.5px] mt-0.5 font-medium leading-none">
-                Discuss your startup idea with the AI to compile your investment dossier. Drag the middle divider to resize columns.
+            </div>
+            <div className="space-y-2">
+              <h1 className="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight">
+                Sign in to Evaluate your Pitch
+              </h1>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Connect with Google or Email to unlock institutional-grade pitch evaluation, cross-reference 150+ frameworks, and resume saved chat sessions.
               </p>
             </div>
+            <SignInButton mode="modal" forceRedirectUrl="/evaluate">
+              <button className="w-full py-3.5 px-5 rounded-xl bg-white text-black font-heading font-semibold text-sm hover:bg-zinc-200 active:scale-[0.98] transition shadow-lg cursor-pointer">
+                Sign In / Sign Up to Continue
+              </button>
+            </SignInButton>
+          </motion.div>
+        </div>
+        <Disclaimer />
+      </PageTransition>
+    );
+  }
 
-            <div className="flex items-center space-x-2">
-              {/* Tab Selector on mobile/tablet */}
-              <div className="flex lg:hidden bg-text-secondary/5 rounded-xl p-0.5 border border-border relative">
+  return (
+    <PageTransition>
+      <div className="flex-grow flex flex-row pt-14 pb-0 px-0 mx-0 w-full max-w-full h-[calc(100dvh-56px)] min-h-[550px] overflow-hidden">
+        {/* Workspace Sidebar (User Profile + Pitch History) */}
+        <WorkspaceSidebar
+          currentSessionId={sessionId}
+          onSelectSession={(id) => {
+            handleResumeSession(id);
+          }}
+          onNewChat={handleNewChat}
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen((prev) => !prev)}
+          refreshTrigger={sidebarRefreshKey}
+        />
+
+        {/* Master Workspace Console Area */}
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+          {/* Connection status bar */}
+          <AnimatePresence>
+            {!sessionId && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="flex-shrink-0 bg-black text-white text-[11px] font-medium py-2 px-6 flex items-center justify-center space-x-2 w-full select-none"
+              >
+                <svg className="animate-spin h-3.5 w-3.5 text-white/80" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Connecting to the backend. Getting ready might take 1-2 minutes...</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error Banner */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="flex-shrink-0 mx-6 mt-4 p-3.5 rounded-xl border border-border bg-surface/50 text-text-primary text-xs flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+              >
+                <div className="flex items-center space-x-2.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-text-secondary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-text-secondary"></span>
+                  </span>
+                  <span className="font-medium text-text-secondary leading-relaxed">{error}</span>
+                </div>
                 <button
-                  onClick={() => setActiveTab("chat")}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "chat"
-                    ? "text-text-primary"
-                    : "text-text-secondary hover:text-text-primary"
-                    }`}
+                  onClick={() => setError(null)}
+                  className="text-text-secondary hover:text-text-primary font-bold hover:opacity-80 ml-4 cursor-pointer"
                 >
-                  Chat
+                  ✕
                 </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Master Workspace Console Box */}
+          <div
+            ref={containerRef}
+            className={`flex-grow w-full border-t border-b border-border bg-surface/15 backdrop-blur-xl overflow-hidden flex flex-col min-h-0 ${
+              isDragging ? "select-none cursor-col-resize" : ""
+            }`}
+          >
+            {/* Console Header Bar */}
+            <div className="flex-shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 border-b border-border bg-surface/50 backdrop-blur-md">
+              <div className="flex-1 min-w-0 flex items-center space-x-2.5 sm:space-x-3">
+                {/* Sidebar Toggle Button */}
                 <button
-                  onClick={() => setActiveTab("dossier")}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${activeTab === "dossier"
-                    ? "text-text-primary"
-                    : "text-text-secondary hover:text-text-primary"
-                    }`}
+                  onClick={() => setIsSidebarOpen((prev) => !prev)}
+                  title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                  className="p-1.5 rounded-lg border border-border bg-surface text-text-secondary hover:text-text-primary hover:bg-border/30 transition cursor-pointer shrink-0"
                 >
-                  Dossier {overallScore !== null ? `(${overallScore})` : ""}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                  </svg>
                 </button>
-                {/* Sliding tab indicator */}
-                <motion.div
-                  className="absolute top-0.5 bottom-0.5 rounded-lg bg-surface shadow-sm"
-                  layoutId="tab-indicator"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  style={{
-                    left: activeTab === "chat" ? "2px" : "50%",
-                    width: "calc(50% - 2px)",
-                  }}
+
+                <div className="min-w-0">
+                  <div className="flex items-center space-x-3">
+                    <h1 className="font-heading text-sm sm:text-base font-bold text-text-primary tracking-tight shrink-0">
+                      Advisor Workspace
+                    </h1>
+                    {/* Score Summary Bar */}
+                    <div className="hidden sm:block">
+                      <ScoreSummaryBar dimensions={dossier} />
+                    </div>
+                  </div>
+                  <p className="hidden md:block text-text-secondary text-[10.5px] font-medium leading-none truncate">
+                    Discuss your startup idea with the AI to compile your investment dossier. Drag the middle divider to resize columns.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+                {/* Tab Selector on mobile/tablet */}
+                <div className="flex lg:hidden bg-text-secondary/5 rounded-xl p-0.5 border border-border relative">
+                  <button
+                    onClick={() => setActiveTab("chat")}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${
+                      activeTab === "chat"
+                        ? "text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    Chat
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("dossier")}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 relative z-10 ${
+                      activeTab === "dossier"
+                        ? "text-text-primary"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    Dossier {overallScore !== null ? `(${overallScore})` : ""}
+                  </button>
+                  {/* Sliding tab indicator */}
+                  <motion.div
+                    className="absolute top-0.5 bottom-0.5 rounded-lg bg-surface shadow-sm"
+                    layoutId="tab-indicator"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    style={{
+                      left: activeTab === "chat" ? "2px" : "50%",
+                      width: "calc(50% - 2px)",
+                    }}
+                  />
+                </div>
+
+                {/* Export PDF Button */}
+                {dossier.length > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.04, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleExportReport}
+                    className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Export Report</span>
+                  </motion.button>
+                )}
+
+                {/* Mobile / Tablet History Button */}
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="flex lg:hidden px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-border-strong hover:text-text-primary transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Chats</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.04, y: -1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleNewChat}
+                  className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+                >
+                  New Pitch
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Console Body workspace area */}
+            <div className="flex-grow flex overflow-hidden min-h-0 flex-col lg:flex-row items-stretch">
+              {/* Left Column: Chat Interface */}
+              <div
+                className={`h-full flex flex-col border-r border-border min-h-0 bg-transparent ${
+                  activeTab === "chat" ? "flex" : "hidden lg:flex"
+                }`}
+                style={{ width: isDesktop ? `${leftWidth}%` : "100%" }}
+              >
+                <ChatInterface
+                  messages={messages}
+                  onSendMessage={handleSendMessage}
+                  isLoading={isLoading}
                 />
               </div>
 
-              {/* Export PDF Button */}
-              {dossier.length > 0 && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.04, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleExportReport}
-                  className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Export Report</span>
-                </motion.button>
-              )}
-
-              {/* History Button */}
-              <motion.button
-                whileHover={{ scale: 1.04, y: -1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowHistory(true)}
-                className="hidden sm:flex px-2.5 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-border-strong hover:text-text-primary transition-all duration-200 cursor-pointer items-center space-x-1 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+              {/* Draggable Divider Line */}
+              <div
+                onMouseDown={handleMouseDown}
+                className={`hidden lg:block w-1.5 hover:w-2 active:w-2 h-full bg-border hover:bg-accent/30 active:bg-accent cursor-col-resize transition-all duration-200 z-30 relative`}
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>History</span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.04, y: -1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleNewChat}
-                className="px-3 py-1.5 rounded-xl border border-border bg-surface text-[11px] font-bold text-text-secondary hover:border-accent/30 hover:bg-accent/5 hover:text-accent transition-all duration-200 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
-              >
-                New Chat
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Console Body workspace area */}
-          <div className="flex-grow flex overflow-hidden min-h-0 flex-col lg:flex-row items-stretch">
-            {/* Left Column: Chat Interface */}
-            <div
-              className={`h-full flex flex-col border-r border-border min-h-0 bg-transparent ${activeTab === "chat" ? "flex" : "hidden lg:flex"
-                }`}
-              style={{ width: isDesktop ? `${leftWidth}%` : "100%" }}
-            >
-              <ChatInterface
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                isLoading={isLoading}
-              />
-            </div>
-
-            {/* Draggable Divider Line */}
-            <div
-              onMouseDown={handleMouseDown}
-              className={`hidden lg:block w-1.5 hover:w-2 active:w-2 h-full bg-border hover:bg-accent/30 active:bg-accent cursor-col-resize transition-all duration-200 z-30 relative`}
-            >
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-9 bg-surface border border-border rounded-full flex flex-col items-center justify-center space-y-0.5 shadow-md cursor-col-resize group active:bg-accent/5">
-                <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
-                <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-9 bg-surface border border-border rounded-full flex flex-col items-center justify-center space-y-0.5 shadow-md cursor-col-resize group active:bg-accent/5">
+                  <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
+                  <div className="w-0.5 h-3 bg-text-secondary/50 rounded-full" />
+                </div>
               </div>
-            </div>
 
-            {/* Right Column: Dossier Results */}
-            <div
-              className={`h-full overflow-y-auto min-h-0 bg-surface/5 custom-scrollbar p-6 ${activeTab === "dossier" ? "block" : "hidden lg:block"
+              {/* Right Column: Dossier Results */}
+              <div
+                className={`h-full overflow-y-auto min-h-0 bg-surface/5 custom-scrollbar p-6 ${
+                  activeTab === "dossier" ? "block" : "hidden lg:block"
                 }`}
-              style={{ width: isDesktop ? `${100 - leftWidth}%` : "100%" }}
-            >
-              <EvaluateResults dimensions={dossier} />
+                style={{ width: isDesktop ? `${100 - leftWidth}%` : "100%" }}
+              >
+                <EvaluateResults dimensions={dossier} />
+              </div>
             </div>
           </div>
         </div>
       </div>
       <Disclaimer />
-
-      {/* History Drawer */}
-      <EvaluationHistory
-        isOpen={showHistory}
-        onClose={() => setShowHistory(false)}
-        onSelectSession={handleResumeSession}
-      />
 
       {/* Report Preview Modal */}
       <AnimatePresence>
