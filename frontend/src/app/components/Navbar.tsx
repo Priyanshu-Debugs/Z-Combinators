@@ -13,24 +13,21 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
-  // When on evaluate page, remove the global header completely
-  if (pathname?.startsWith("/evaluate")) {
-    return null;
-  }
-
   const toggleMenu = () => setIsOpen(!isOpen);
 
   // Track scroll position for blur effect
   useEffect(() => {
+    if (isEvaluate) return;
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isEvaluate]);
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
+    if (isEvaluate) return;
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -39,7 +36,7 @@ export default function Navbar() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [isOpen, isEvaluate]);
 
   // Pre-warm the backend on initial mount
   useEffect(() => {
@@ -48,6 +45,11 @@ export default function Navbar() {
       // Silently catch errors during the wake-up pings
     });
   }, []);
+
+  // When on evaluate page, remove the global header completely - placed AFTER all hooks to adhere to React Rules of Hooks
+  if (pathname?.startsWith("/evaluate")) {
+    return null;
+  }
 
   // Determine background style based on page and scroll
   const getBgClass = () => {
