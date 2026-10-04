@@ -69,8 +69,12 @@ def get_user_sessions_endpoint(
     )
 
     summaries = []
+    empty_to_prune = []
     for s in sessions:
         msg_count = db.query(ChatMessageTable).filter(ChatMessageTable.session_id == s.id).count()
+        if msg_count == 0:
+            empty_to_prune.append(s)
+            continue
         summaries.append(
             SessionSummaryResponse(
                 id=s.id,
@@ -81,6 +85,16 @@ def get_user_sessions_endpoint(
                 latest_score=s.latest_score,
             )
         )
+
+    # Prune empty abandoned sessions to maintain database hygiene
+    if empty_to_prune:
+        try:
+            for es in empty_to_prune:
+                db.delete(es)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+
     return summaries
 
 

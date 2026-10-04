@@ -13,6 +13,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
+  // When on evaluate page, remove the global header completely
+  if (pathname?.startsWith("/evaluate")) {
+    return null;
+  }
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
   // Track scroll position for blur effect

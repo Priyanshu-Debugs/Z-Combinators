@@ -1,16 +1,26 @@
 "use client";
 
-import { useTypewriter } from "../hooks/useTypewriter";
 import { motion } from "framer-motion";
 
 interface DimensionCardProps {
   dimension: string;
   score: number;
   justification: string;
-  sourceExcerpt: string;
-  sourceFramework: string;
+  sourceExcerpt?: string;
+  sourceFramework?: string;
+  confidence?: "high" | "medium" | "low";
+  onPromptClick?: (prompt: string) => void;
   startDelay?: number;
 }
+
+const DIMENSION_PROMPTS: Record<string, string> = {
+  market: "Help me analyze our Total Addressable Market (TAM), customer persona, and target segment size.",
+  team: "What details about our founding team's domain expertise and technical background would improve our score?",
+  timing: "Analyze the macro trends, technological inflection points, and 'Why Now' drivers for this idea.",
+  competition: "How can we refine our competitive matrix and clearly articulate our wedge against incumbents?",
+  moat: "Suggest defensible moats, network effects, or data flywheels we can construct for this business.",
+  execution: "Review our go-to-market plan, distribution channel strategy, and initial pricing model.",
+};
 
 export default function DimensionCard({
   dimension,
@@ -18,100 +28,120 @@ export default function DimensionCard({
   justification,
   sourceExcerpt,
   sourceFramework,
+  confidence = "medium",
+  onPromptClick,
   startDelay = 0,
 }: DimensionCardProps) {
-  // Use custom typewriter hook for the justification text
-  const { displayed, done } = useTypewriter({
-    text: justification,
-    speed: 12,
-    startDelay: startDelay,
-  });
+  const isScored = score > 0;
 
-  // Left border and badge colors based on score
   const getColorClasses = (s: number) => {
+    if (!isScored) {
+      return {
+        border: "border-l-4 border-l-neutral-300",
+        badge: "bg-neutral-100 text-neutral-600 border border-neutral-200",
+      };
+    }
     if (s >= 8) {
       return {
-        border: "border-l-4 border-l-score-high",
-        badge: "score-bg-high score-high",
+        border: "border-l-4 border-l-emerald-600",
+        badge: "bg-emerald-50 text-emerald-800 border border-emerald-200",
       };
     }
     if (s >= 5) {
       return {
-        border: "border-l-4 border-l-score-mid",
-        badge: "score-bg-mid score-mid",
+        border: "border-l-4 border-l-amber-500",
+        badge: "bg-amber-50 text-amber-800 border border-amber-200",
       };
     }
     return {
-      border: "border-l-4 border-l-score-low",
-      badge: "score-bg-low score-low",
+      border: "border-l-4 border-l-rose-500",
+      badge: "bg-rose-50 text-rose-800 border border-rose-200",
     };
   };
 
+  const getConfidenceBadge = (conf: "high" | "medium" | "low") => {
+    if (conf === "high") {
+      return (
+        <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold">
+          High Confidence
+        </span>
+      );
+    }
+    if (conf === "low") {
+      return (
+        <span className="px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-600 border border-neutral-200 text-[10px] font-semibold">
+          Preliminary Info
+        </span>
+      );
+    }
+    return (
+      <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-semibold">
+        Moderate Confidence
+      </span>
+    );
+  };
+
   const colors = getColorClasses(score);
+  const promptSuggestion = DIMENSION_PROMPTS[dimension.toLowerCase()] || `Help me improve the ${dimension} score.`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.97, y: 8 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: startDelay / 1000 }}
-      className={`rounded-2xl border bg-surface shadow-card transition-shadow duration-300 hover:shadow-card-hover p-4.5 sm:p-6 md:p-8 space-y-4 ${colors.border}`}
-      style={{ borderColor: "var(--color-border)" }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: startDelay }}
+      className={`rounded-2xl border border-black/8 bg-white p-5 space-y-4 shadow-xs transition-all duration-200 hover:shadow-md ${colors.border}`}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-border">
-        <h3 className="font-heading text-xl font-semibold text-text-primary">
-          {dimension}
-        </h3>
-        <motion.span
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            delay: (startDelay / 1000) + 0.2,
-          }}
-          className={`rounded-full px-3 py-1 text-xs font-semibold tracking-wider ${colors.badge}`}
-        >
-          {score}/10
-        </motion.span>
+      {/* Card Header */}
+      <div className="flex items-center justify-between pb-3 border-b border-black/6">
+        <div className="flex items-center space-x-2.5">
+          <h3 className="font-heading text-base font-bold text-[#0A0A0A] tracking-tight">
+            {dimension}
+          </h3>
+          {isScored && getConfidenceBadge(confidence)}
+        </div>
+
+        <span className={`px-2.5 py-1 rounded-full text-xs font-bold tracking-wider ${colors.badge}`}>
+          {isScored ? `${score}/10` : "Unscored (0/10)"}
+        </span>
       </div>
 
-      {/* Analysis text with typewriter effect */}
-      <div className="space-y-4">
+      {/* Analysis Content */}
+      <div className="space-y-3">
         <div>
-          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary mb-2">
-            Analysis
-          </h4>
-          <p className="text-base text-text-primary leading-relaxed font-body min-h-[40px]">
-            {displayed}
+          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 block mb-1">
+            Advisor Evaluation
+          </span>
+          <p className="text-xs text-neutral-700 leading-relaxed font-body font-medium whitespace-pre-wrap">
+            {isScored ? justification : `No evaluation details available yet. Discuss your ${dimension.toLowerCase()} in chat to generate this score.`}
           </p>
         </div>
 
-        {/* Cited Framework Context — fades in smoothly only after typewriter completes */}
-        {sourceExcerpt && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: done ? 1 : 0, y: done ? 0 : 10 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className={`space-y-2 pt-2 border-t border-border ${
-              done ? "block" : "invisible"
-            }`}
-          >
-            <h4 className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
-              Retrieved Framework Context
-            </h4>
-            <div
-              className="border-l-2 pl-4 py-1 text-sm text-text-secondary italic leading-relaxed"
-              style={{ borderColor: "var(--color-border-strong)" }}
-            >
-              <p className="mb-2">&quot;{sourceExcerpt}&quot;</p>
-              <span className="text-[12px] not-italic font-medium text-text-primary">
+        {/* Framework Citation context */}
+        {isScored && sourceFramework && (
+          <div className="pt-2 border-t border-black/6 space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 flex items-center space-x-1">
+              <span>📚</span>
+              <span>Retrieved Institutional Framework</span>
+            </span>
+            <div className="border-l-2 border-[#0A0A0A] bg-[#F9F9F8] rounded-r-lg pl-3 pr-3 py-2 text-xs text-neutral-700 italic leading-relaxed">
+              {sourceExcerpt && <p className="mb-1 text-neutral-800">&quot;{sourceExcerpt}&quot;</p>}
+              <span className="not-italic text-[11px] font-semibold text-black">
                 Source: {sourceFramework}
               </span>
             </div>
-          </motion.div>
+          </div>
         )}
+
+        {/* Action Prompt to elevate score */}
+        <div className="pt-2 flex items-center justify-between">
+          <button
+            onClick={() => onPromptClick?.(promptSuggestion)}
+            className="inline-flex items-center space-x-1.5 text-[11px] font-semibold text-neutral-600 hover:text-black transition group cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 group-hover:bg-black transition-colors" />
+            <span>{isScored ? `Elevate ${dimension} score →` : `Unlock ${dimension} evaluation →`}</span>
+          </button>
+        </div>
       </div>
     </motion.div>
   );

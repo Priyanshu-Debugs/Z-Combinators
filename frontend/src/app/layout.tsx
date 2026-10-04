@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 
@@ -37,20 +36,19 @@ export default function RootLayout({
       signInFallbackRedirectUrl="/evaluate"
       signUpFallbackRedirectUrl="/evaluate"
       appearance={{
-        theme: dark,
         variables: {
-          colorPrimary: "#ffffff",
-          colorBackground: "#0c0d0e",
-          colorForeground: "#ffffff",
-          colorMutedForeground: "#a1a1aa",
+          colorPrimary: "#0A0A0A",
+          colorBackground: "#FFFFFF",
+          colorForeground: "#0A0A0A",
+          colorMutedForeground: "#6B6B6B",
           borderRadius: "0.75rem",
         },
         elements: {
-          card: "border border-zinc-800 bg-[#0c0d0e]/95 backdrop-blur-xl shadow-2xl",
-          formButtonPrimary: "bg-white text-black hover:bg-zinc-200 transition font-medium",
-          formFieldInput: "bg-[#16181a] border-zinc-800 text-white",
-          socialButtonsBlockButton: "border border-zinc-800 hover:bg-zinc-900 transition text-white",
-          footerActionLink: "text-white underline hover:text-zinc-300",
+          card: "border border-black/10 bg-white/95 backdrop-blur-xl shadow-xl",
+          formButtonPrimary: "bg-black text-white hover:bg-neutral-800 transition font-medium",
+          formFieldInput: "bg-[#F7F7F6] border-black/10 text-black",
+          socialButtonsBlockButton: "border border-black/10 hover:bg-black/5 transition text-black",
+          footerActionLink: "text-black underline hover:text-neutral-700",
         },
       }}
     >
