@@ -1,0 +1,599 @@
+# The Founder Dating Playbook: Here's the Process I Used to Find My Co-Founder
+# Author: First Round Review / Gloria Lin
+# Source: https://review.firstround.com/the-founder-dating-playbook-heres-the-process-i-used-to-find-my-co-founder/
+
+Loading the 
+
+Elevenlabs Text to Speech
+
+ AudioNative Player...
+
+Gloria Lin
+
+ went on a lot of dates in 2019. No, not that kind. We’re talking about co-founder dating.
+
+As the first head of product at 
+
+Flipboard
+
+ and the first PM hire at 
+
+Stripe
+
+, Lin’s seen founding teams in action — and knew what she was looking for as she set out to build a company of her own. “I always wanted to team up with someone. My experiences as a product leader were strongest when I was partnering closely with an engineering leader,” says Lin. “When I left to start a company, there were a few spaces I was interested in, but I didn’t have a specific startup idea so I set my sights on finding a strong co-founder to work with.” 
+
+But she quickly found that was easier said than done. “Most of the co-founder stories I’d heard fell in this bucket of former co-workers pairing up to go after an idea. But it’s not that simple. You have to both want to do a startup — requiring similar levels of high-risk tolerance — and be available at the same time, which depends on life and financial circumstances. And once you step outside of that pool, it gets harder to meet someone,” says Lin. “I knew I didn’t want my search to be random or unfocused, so I honed my process and took my time. 
+
+I ended up ‘dating’ six different potential co-founders over the course of a year
+
+. Just like real-life dating, sometimes it seemed like I was going to end up alone. Eventually, I met 
+
+Joel Poloney
+
+ and everything clicked. Now we’re working on 
+
+Siteline
+
+ together.”
+
+As the next generation of company builders takes shape and new founder mafias spin out of places like Stripe, it stands to reason that more co-founder stories won’t fit the traditional mold, and will instead look a lot more like Lin’s. And judging from 
+
+threads on Reddit
+
+, countless 
+
+questions on Quora
+
+, and all the “first dates” filling up coffee shops in SOMA, the carefully designed hunt for a co-founder is already afoot.
+
+While the Review has covered co-founder considerations before, from 
+
+getting vulnerable about painful “divorces”
+
+ to applying a framework for 
+
+strategically assembling a founding team
+
+, we’ve never seen a process like Lin’s. It’s a detailed, step-by-step playbook for thinking through all the potential pitfalls that can ruin even the best of co-founder relationships.
+
+In this exclusive interview, Lin presents that rigorous approach in full, from how she found potential partners and handled early conversations to how they ideated and prototyped together to narrow in on a more specific idea. Whether you’re a proven founder working on your next play or a wannabe entrepreneur waiting in the wings, her process can add a dose of rigor to your own search for a co-founder.
+
+Lin also shares the incredibly detailed 
+
+co-founder questionnaire
+
+ — with 50 questions spanning across six categories — that she and other fellow founders have collaborated on to probe compatibility more deeply. We’ll highlight a handful of impactful questions here in this article, tacking on Lin’s marginalia: her reflections on why these questions stood out, the sticking points you need to watch for, and how you’ll know when you’ve found “the one.”
+
+But we've also included the full set (below, in a designed PDF template so you can grab and go, and further down in a Google Doc, in case you'd like to edit and add your own questions).
+
+Want to jump straight into the set of 50 questions to ask a potential co-founder?
+
+50 Questions for Interviewing a Potential Co-Founder
+
+Download PDF
+
+BEFORE YOU GET STARTED: COMMON ADVICE WITH SOME CAVEATS
+
+The search for a co-founder often conjures up comparisons to dating. It’s become a well-worn metaphor because from fights to marriage to divorce, parallels abound.
+
+“Finding a co-founder can feel like a more intense version of dating. One key difference though is that most people have at least some experience with real-life dating. And there’s certainly tons of self-help books for tips as well as apps that make it easier to meet people. But when it comes to figuring out how to find a co-founder, it’s hard to know where to begin,” says Lin.
+
+“That’s a huge problem because
+
+ two of the most common causes of startup failures are not finding product/market fit and co-founder issues
+
+. The former is top of mind for every budding entrepreneur, but I don’t think people consider the latter as much when they’re crafting their pitches," she says. "We just finished our fundraising process and I can’t tell you how many seasoned investors told us about how a co-founder situation blew up one of their companies. But even so, there’s not much guidance out there on how to pick the right co-founder.”
+
+One reason for that lack of guidance is that it’s hard to get too prescriptive — after all, folks are approaching the co-founder search and company building process from different places. You could be:
+
+Looking for a co-founder and neither of you have an idea yet.
+
+Searching for a business or technical co-founder to help you execute on an idea you’ve been working on.
+
+Pairing up with someone you already know to find an idea.
+
+“The advice on how to tailor your search depends on what you’re looking for. If you already have a vision for your startup in mind, then you might want to skip straight into getting to know your potential co-founder on a deeper level. If you’re going to work with someone you already know, you may want to spend extra time making sure you’re aligned on how you want to build the company,” says Lin.
+
+“I was in that first bucket. 
+
+People get hung up on having either a solid company idea or a specific co-founder in place from the start, but I don’t think you need either right away
+
+. See the white space as an opportunity to try working together and a chance to explore interesting ideas at the same time.”
+
+When it comes to starting a company, you can figure out the right space to go after and find the right person to tackle it with in parallel. Don’t compromise on either.
+
+Lin came to this realization after seeing the hidden dangers in pairing up quickly with an old friend. “I’ve seen new co-founders get further down the company building path and suddenly realize that, ‘Oh, we didn't ever talk about this,’ or, ‘I didn't realize that we have such opposing views on this topic,’” she says. “It's kind of like moving in with someone for the first time and realizing that they leave their socks on the floor or they don’t share your approach to finances. They have all these habits big and small that suggest you may not be such a great match after all.”
+
+Here, Lin recommends a few additional broad takeaways to keep in mind before kicking off your search:
+
+Take your time — but realize the clock is ticking.
+
+In Lin’s view, one of the biggest mistakes people tend to make is not giving the process time to unfold. “You don’t want to rush into a pairing or stop your search prematurely,” she says. “
+
+Alfred Lin
+
+ once gave me some advice that was clarifying: 
+
+It’s common practice to take three to six months to hire an executive, so why wouldn't you take the same amount of care to find a co-founder?
+
+ Because that person is probably going to be around even longer. You’ll potentially work together for a decade or more.”
+
+All too often, people jump into company building opportunities and don’t spend the time testing the depths of the co-founder relationship — which makes for shotgun marriages that carry more risk.
+
+However, there is an important caveat to consider. “People only have a certain amount of financial runway they can survive on while they’re exploring a company. Some people can only go three months, while others could last three years. As you start to run out of resources, it can feel like a very accelerated, which is why you can end up with some shotgun marriages,” she says.
+
+Opposites attract — but don’t dismiss overlap.
+
+“People who are very similar in their strengths can lead to weaker co-founding situations. You want someone who shares similar values, but in terms of interests or characteristics, it’s often better if you’re different — there’s a reason they say opposites attract,” says Lin. “As a small example, my co-founder Joel and I don't share a lot of personal tastes in music and other areas that are more subjective, but we’re so aligned on how we think about company building.”
+
+We naturally flock to folks with similar experiences, tastes, and skills, but entrepreneurs overlook founding team diversity at their own peril — it’s a huge source of strength.
+
+However, this advice doesn’t always map onto previous experiences quite so neatly. “You can’t just glance at a resume and pass on all the ones that are too similar to yours,” says Lin. “Sometimes two people with the same background want very different things when it comes to building a startup. If they’re both PMs, one might want to focus on product, while the other person may want to stretch and get into the business side. It's highly dependent on what they 
+
+want
+
+ to do, not just what they've done before — you have to talk about it to find out.”
+
+DECONSTRUCTING THE PROCESS
+
+With that high-level advice to set the scene, let’s dig into Lin’s process — and why she recommends following one in the first place. “You need to be really intentional about how you spend your time together,” she says. “In my experience a ‘Let’s see what happens’ approach with meandering conversations and unstructured brainstorming is not as effective.”
+
+Still, a positive outcome is anything but guaranteed and progress is often hard to sense. “
+
+Building a startup feels like you’re standing at the start of a maze and you don’t know where the path is going to lead you
+
+,” says Lin. “It can be frustrating because you have no idea if jamming really hard for a week will get you any closer to your goal. You don’t know if it's a dead-end. You need to put one foot in front of the other — you have to keep moving.”
+
+And she’s found that you can cover more ground faster than you might think. “You can get a lot of data on what it would be like to be someone’s co-founder in a few weeks. I don't think that these steps are strictly linear — there's no waterfall chart that perfectly illustrates the stages as you move through them. But generally speaking, 
+
+here’s the process I followed in a nutshell
+
+:
+
+Step 1: Find potential co-founders
+
+ from your network of entrepreneurial communities.
+
+Step 2:
+
+ 
+
+Identify overlap through initial conversations.
+
+ Have a few coffee chats to cover some basic topics such as: 
+
+What’s your story? What sectors or industries do you have experience in? What areas are you interested in building a startup in?
+
+Step 3:
+
+ 
+
+Dive into exploring specific ideas
+
+ with brainstorming and lightweight prototyping. The goal is to both make progress toward an idea and gain collaboration experience to see what it would be like to work together.
+
+Step 4:
+
+ 
+
+Fill out the co-founder questionnaire
+
+ separately and schedule three to four working sessions to go over your respective answers.
+
+Step 5:
+
+ 
+
+Commit to working together
+
+ or part ways. Know when to pull the trigger — and when to stop and start anew with someone else.
+
+“The shortest round I had ended after just a couple of those initial coffee chats. It was somebody who seemed great on paper, but we didn’t mesh in real life,” says Lin. “In contrast, I spent four months working with my current co-founder to validate that we were on the right track before we committed.”
+
+In the sections that follow, Lin gets granular on each of those high-level steps, filling in tactical advice and drawing on stories from her own co-founder search experiences.
+
+STEP 1: FIND POTENTIAL CO-FOUNDERS TO FILL YOUR PIPELINE
+
+“‘Where do I find people?’ is one of the biggest questions I get when people ask me for advice. There isn’t a ‘Tinder for co-founders’ app that everyone is on. Sourcing is hard,” says Lin. “There were times in my process where I flipped back to working on an idea on my own because I didn’t have another potential co-founder lined up.”
+
+Lin typically courted a mix of folks that she had either known for a long time, gotten introduced by a mutual friend, or just recently met at an event. “One person was a classmate from college whom I hadn't spoken with in a while. Some were folks that I’d met through the broader entrepreneurial communities I’m a part of, like 
+
+South Park Commons
+
+,” she says.
+
+“I tried to engineer serendipity — I wasn't heads down hoping for someone to cross my path. I told all my friends and closer connections that I was looking for co-founders and asked for recommendations and intros. I think you have to get out of your comfort zone and try to 
+
+make more connections that count
+
+,” says Lin. “More tactically, joining entrepreneurial communities and attending events are great ways to broaden your pool. There are even some early-stage investors who help facilitate some of those interactions. The long and the short of it is that you have to be open to opportunity.”
+
+The only opportunity that should give you pause is a chance to work with a particularly close friend. “I wouldn't go as far as saying, ‘Don't go fish in that pond,’ but you need to go into it eyes wide open,” says Lin. “
+
+Noam Wasserman
+
+ literally wrote the book on this — in 
+
+The Founder’s Dilemmas
+
+, he explored what kind of founders are more successful than others. His research found that social connections are likely to be stable in the first six months — the honeymoon period — but become riskier over time. And even if it works out smoothly, doing a startup together will surely affect your friendship, so you have to be prepared for that.”
+
+STEP 2: IDENTIFY AREAS OF OVERLAP TO SURFACE A QUICK NO
+
+After finding a potential lead, schedule a few coffee chats or calls to uncover common ground — or a lack thereof. “This stage is very exploratory. Nothing’s set in stone. You’re looking for signals that it makes sense to move forward and invest more of your time,” says Lin.
+
+In particular, she searches for a 
+
+lack
+
+ of alignment in this step. “Actively look for counterfactuals, the places where you say ‘Oh, I actually don't think we're aligned on this point.’ I had a great initial chat with one person, but we found that one of us wanted to bootstrap our company while the other wanted to raise as much money as possible. It probably wasn’t a fit, so we didn’t need to keep spinning our wheels,” says Lin.
+
+Here are the threads she recommends pulling on in these early conversations:
+
+Areas of interest:
+
+ 
+
+What kinds of things are you excited to work on? What have you explored recently? Are we interested in the same industries and business models?
+
+ “Of course, your idea can change completely. Co-founding pairs pivot all the time, but you often move into an adjacent space, so it’s helpful to get a mapping of what you're respectively interested in,” says Lin. “With each of the six potential co-founders I dated, I explored different areas: identity, recruiting, interior design, security, crypto. What’s interesting is that some ideas morph and take on a totally different direction, while others don’t work out with one person, but end up making sense with someone else later. For example, I’d previously explored interior design with someone else, but now my co-founder and I are building something in the adjacent construction space.”
+
+Broad roles:
+
+ 
+
+Are we interested in potentially exploring a co-founder relationship together? What would that look like?
+
+ “This isn’t a negotiation over who wants to be the CEO. It’s more of a ‘In an ideal world, what are you imagining?’ kind of discussion,” she says. “There's a rough sense of roles but it's not super clear cut. It’s more like ‘I could focus on product and marketing and you could work on the tech and operations.’”
+
+STEP 3: SPEND TWO WEEKS PROTOTYPING TO SEE IF AN IDEA HAS LEGS
+
+After spot checking for initial alignment, Lin dives straight into tackling a project with a potential co-founder. “The first or second coffee chat may not tell you that much. But once you start doing some kind of project, you get so much more data on the person and their work style,” she says.
+
+“For me, this was the fun part. It’s about getting your hands dirty, digging into a space, figuring out the need, and seeing if a startup idea has potential,” says Lin. “It’s also an opportunity to uncover if you’re 
+
+actually
+
+ interested in a certain area. A few times I thought I was passionate about a certain industry, only to discover through hands-on projects that I actually didn’t enjoy it.”
+
+It’s not about tinkering aimlessly, though. Lin suggests timeboxing this exploratory period to about two weeks to maximize both learning fast and moving quickly. She’s also looked to other frameworks for guidance. “I was inspired by 
+
+Nat Turner’s approach to finding a startup idea
+
+,” says Lin. “He and his co-founder refined them so successfully — and quickly — that they were able to start a company in healthcare without domain expertise. I had their process in mind each time I was ideating.”
+
+Gloria Lin and her co-founder, Joel Poloney
+
+Here’s an overview of targeted tactics to use when exploring an idea with a potential co-founder, the very same ones Lin used to test six different startup ideas of her own:
+
+Explore consumer and enterprise startup ideas differently.
+
+When investigating a consumer play with a potential co-founder, Lin is a firm believer that you have to try to build something. “It doesn't mean that you have to build a full production-ready app. Figure out the cheapest possible thing, the crappiest MVP you can get out there within a week or two just to see how things go,” says Lin. “That could be a really janky prototype, a small Chrome extension, or a landing page. Anything where you can put it out into the world and see if there’s a response.”
+
+Contrast that with enterprise, which is more about customer discovery. “With enterprise, building often isn’t the hard part. It’s all about selling. You need a shortcut to figure out, ‘Am I making something people want?’ Do a bunch of interviews with experts or potential customers to find out. Customers will tell you what their problems are. If you listen very carefully, you might be able to figure out a jumping off point to build a company around.”
+
+When you’re exploring enterprise startup ideas, you have to get out and talk to customers. My co-founder and I got ideas from those conversations that I could have never come up with on my own in a million years.
+
+Here’s a sampling of the specific questions Lin and her potential co-founders asked in these customer calls:
+
+How do you currently manage this process?
+
+How big of a pain point is it for you, compared to other pain points you have?
+
+If you could wave a magic wand and have that problem go away, how would that affect your work or your customers?
+
+Use these clues to find out if you’re onto something.
+
+Of course, with time constraints and minimal resources, you can’t expect statistically significant insights from this discovery stage work. That said, there are indicators that you may be on the right track.
+
+“On the consumer side, a good signal is if some people tell you they want it, if you see others actually using it and maybe even actively badgering you for more. 
+
+Segment is a great example of this
+
+. They launched an open source analytics library with a landing page and it blew up on Hacker News,” says Lin. “With enterprise, it’s about looking for patterns. You need some minimum number of people in a segment saying, ‘Yes, I want this, I’d pay you for this and here’s how much I'd pay.”
+
+Get ready for the dropoff.
+
+“This ideation stage was where most of my ‘breakups’ happened,” says Lin. “It’s a good litmus test for whether the partnership can work. Obviously, a lot of ideas you generate together aren’t going to work out. With the right person, you can push through that, and move onto other areas and experiments. 
+
+But sometimes when ideas die on the vine, the partnership can lose steam
+
+. You start to question if this person is the right partner for you. Other times, a business idea had true potential, but we discovered that we had incompatible working styles.”
+
+In Lin’s experience, these break-up conversations can be handled several different ways. “I was ghosted once,” she laughs. “With others, we had in-person convos or phone calls. There are lots of ways people can decide not to work together, but for me personally, I most appreciated when there was a clear go or no-go date, and we had one or two direct conversations about the viability of us working together. Those are the relationships I feel better about today.”
+
+Have the courage to talk about these potential partnerships directly, especially when it's not a fit.
+
+STEP 4: BRING ON THE QUESTIONNAIRE
+
+Once you have a very basic sense of how prototyping is going, the next step is to tackle the finer points of what the co-founder relationship might look like. Enter 
+
+the co-founder questionnaire
+
+, the getting-to-know-you gauntlet that Lin throws down before seriously considering starting a company with someone.
+
+Here’s 
+
+the Google Doc version of the questionnaire
+
+ if you’d like to edit and add in questions of your own.
+
+Want to grab the list Lin used and go?
+
+Below you’ll find a handy template, designed to make it easy for you to quickly share with a fellow founder you’re considering teaming up with:Get Access
+
+As with most things in life, timing is everything. “Some folks are open books and they’ll do it immediately, but for others, getting into this stuff seems way too personal,” says Lin. “Out of the fellow founders I’ve known who’ve used the questionnaire, they’ve all brought it in at different times based on what they were looking for in a partner.”
+
+For example:
+
+If you’re looking for a co-founder and an idea in parallel
+
+, you might want to use the questionnaire before you get into prototyping. “One pair I know wanted to understand each other better before investing time in ideation and business development,” says Lin.
+
+If you’re searching for a business or technical counterpart
+
+ to help you execute on a game plan, you may want to use the questionnaire earlier in the process. “One founder I knew used it before his second coffee chat. That way you can quickly screen out people who won't be a fit, given the specificity of what you know you’re looking for,” says Lin.
+
+If you’re pairing up with someone you already know
+
+, there’s still tremendous value in running through the questions before taking the leap. “People can behave quite differently in different settings. Working at a company alongside someone is very different than co-founding a new startup together. Founder life can be much more stressful,” says Lin.
+
+Here’s Lin’s own take: “
+
+I did after we had a viable idea in sight. I’d pull the questionnaire out of the toolkit when you have an inkling that things might get serious.
+
+ Just like in dating, there’s an appropriate time to start tackling some tough questions: 
+
+Do you want kids? Could you see yourself getting married? What’s your approach to personal finances?
+
+ If you ask these on the first date, you might seem too intense. But if you date for years before ever bringing them up, that’s probably not ideal either. It’s about finding the approach that works for you and what you’re looking for in a co-founder.”
+
+Here, she gives a tactical overview of how the questions evolved and how co-founding pairs can put them to work:
+
+The making of the questions:
+
+This specific questionnaire for co-founders has been quietly making the rounds in certain entrepreneurial circles for some time. “It originated with 
+
+Paul Biggar
+
+. He forwarded me some questions he’d been asking of potential co-founders," says Lin. "I thought it was a really clarifying and helpful tool, so I baked it into my process going forward.”
+
+Lin then expanded on that question set to make it even more robust and pull out what she was interested in learning. “At one point, I turned it into the co-founder’s version of 
+
+The 36 Questions That Lead to Love
+
+, really leaning into the dating angle,” she laughs. “But 
+
+the Google Doc we have going now
+
+ has expanded and evolved significantly from that original set. It’s been fun to see others add to it over time, and I certainly can’t take most of the credit for it. 
+
+Evan Beard
+
+, 
+
+Nick Lane-Smith
+
+, 
+
+Chloe Sladden
+
+, 
+
+Ramesh Balakrishnan
+
+, and 
+
+Ellen Pao
+
+ in particular added so many great questions. And it will continue to evolve as entrepreneurs take the doc, and add or subtract questions as they figure out what works for them.”
+
+The selling points:
+
+Lin found the questionnaire to be a valuable tool as she was looking for a fellow company builder. But if you’re still not convinced that you should fold it into your own process, here’s a list of quick hits on why this set of questions is worth your while:
+
+It makes sure you’re aligned on values:
+
+ “There are lots of different, perfectly valid ways to build a company, but the co-founders need to be as aligned as possible. The questions surface the motivations and preferences that will factor in as you 
+
+come up with company values
+
+ and 
+
+try to scale culture when hiring
+
+,” says Lin. “You run into a lot of philosophical disagreements than can spiral into massive fallouts later on, so it’s good to find out before you’re in too deep.”
+
+It helps you flex the vulnerability muscle:
+
+ “In sharing your answers to the questions, you have a tool that allows you to say: ‘This is what I’m like at my best and my worst. This is how I react when I get stressed. Here’s how I can prevent burnout and achieve my ideal lifestyle. Here are my hopes and dreams,’” says Lin. “Opening up like that with someone you don’t know very well can be hard, but I’m convinced many co-founding pairs fall apart partially because they didn’t understand each other’s motivations and fears at a deep level. 
+
+Vulnerability is the key ingredient in any strong co-founder relationship
+
+, but it doesn’t come naturally — you have to work at it. And while it does take time, there are 
+
+ways to build trust quickly
+
+, and I’ve found this questionnaire to be one of them.”
+
+It highlights gaps on the founding team:
+
+ “Many of the questions center around your strengths and weaknesses, both professional and personal. I found that this process uncovered our weak spots as a collective. This can be useful for both hiring and for identifying your own areas of growth,” says Lin. “For Joel and I, we're building an enterprise startup, and like many founders, neither of us has first hand sales experience.”
+
+Advice before you dive in:
+
+Lin notes that while you can run through the questionnaire several different ways, there are some essential elements to keep in mind:
+
+Custom-tailor your own test.
+
+ “The questionnaire process is very flexible,” says Lin. “Pick your own order with your potential co-founder to ease into the more intense questions. Pare it down for a lightweight version at co-founder speed dating events. Add more questions of your own to target what you’re uniquely looking for.”
+
+Keep your eyes on your own paper.
+
+ “In my experience, filling it out for the first time usually takes about two to three hours if you’re being thoughtful. It’s important to do it independently as opposed to running through them together live. Don’t get stuck in groupthink — you need to surface true differences,” says Lin.
+
+Reconvene to go over your respective answers.
+
+ “You could just share your answers over email, but I think you’d miss some context and nuance. If you discuss the answers in person, that can take at least six to 10 hours. I’d never recommend going over all the answers in one marathon session — that's too intense,” says Lin. “Since the questions are already broken up into sections, we typically covered a section or two in one sitting, with about three to five sessions total to go over everything. You could spend a few days on this part. One founder estimated that she spent at least 60 hours on it over a four week period.”
+
+The non-negotiables:
+
+A natural question comes up as founding pairs run through the questionnaire: How much alignment do you need in your answers? “Do you have to be 100% aligned on everything or is 75% okay? At the end of the day you need to rely on your experience and your intuition,” says Lin, “Make a checklist of your non-negotiables, but keep it small — don’t have more than three.”
+
+When it comes to finding alignment with a potential co-founder, your list of non-negotiables better be really small — otherwise it doesn’t mean much.
+
+When you decide to build a company with someone, you’re giving up total control — it won’t be done exactly the way you would have if you were on your own. “
+
+You need to figure out the difference between the compromises that will keep you up at night and the areas where you can stretch to accommodate a different perspective
+
+,” says Lin.
+
+When identifying potential spots for compromise, she’s found it helpful to 
+
+think about it in terms of table-stakes, must-haves, and flex areas
+
+:
+
+Table-stakes:
+
+ “These are the givens, the absolute basics. As a product leader, I had to have someone with a technical background to build the thing. Otherwise it wouldn’t be a very good tech company. So the technical folks who had ambitions to step out of the codebase and pivot into the business side of things weren’t as good of a fit for me,” says Lin.
+
+Must-haves:
+
+ “I had two: One was personal maturity. The second litmus test I always had in the back of my mind was: 
+
+When I'm not in the room am I going to agree with their judgment calls?
+
+ Would I trust this person in their hiring and firing decisions? Could this person oversee an important function for the company, whether it's lawyers or finances? I wanted to be able to fully hand off an aspect of the company to someone and depend on their judgment,” she says.
+
+Flex areas:
+
+ “For example, some folks aren’t natural-born communicators. Or perhaps you’re looking for a technical co-founder to help build and recruit, but they don’t have a ton of experience as a manager,” says Lin. “These factors might give you pause, but they don’t have to be deal-breakers. If they exhibit humility, a willingness to learn and self-awareness around these areas of growth, you can still make a great team.”
+
+The deep-dive into the questions:
+
+Lin shared her co-founder questionnaire with the Review in full so others could get a clear sense of the template and level of granularity that’s worked for her and others in the co-founder search. As it stands, the questionnaire contains 50 questions, too many to cover in full here.
+
+We’ve thus separated her guide into sections and highlighted a handful of standout questions, after which we’ve included her commentary on why they matter and what to look for:
+
+Part 0. How You Operate
+
+“Part 0 is mostly in the terrain of behavioral interviews. You’re looking to learn more about the person’s values, how they work, where they spike, and their shortcomings. How would they be an asset to your team and where would you have to help them out? How self-aware do they seem? How vulnerable do they get?” says Lin.
+
+Highlighted question with Gloria’s commentary:
+
+What’s the worst interpersonal conflict you’ve dealt with? How did you handle it?
+
+ “I think this question is particularly important to look out for. I want to have the tools I need to navigate inevitable conflicts successfully with my co-founder,” says Lin.
+
+How many hours/week are you willing to work? What sounds ideal and what sounds like hell?
+
+ “If one person says ‘I really love grinding out, I thrived with investment banking hours,’ and the other person says, ‘I work very hard, but I’m not going to exceed 50 hours a week,’ that clearly sets you up for a collision,” says Lin. “This is also important because it impacts the tone you set for the rest of the company.”
+
+Part I. Roles
+
+Highlighted questions with Gloria’s commentary:
+
+How do you see your role changing after we reach product/market fit? What about once we start to scale?
+
+ “It’s important to break out how your role as co-founder will change, especially when you have multiple co-founders,” says Lin. “What you take on 
+
+before you hit product/market fit
+
+ versus afterwards can change pretty drastically and you need to temper expectations. You might start off leading sales but then quickly have to 
+
+give away your Legos
+
+ to someone else — I was looking for people who were very comfortable with that.”
+
+Areas of Responsibility Exercise
+
+: “I found this exercise to be so useful. There are a lot of areas that neither of you have experience in, so adding the dimension of who has high passion for it can be really helpful,” says Lin. Here’s how it works: Rank yourself in the areas below (both as an individual contributor and as a leader) on a scale of 1-10. Then rate your passion in each of the areas on a scale of none to high (e.g. “I'm an 8 in sales, but hate it now”). Cluster AORs based on rank and discuss how they could be assigned to individuals. (E.g. John is a 10 in product, so he gets that AOR). Break ties using the passion rating. (E.g. Nick is a 7 in sales with medium passion and Gloria is a 7 in Sales with high passion, so Gloria will take on sales). Do these clusters align with everyone’s expectations, skills, and desires? Do we all agree on the areas of responsibility for the CEO, CTO, and COO?
+
+Part II. Corporate Structure and Funding
+
+“The bigger points of division in this section have typically been around fundraising, exits, and equity, all of the stuff that can turn into boardroom battles,” says Lin. “My goal is always to at least talk about governance and logistics at a high-level. Most co-founders aren’t lawyers and haven't thought through the nuts and bolts of corporate structure. You don’t have to have perfect answers here, but make sure you think about it proactively and discuss it intentionally — too often it’s something that evolves haphazardly, which is a recipe for hurt feelings later on.”
+
+Highlighted questions with Gloria’s commentary:
+
+How much money should we raise?
+
+ 
+
+In the range of “bootstrapped small business” to “go big or go home,” where do you want this startup to go?
+
+ “This can be a huge sticking point. People often disagree about how big they want the company to get, or how quickly they want to burn. You could want to ‘go big or go home,’ take VC dollars but grow more sustainably, or be bootstrapped and very frugal,” says Lin. “This is important when you’re strategizing about follow-on funding.”
+
+How should founder equity be set? What’s your philosophy on the employee equity pool?
+
+ “Equity always ends up being a natural friction point. It’s about power, sharing it, and the sort of team you hope to build with your co-founder. I intentionally looked for 
+
+equal or nearly equal partnership setups
+
+, but I’ve heard other founders say they were advised 
+
+not
+
+ to seek out an equal partnership,” says Lin. “Sometimes a highly unequal arrangement makes sense when there’s a mismatch in experience between the co-founders.”
+
+What do we do if we find product/market fit, yet none of the founders are excited about that product?
+
+ “This happened to a founder I know,” says Lin. “They ended up selling the company after the company found product/market fit because it didn’t spark joy. It may seem like an edge case, but I think this one is important because it speaks to what you value and the importance of passion.”
+
+Part III. Personal Motivation
+
+Highlighted questions with Gloria’s commentary:
+
+Why do you want to start a company — in general, and in particular right now?
+
+ “Here was my answer: I'm a product person. I love to see things out in the world, to think about futures that are about five to ten years away from mass adoption and work to bring them closer to our reach,” says Lin.
+
+What makes you gritty?
+
+ “This is one of my favorites. It can be tough to answer, but you're looking for examples and stories, and the thinking behind them,” says Lin. “For example, I talk about two of my traits and provide stories to back them up. I’m very strategic about which opportunities I go after, but I’m relentless once I decide to pursue them. And there are a few areas where I'm stubborn as a mule.”
+
+Part V. Team Culture
+
+Highlighted questions with Gloria’s commentary:
+
+How important is diversity & inclusion? 
+
+Concretely
+
+, how would you put that into action?
+
+ “You could tell who had concrete ideas about how to create a diverse and inclusive environment and who said they cared but hadn't put in as much thought yet. The ones with more tangible suggestions obviously signaled they took it more seriously,” says Lin.
+
+Part VI. Co-Founder Relationship
+
+Highlighted questions with Gloria’s commentary:
+
+In case this becomes part of our partnership’s evolution, how would you go about handling a startup divorce? How would you think about bringing on a third (or N+1) cofounder?
+
+ “There's no right answer to either of these questions, but I looked for maturity in thinking about how to handle these thorny issues,” says Lin.
+
+STEP 5: COMMIT AND STAY THE COURSE
+
+The last and final stop on the co-founder search journey is deciding to make it official. “There’s a bit of an optimal stopping problem here. Are you committing too soon? Will someone better come along? 
+
+There’s a math-based rule of thumb for real-life dating
+
+, but it doesn’t map so cleanly onto selecting a co-founder,” says Lin. “When it comes to founding a company, your personal runway is the stopping point. I’ve seen friends say ‘This is the last person I co-founder date with before I have to go find a job.’”
+
+But those considerations aside, it can be hard to know when to pull the trigger, especially early on in your process. “For those like me who are very hungry for information, you have a temptation to try and get even 
+
+more
+
+ data. But you reach a point when there’s nothing more to collect — you have to take a leap of faith.”
+
+In Lin’s experience, she knew she’d found “the one” after comparing notes on the co-founder questionnaire. “Joel and I wrote all of our answers in our notebook separately and then came back to compare — and 95% of our answers were the same,” she says. “Of course, this was after we spent four months working together. We’d already uncovered a really interesting market opportunity. All of this put together made me feel ready to dive in.”
+
+Now in the thick of their company-building journey, Lin and her co-founder are focused on getting their idea off the ground. But they still plan on making the co-founder relationship a true priority. “If you spend so much time making this monumental decision, then you need to put work into your relationship over time. It’s easy to get caught up in the stress of startup life and de-prioritize it, but just because you were on the same page at the outset doesn’t mean you will continue to be without intentional effort,” says Lin.
+
+“I’m sure our relationship will be seriously tested as we walk further down the company building path together. But I think you know that you have something special on your hands when you have an easy chemistry and you’re both willing to put in the commitment required for the long haul. It might take you quite a bit of time to find the right co-founder, but when you find that person, you’ll be glad that you waited. After all, the real work is just beginning.”
+
+Photography by 
+
+Bonnie Rae Mills
+
+.

@@ -19,6 +19,30 @@ from rag.embeddings import embed_texts
 from knowledge_base.chunker import ChunkRecord, chunk_all
 
 
+import hashlib
+import json
+
+CACHE_FILE = os.path.join(os.path.dirname(__file__), "embeddings_cache.json")
+
+
+def load_cache() -> dict[str, list[float]]:
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+
+def save_cache(cache: dict[str, list[float]]):
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f)
+    except Exception as e:
+        print(f"Warning: could not save cache: {e}")
+
+
 def ingest_chunks(chunks: list[ChunkRecord], persist_dir: str):
     """
     Embed all chunks and store in ChromaDB.
@@ -28,7 +52,43 @@ def ingest_chunks(chunks: list[ChunkRecord], persist_dir: str):
     """
     print("Will generate embeddings using Gemini API (gemini-embedding-2)...")
 
-    print(f"Initializing ChromaDB at: {persist_dir}")
+    cache = load_cache()
+    print(f"Loaded {len(cache)} existing cached embeddings.")
+
+    # Determine which texts need embedding
+    needed_hashes = []
+    needed_texts = []
+    
+    for c in chunks:
+        h = hashlib.sha256(c.text.encode("utf-8")).hexdigest()
+        if h not in cache:
+            if h not in needed_hashes:
+                needed_hashes.append(h)
+                needed_texts.append(c.text)
+
+    if needed_texts:
+        print(f"Embedding {len(needed_texts)} new texts using Gemini API (batch size 32)...")
+        # Embed in batches to save progress progressively
+        batch_size = 32
+        for start in range(0, len(needed_texts), batch_size):
+            end = min(start + batch_size, len(needed_texts))
+            sub_batch_texts = needed_texts[start:end]
+            sub_batch_hashes = needed_hashes[start:end]
+            print(f"  Embedding batch {start//batch_size + 1}/{(len(needed_texts)-1)//batch_size + 1} ({len(sub_batch_texts)} texts)...")
+            sub_embeddings = embed_texts(sub_batch_texts)
+            for h, emb in zip(sub_batch_hashes, sub_embeddings):
+                cache[h] = emb
+            save_cache(cache)
+        print("All new embeddings successfully computed and cached!")
+    else:
+        print("All chunk embeddings already present in cache!")
+
+    embeddings = []
+    for c in chunks:
+        h = hashlib.sha256(c.text.encode("utf-8")).hexdigest()
+        embeddings.append(cache[h])
+
+    print(f"\nInitializing ChromaDB at: {persist_dir}")
     client = chromadb.PersistentClient(path=persist_dir)
 
     # Delete existing collection for clean state
@@ -42,11 +102,6 @@ def ingest_chunks(chunks: list[ChunkRecord], persist_dir: str):
         name="startup_frameworks",
         metadata={"hnsw:space": "cosine"},
     )
-
-    # Generate embeddings
-    print(f"Embedding {len(chunks)} chunks using Gemini API...")
-    texts = [c.text for c in chunks]
-    embeddings = embed_texts(texts)
 
     # Build IDs, documents, embeddings, and metadatas
     ids = []

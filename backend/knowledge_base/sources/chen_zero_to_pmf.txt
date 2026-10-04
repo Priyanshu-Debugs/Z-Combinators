@@ -1,0 +1,507 @@
+# Zero to Product/Market Fit
+# Author: Andrew Chen (a16z)
+# Source: https://andrewchen.com/zero-to-productmarket-fit-presentation/
+
+Zero to Product/Market Fit (Presentation) at andrewchen
+
+ 
+
+Andrew Chen Archives
+
+Subscribe
+
+ · 
+
+Featured
+
+ ·
+
+Recent
+
+ ·
+
+The Cold Start Problem 📘
+
+Dear readers,
+I have moved to Substack and I will be writing here from now on:
+
+ 👉 
+
+andrewchen.substack.com
+
+In the meantime, I will leave andrewchen.com up for posterity. Enjoy!
+ 
+
+Zero to Product/Market Fit (Presentation)
+
+Readers,
+
+Starting from a blank canvas is the absolute hardest thing to do. It’s insanely hard. And yet the brave entrepreneurs in the tech industry do it, time and time again, and every year, a few are successful. It’s an awesome thing when it works though.
+
+Anyone who’s working on a new product has question: How do you get to product/market fit? If you’ve been wandering the desert and you can’t retain your users, is there anything you can do about that? Is there a way to add structure to something that seems awfully random? How do you even know you’re there?
+
+Below is a short and sweet deck that I created and presented a few years back to Stanford students. It’s focused on a simple idea: The path from zero to product/market fit can be a straight line, or windy, depending on what kind of idea you choose. I present the tradeoffs involved in creating a product that’s a bit more incremental, versus something that’s more breakthrough.
+
+Although this deck is mostly focused on consumer and consumery enterprise products, it’s also fairly general, drawing ideas from the book Blue Ocean Strategy and others.
+
+Hope you enjoy!
+
+Andrew
+
+San Francisco, CA
+
+📥 Get this deck as a PDF, plus new updates and essays in the future:
+
+Leave this field empty if you're human: 
+
+Above: It’s difficult to product/market fit, but today we’ll talk about some of the tradeoffs you can make for it to be easier!
+
+Traction is everything – it’s what investors ask for. It’s what prospective employees and your team is looking for. But getting traction is really a reflection of your product “working” – where users are engaged and retaining, and there’s some organic acquisition. Product/market fit is when people who know they want your product are happy with what you’re offering – 
+
+more on the topic here at the a16z blog
+
+.
+
+Above: Important, once you get to product/market fit, you can shift your focus from the initial product to distribution and win the market. It’s important to do it in this order! In the haste to get to market, there are teams that start spending too much time on partnerships, paid marketing, etc. – all in preparation for a big launch. But the problem is that if you have a leaky bucket, then all those users at the top of the funnel won’t help.
+
+Above: So what does product/market fit look like from a metrics standpoint? Really the best metric to think about is probably retention, which you’d analyze using cohorts. That means it’s sticking, and you need to figure out acquisition. Once it’s all figured out though, then you get the hockey stick. That’s what we’re all looking for, right?
+
+Hitting the inflection point means that you can focus on scaling growth. The activities here are many of the things that I write about – funnel optimization, new user activation, creating notifications and email drip campaigns, etc., etc.
+
+But it’s important to think of these are distinct activities.
+
+If your product isn’t working, you won’t solve that by doing growth activities.
+
+There’s a certain lightning-in-a-bottle aspect to building new consumer companies for that reason.
+
+This is why 20-something year olds often build awesome new companies in Silicon Valley- they make lots of stuff, hit product/market fit, and the capital/talent in the Bay Area comes to help them scale
+
+Entrepreneurs who are young are less encumbered by the notion of “this is how things have always been done” or “this kind of thing has never worked.” They can try, fail, iterate, and make their way towards something pretty new.
+
+Above: Here are some specific ways that I might quickly judge if a consumer product has p/m fit.
+
+You want to see DAU/MAU at >25%. A world-class leading DAU/MAU would be over 50%.
+
+There’s a certain minimum for organic acquisition. You want to see hundreds if not thousands of signups per day, and a D1 of at least 30%. >70% would be world-class there.
+
+And ultimately there’s some scale to show it works – probably 100,000 DAU.
+
+For a SaaS product, you’d like at other metrics that might focus on monetization rather than engagement. Although some products can be evaluated using both sets of metrics.
+
+Above: If you think you have that, send me an email :)
+
+If you compare the metrics above, most startups don’t have product/market fit. It’s usually not working.
+
+So what do you do?
+
+ 
+
+Above: These days, most startups fail because of lack of P/M fit, not technology risk. So if there’s one thing that will kill you, it’ll be the product never quite working, and thus, all the subsequent problems that come with that: Lack of investor interest, employees leaving, cofounder fighting, etc. It’s a stressful time when it’s not working
+
+I find that product/market fit is usually reached either right away, or you have to be incredibly thoughtful about your iterations if you’re almost there but not quite.
+
+So how do you get there?
+
+Above: I want to present to you one framework to think about this, and what kinds of tradeoffs you can make.
+
+Above: Here’s a coffee cup. Product/market fit is actually easy to get, for a coffee cup. It has to hold coffee. That’s about it. There’s not too many variables in designing a cup, and so there’s not a lot to mess up.
+
+Above: Contrast that to a digital product, where there are a million variables. It’s so much more complex than a coffee cup! It’s easy to mess something up.
+
+(The above is a Facebook experimental project, called Paper, that never quite worked out)
+
+It’s easy to mess up because the software medium is so rich. You can build or create anything, and you often end up with something that users can’t quite understand. Worst yet, once it’s not working, adding features won’t help! Sometimes the foundation is just not strong.
+
+Keep these examples in your head, as two extremes on a spectrum. The coffee cup. The messy random digital product.
+
+Above: The more I’ve thought about this problem, the more I’ve come to realize there’s really a spectrum between new versus pre-existing product categories.
+
+The new product category carries a lot more risk, which we’ll discuss.
+
+The pre-existing category carries less risk, but you face more competition, more expectations, etc.
+
+What you want is a point in between those two extremes.
+
+First, over time I’ve come to believe that you actually do want your product to be in a pre-existing product category. Google was not the first search engine, Facebook was not the first social network, and Microsoft was not the first OS.
+
+However, those companies came to dominate those markets because they came in early, when the dynamics were still developing. And the markets grew and grew. But it was also clear what they offered, how they developed something killer.
+
+Above: I want to be more precise than to say that the market must be big – more specifically than that, there must be a large number of users who are pulling on this category in the market. By pulling, I mean folks are actively searching for the product. You can see it in Google Trends. They are clicking on links that mention products in the category. There’s already spend.
+
+Let’s contrast this to the big fake market sizes that entrepreneurs often trick themselves into. Yes there are a lot of college students, and maybe that’s your target market. But how many of them actually want this? Already own a precursor version of your product, or are googling or searching or talking about the category? That’s the real assessment of demand.
+
+Above: Related to the above point, the best markets already have competitors. And maybe they are pretty decent. It’s a good sign when folks can make a decent living building products in the space, but you just have to find a wedge to get in. Or maybe you have a clear thesis on why and how the market will get a lot bigger quickly.
+
+The best case is where the market is large, but fragmented – perhaps because the competitors are not that competent or there’s something structural, like regulatory issues, that keep things small.
+
+Above: If you are in a pre-existing market with competitors and pre-existing demand, then you need a wedge. You need to analyze the market, understand the segments, and figure out how to break in.
+
+My favorite book on this topic is Different: Escaping the Competitive Herd. Worth reading.
+
+Above: There’s a huge advantage to building for yourself because the intuitive advantage it gives you in iterating quickly is fantastic. This isn’t always possible, but it can be a good thing.
+
+Just as we discussed with the coffee cup, one way to get to product/market fit quickly is to just copy something.
+
+There are a ton of problems with this strategy though – if you’re the second player with the same product, you’ll always remain the second player. Your team will hate this strategy. Investors won’t get it.
+
+Sometimes the market is big enough to make this work, but it’s not often.
+
+Above: The better approach is to do a twist. On the spectrum of pre-existing market to new market, pick a point in the middle. Build something that consumers fundamentally understand, but with a clear innovation that you can market around.
+
+A lot of getting to product/market fit is being thoughtful about the category, the axis of differentiation, etc.
+
+I want to run through some common mistakes that people make.
+
+Above: We love these “X for Y” type companies. And it can be a way to generate cool ideas, but it doesn’t say much about the underlying market size and existence of pull in the market.
+
+For instance, “Pinterest for dogs” and “Pinterest for businesses” are both X for Y ideas, but only dogs are a segment of Pinterest. A business-targeted product is more a description of the mechanics of the product, not a smaller set of the broader Pinterest market. And as we mentioned, identifying a wedge in a pre-existing market is key.
+
+📥 Get this deck as a PDF, plus new updates and essays in the future:
+
+Leave this field empty if you're human: 
+
+As a result, you can think about existing versus new markets using The Substitution Test. If I use this new product you’re building, does it take away engagement or $ from something else. If so, then it’s truly a segment and a heads-on competitor. It’s counter-intuitive but I consider that a good thing, because they you are truly competing in a pre-existing framework- you just need the right functionality to win.
+
+Above: Every existing market has a baseline of product quality, functionality, etc. We’d all love to build the minimum viable product, but sometimes it doesn’t work because the category has evolved sufficiently that you need more than the bare bones.
+
+Sometimes people love a certain kind of tech. Today it might be crypto, tomorrow it might be something else. And they are looking for some kind of product and category to apply to, rather than fundamentally solving peoples’ core needs. It’s an easy mistake to make for technologists.
+
+As you know, I hate new consumer behavior :) Sometimes this can work but it’s rare. At the very least, products have to tap into the same fundamental human motivations that have driven us for 100,000s of years.
+
+Above: This is a San Francisco thing, but entrepreneurs are often building things that sound cool only to each other. No one else cares, but it’s fun and captures some tech trend that’s confined to the SOMA bubble. I call this “art for artists”
+
+Above: This is common. You can execute everything correctly – iterate quickly, great tech, hire well, etc. – but ultimately still take huge risks on your product and market in such a way to not actually be successful.
+
+Above: So let’s say you get something that has P/M fit, and it starts to take off! It’s a good problem to have. So what do you do?
+
+Above: Luckily, you can summon the power of the Bay Area to help you solve this.
+
+There’s a large body of work and experts on scaling companies. You can raise money, hire operators who’ve scaled, and you’re on your way.
+
+I don’t mean to downplay this, except to say that the zero to product/market fit part is so hard that this next stage will be much easier than the first. Ultimately, there’s a few growth channels that work, and it’s much more of an optimization problem.
+
+Above: For the paid ads channel, you’re ultimately looking at it as a LTV versus CAC problem. With some blended/organic traction too.
+
+The ecommerce companies, OTAs, and marketplaces often grow like this.
+
+Or you want to build a viral loop – if your product is social or collaborative in nature – and you can optimize for invites or content sharing or some other loop. This is a deep topic that could be a multi-part series of its own things.
+
+This channel is used by the social networks, video sharing products, but also even productivity/collaboration products in the workplace.
+
+If your growth loop involves a lot of user-generated content, then you can build on Google. For products that are really about reviews on local businesses, companies/products, or even real estate, we see them use this loop.
+
+Above: If you’re at product/market fit, I want to hear from you! Send me a note anytime. Thank you :) (For future reference, 
+
+you can also download the PDF here
+
+).
+
+PS. Get new updates/analysis on tech and startups
+
+I write a high-quality, weekly newsletter covering what's happening in Silicon Valley, focused on startups, marketing, and mobile.
+
+Leave this field empty if you're human: 
+
+Views expressed in “content” (including posts, podcasts, videos) linked on this website or posted in social media and other platforms (collectively, “content distribution outlets”) are my own and are not the views of AH Capital Management, L.L.C. (“a16z”) or its respective affiliates. AH Capital Management is an investment adviser registered with the Securities and Exchange Commission. Registration as an investment adviser does not imply any special skill or training. The posts are not directed to any investors or potential investors, and do not constitute an offer to sell -- or a solicitation of an offer to buy -- any securities, and may not be used or relied upon in evaluating the merits of any investment.
+
+The content should not be construed as or relied upon in any manner as investment, legal, tax, or other advice. You should consult your own advisers as to legal, business, tax, and other related matters concerning any investment. Any projections, estimates, forecasts, targets, prospects and/or opinions expressed in these materials are subject to change without notice and may differ or be contrary to opinions expressed by others. Any charts provided here are for informational purposes only, and should not be relied upon when making any investment decision. Certain information contained in here has been obtained from third-party sources. While taken from sources believed to be reliable, I have not independently verified such information and makes no representations about the enduring accuracy of the information or its appropriateness for a given situation. The content speaks only as of the date indicated. 
+
+Under no circumstances should any posts or other information provided on this website -- or on associated content distribution outlets -- be construed as an offer soliciting the purchase or sale of any security or interest in any pooled investment vehicle sponsored, discussed, or mentioned by a16z personnel. Nor should it be construed as an offer to provide investment advisory services; an offer to invest in an a16z-managed pooled investment vehicle will be made separately and only by means of the confidential offering documents of the specific pooled investment vehicles -- which should be read in their entirety, and only to those who, among other requirements, meet certain qualifications under federal securities laws. Such investors, defined as accredited investors and qualified purchasers, are generally deemed capable of evaluating the merits and risks of prospective investments and financial matters. There can be no assurances that a16z’s investment objectives will be achieved or investment strategies will be successful. Any investment in a vehicle managed by a16z involves a high degree of risk including the risk that the entire amount invested is lost. Any investments or portfolio companies mentioned, referred to, or described are not representative of all investments in vehicles managed by a16z and there can be no assurance that the investments will be profitable or that other investments made in the future will have similar characteristics or results. A list of investments made by funds managed by a16z is available at https://a16z.com/investments/.
+ 
+ Excluded from this list are investments for which the issuer has not provided permission for a16z to disclose publicly as well as unannounced investments in publicly traded digital assets. Past results of Andreessen Horowitz’s investments, pooled investment vehicles, or investment strategies are not necessarily indicative of future results. Please see 
+
+https://a16z.com/disclosures
+
+ for additional important information.
+
+Pages
+
+About
+
+Downloads
+
+Essays on network effects, growth hacking, gaming, and consumer startups
+
+Featured Essays
+
+Get updates
+
+Recent
+
+Sitemap
+
+Search
+
+search site archives
+
+Blogroll
+
+Archives
+
+February 2024
+
+January 2024
+
+September 2023
+
+August 2023
+
+August 2022
+
+July 2022
+
+December 2021
+
+November 2021
+
+September 2021
+
+August 2021
+
+February 2021
+
+July 2020
+
+January 2020
+
+November 2019
+
+July 2019
+
+June 2019
+
+May 2019
+
+March 2019
+
+December 2018
+
+November 2018
+
+September 2018
+
+August 2018
+
+July 2018
+
+June 2018
+
+May 2018
+
+February 2018
+
+January 2018
+
+December 2017
+
+October 2017
+
+July 2017
+
+June 2017
+
+January 2017
+
+December 2016
+
+October 2016
+
+May 2016
+
+March 2016
+
+February 2016
+
+January 2016
+
+August 2015
+
+June 2015
+
+May 2015
+
+April 2015
+
+March 2015
+
+February 2015
+
+January 2015
+
+November 2014
+
+October 2014
+
+September 2014
+
+August 2014
+
+July 2014
+
+June 2014
+
+May 2014
+
+March 2014
+
+February 2014
+
+January 2014
+
+November 2013
+
+October 2013
+
+September 2013
+
+August 2013
+
+July 2013
+
+June 2013
+
+May 2013
+
+April 2013
+
+March 2013
+
+February 2013
+
+January 2013
+
+December 2012
+
+November 2012
+
+October 2012
+
+September 2012
+
+August 2012
+
+July 2012
+
+June 2012
+
+May 2012
+
+April 2012
+
+March 2012
+
+October 2011
+
+August 2011
+
+July 2011
+
+June 2011
+
+May 2011
+
+March 2011
+
+February 2011
+
+January 2011
+
+April 2010
+
+January 2010
+
+December 2009
+
+November 2009
+
+October 2009
+
+September 2009
+
+August 2009
+
+July 2009
+
+June 2009
+
+May 2009
+
+April 2009
+
+March 2009
+
+February 2009
+
+January 2009
+
+December 2008
+
+November 2008
+
+October 2008
+
+September 2008
+
+August 2008
+
+July 2008
+
+June 2008
+
+May 2008
+
+April 2008
+
+March 2008
+
+February 2008
+
+January 2008
+
+December 2007
+
+November 2007
+
+October 2007
+
+September 2007
+
+August 2007
+
+July 2007
+
+June 2007
+
+May 2007
+
+April 2007
+
+March 2007
+
+February 2007
+
+January 2007
+
+December 2006
+
+November 2006
+
+October 2006
+
+September 2006
+
+Categories
+
+Uncategorized
+
+Meta
+
+Log in
+
+Site Feed
+
+Comments Feed
+
+Back to top
+
+Sitemap

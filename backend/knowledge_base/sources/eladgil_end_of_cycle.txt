@@ -1,0 +1,59 @@
+# End of Cycle?
+# Author: Elad Gil
+# Source: https://blog.eladgil.com/p/end-of-cycle
+
+One sign that technology markets often exhibit at the tail end of a cycle is a fast diversification of the types of startups getting funded. For example, following the core internet boom of the late 90s (Google, Yahoo!, eBay, PayPal), in early 2000 and 2001 there was a sudden diversification and investment into P2P and mobile (before mobile was ready) and then in 2002-2003 people started looking at CleanTech, Nanotech etc - industries that obviously all eventually failed from an entrepreneurial and investment return perspective.
+
+It turned out the real wave was just around the corner with the rise of social products (LinkedIn, Facebook, Twitter, Instagram, Whatsapp, Pinterest) and consumer enabled marketplaces (aka sharing economy - e.g. AirBnB, Uber, Lyft). The heavy investments in cleantech and other areas was a sign that one economic cycle had ended and there was a gap in identifying the next one.
+
+Similarly, today we are seeing a shift to a boom in the variety and type of companies being funded as tech investors pursue other areas that I would characterize as "software aware" versus "software driven"[0]. There are two ways to interpret this trend[1]:
+
+1. There are lots of industries suddenly available for transformation.
+
+While I think the range of markets about to be transformed by software is large, the interpretation of what is truly a tech business is being misapplied. Software, the Internet, and AI are transforming a variety of industries on an ongoing basis and I am a huge fan of 
+
+software is eating the world
+
+ 
+
+pmarca
+
+ statement. However, people are starting to apply software valuations to low gross margin, physical good businesses that are not software businesses. In other words, lots of tech investors are now investing in areas they do not understand, at valuation multiples that do not make sense for these alternate businesses. This is similar to the 2001-2003 bad period of cleantech and nanotech.
+
+2. We are at the end of an economic cycle for tech, and tech investors are desperate for the next new thing.
+
+It is always hard to call the end of an economic or innovation cycle[2]. Technology-driven shifts will continue to be incredibly resilient and transformative. However, the rate of creation of truly fundamental massive businesses accelerated for a few years, and may decelerate for a few years before the next wave hits. During this period of deceleration, entrepreneurs and investors will go into a search pattern to try to find the next wave.
+
+The reasons people shift startup founding and investing patterns at the end of the cycle include:
+
+Everyone is searching for the next thing.
+
+The period of 2004 to the 20-teens will be viewed as the era of network driven business, developer & B2B SaaS infrastructure, and the lean startup. This rich vein of innovation is not over, but appears to be slowing. As this happens, entrepreneurs and VCs go into search mode, trying to seek out other markets that have not been mined as deeply. This explosion in startup investment diversity by technology investors in my opinion is a sign of weakness versus strength in the entrepreneurial ecosystem. Tech investors are investing in food, hardware, traditional biotech, oil and gas, and other industries they know nothing about. Is this a sign of software transforming these areas, or unstated (and perhaps, not even self-aware) desperation?
+
+Investors have fewer great organic opportunities and shift from reactive to thesis driven. Further, past success investing in one area gives false confidence to invest in unrelated areas.
+
+Investors tend to get confident about success irrespective of whether the success was deserved or merely being at the right place at the right time. If you are an investor in great companies like Uber or AirBnB you may start to believe you are smarter then you are about non-tech driven areas and begin to invest more broadly than you should.
+
+The warning sign is often when a large portion of venture firms shift from entrepreneur-driven to thesis-driven. There are a handful of venture firms that are always thesis-driven, for example Union Square investing in network driven businesses. However, most venture firms are admittedly reactive - they do not have a specific theme they are driving themselves, but rather respond to where the best entrepreneurs are creating the most high growth, high margin, companies fastest.
+
+When lots of VC firms shift into a thesis driven mode, it is usually a sign that organic entrepreneurial activity is no longer sufficient to drive that firms investments. As a result, lots of capital gets invested in areas that do not merit the investment, there is a flurry of activity that looks important (Cleantech), but ultimately this activity does not yield great returns. Typically these areas are ones where the investors lack real expertise.
+
+People move from bits to atoms without realizing the change in underlying fundamentals.
+
+Many tech investors are shifting from investing in bits-driven business (software) into atoms driven businesses (anything you need to manufacture). I know tech investors now looking heavily at food, traditional biotech, hardware, pre-fabricated housing, and numerous other areas. These businesses all have fundamentally different development and ship cycles, distribution models, and margin structures than software. However, investors are applying tech multiples expectations to these radically different types of businesses. This is unlikely to end well.
+
+I think it is important on an ongoing basis to ask "how important is software to this business" and "why now?". Software is truly eating the world, but you need what is fundamentally a software business in these traditional industries to make a real difference. Too many people are saying "oh this biotech is using algorithms so it is a tech company" even though it is really still a drug company with all the standard drug business timelines and fundamentals. They are merely using software for one part of their approach, but it is not a software driven business.
+
+Another way to put it - is software truly transformative/the basis for competition for the startup? If so, you may end up with a tech model of innovation and disruption which is great. If you are merely using software but the business fundamentals have not shifted - than the startup is probably not that differentiated and will not merit tech multiples. A software-enabled, network connected, crowd funded, smart toaster is, when all is said and done, still just a toaster.
+
+There are still lots of strong opportunities today. 
+
+I am a huge optimist about the future of technology and its ability to transform large markets. There is still a lot of transformation happening in the world due to software driven businesses. Self driving vehicles, AI, the ongoing FinTech transformation, and digital health are all examples of rich entrepreneurial veins. Similarly, there are still a few great network driven businesses to be founded and funded. However, we are seeing an explosion in a lot of other businesses areas concurrently with tech VCs investing in areas they know nothing about. I believe this to be a sign that we are entering a period where everyone is looking for the next truly deep vein to explore. It may already be here - just as social products co-existing with cleantech and nanotech - but my sense is the tech community is in a period of searching for the next big thing.
+
+Notes
+
+[0] By "software aware" I mean some software is used by the startup. However, the true basis for value for the startup has little to do with software despite claims by the founders. At least one prominent food tech company is like this. E.g. a food company masquerading as a tech company.
+
+[1] Obviously there are many more ways to interpret this. But here are the two that stand out most to me.
+
+[2] Maybe calling the end of a cycle is overly dramatic. Rather, we are likely to see a slow down in the rate at which huge companies in one market segment are funded and a gap in activity as the next trend is identified and accelerated.

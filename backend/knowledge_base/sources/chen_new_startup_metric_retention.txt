@@ -1,0 +1,561 @@
+# New Data Shows Why Losing 80% of Your Mobile Users is Normal
+# Author: Andrew Chen (a16z)
+# Source: https://andrewchen.com/new-data-shows-why-losing-80-of-your-mobile-users-is-normal-and-that-the-best-apps-do-much-better/
+
+New data shows losing 80% of mobile users is normal, and why the best apps do better at andrewchen
+
+ 
+
+Andrew Chen Archives
+
+Subscribe
+
+ · 
+
+Featured
+
+ ·
+
+Recent
+
+ ·
+
+The Cold Start Problem 📘
+
+Dear readers,
+I have moved to Substack and I will be writing here from now on:
+
+ 👉 
+
+andrewchen.substack.com
+
+In the meantime, I will leave andrewchen.com up for posterity. Enjoy!
+ 
+
+New data shows losing 80% of mobile users is normal, and why the best apps do better
+
+Exclusive data on retention curves for mobile apps
+
+In a recent essay covering the 
+
+Next Feature Fallacy
+
+, I explained why shipping “just one more feature” doesn’t fix your product. The root cause is that the average app has 
+
+pretty bad retention metrics
+
+. Today, I’m excited to share some real numbers on mobile retention. I’ve worked with mobile intelligence startup 
+
+Quettra
+
+ and it’s founder/CEO 
+
+Ankit Jain
+
+ (formerly head of search+discovery for Google Play) to put together some exclusive data/graphs on retention rates** based on anonymized datapoints from over 125M mobile phones.
+
+Average retention for Google Play apps
+
+The first graph shows a retention curve: The number of days that have passed since the initial install, and what % of those users are active on that particular day. As my readers know, this is often used in a sentence like “the D7 retention is 40%” meaning that seven days after the initial install, 40% of those users was active on that specific day.
+
+The graph is pretty amazing to see:
+
+Based on Quettra’s data, we can see that the average app loses 77% of its DAUs within the first 3 days after the install. Within 30 days, it’s lost 90% of DAUs. Within 90 days, it’s over 95%. Stunning. The other way to say this is that the average app mostly loses its entire userbase within a few months, which is why of the >1.5 million apps in the Google Play store, only a few thousand sustain meaningful traffic. (*Tabular data in the footnotes if you’re interested)
+
+Ankit Jain
+
+, who collaborated with me on this essay, commented on this trend:
+
+Users try out a lot of apps but decide which ones they want to ‘stop using’ within the first 3-7 days. For ‘decent’ apps, the majority of users retained for 7 days stick around much longer. The key to success is to get the users hooked during that critical first 3-7 day period.
+
+This maps to my own experience, where I see that most of the leverage in improving these retention curves happen in how the product is described, the onboarding flow, and what triggers you set up to drive ongoing retention. This work is generally focused on the first days of usage, whereas the long-term numbers are hard to budge, no matter how many reminder emails you send.
+
+Note that when we say that these DAUs are being “lost” it doesn’t mean that users are suddenly going completely inactive – they might just be using the app once per week, or a few times per month. Different apps have different usage patterns, as I’ve written about in 
+
+What factors influence DAU/MAU?
+
+ with data from Flurry. Just because you lose a Daily Active User doesn’t mean that you’re losing a Monthly Active User, yet because the two correlate, you can’t sustain the latter without the former.
+
+💌 Are you up to date?
+
+Get new updates, usually once a week – featuring long-form essays with what’s going on in tech.
+
+Leave this field empty if you're human: 
+
+How do the best apps perform? Much better.
+
+The second graph we’ll discuss is a comparison of retention curves based on Google Play ranking. The data shows that there is a very clear and direct correlation:
+
+The top apps have higher D1 retention rates, and end with much stronger absolute D30 numbers. However, interestingly enough, the falloff from D1 to D30 is about the same as all the other apps. Another way to say it is that users find the top apps immediately useful, use it repeatedly in the first week, and the drop off happens at about the same speed as the average apps. Fascinating.
+
+Bending the curve happens via activation, not notification spam
+
+To me, this is further validation that the best way to bend the retention curve is to target the first few days of usage, and in particular the first visit. That way, users set up themselves up for success. Although the data shown today relates to mobile apps, I’ve seen data for desktop clients and websites, and they all look the same. So whether you’re building a mobile app or something else, the same idea applies:
+
+For a 
+
+blogging product
+
+, you might want users to pick a theme, a name, and write their first post, to get them invested.
+
+For a 
+
+social service
+
+, you might want users to import their addressbook and connect to a few friends, to give them a strong feed experience and opt them into friend notifications
+
+For a 
+
+SaaS analytics product
+
+, you might want users to put their JS tag on their site, so that you can start collecting data for them and sending digest emails
+
+For an 
+
+enterprise collaboration product
+
+, you might want users to start up a new project and add a couple coworkers to get them started
+
+Each of the scenarios above can have both a qualitative activation goal, as well as quantitive results to make sure it’s really happening. Whatever you do, sending a shitload of spammy email notifications with the subject line “We Miss You” is unlikely to bend the curve significantly.
+
+I hate those, and you should too.
+
+(Thanks again to 
+
+Ankit Jain
+
+ of Quettra for sharing this data and assisting me in developing this piece. 
+
+More from them here
+
+, which examines app-by-app retention rates for messaging apps)
+
+*Tabular data
+
+0
+
+1
+
+3
+
+7
+
+14
+
+30
+
+60
+
+90
+
+Top 10 Apps
+
+100
+
+74.67
+
+71.51
+
+67.39
+
+63.28
+
+59.80
+
+55.10
+
+50.87
+
+Next 50 Apps
+
+100
+
+64.85
+
+60.31
+
+54.13
+
+49.48
+
+44.81
+
+39.60
+
+34.50
+
+Next 100 Apps
+
+100
+
+48.72
+
+42.96
+
+35.93
+
+30.79
+
+25.45
+
+21.25
+
+18.98
+
+Next 5000 Apps
+
+100
+
+34.31
+
+28.54
+
+21.64
+
+17.43
+
+13.62
+
+10.74
+
+8.99
+
+Average
+
+100
+
+29.17
+
+23.42
+
+17.28
+
+13.11
+
+9.55
+
+6.82
+
+3.97
+
+ 
+
+**Methodology
+
+Some notes on methodology below, shared by Quettra:
+
+Quettra software, that currently resides on over 125M Android devices worldwide, collects install and usage statistics of every application present on the device. For this report, we examine five months of data starting from January 1, 2015.
+
+Since we exclusively consider Android users in this study, we exclude Google apps (e.g. Gmail, YouTube, Maps, Hangouts, Google Play etc.) and other commonly pre-installed apps from our study to remove biases. We also only consider apps that have over 10,000 installs worldwide.
+
+A note on privacy, which is very important to us: All data that we collected is anonymized, and no personally identifiable information is collected by any of our systems. From our understanding, this is the first time ubiquitous mobile application usage has been analyzed at such large scale. Quettra does not have a direct relationship with any of the apps or app developers mentioned in this report.
+
+PS. Get new updates/analysis on tech and startups
+
+I write a high-quality, weekly newsletter covering what's happening in Silicon Valley, focused on startups, marketing, and mobile.
+
+Leave this field empty if you're human: 
+
+Views expressed in “content” (including posts, podcasts, videos) linked on this website or posted in social media and other platforms (collectively, “content distribution outlets”) are my own and are not the views of AH Capital Management, L.L.C. (“a16z”) or its respective affiliates. AH Capital Management is an investment adviser registered with the Securities and Exchange Commission. Registration as an investment adviser does not imply any special skill or training. The posts are not directed to any investors or potential investors, and do not constitute an offer to sell -- or a solicitation of an offer to buy -- any securities, and may not be used or relied upon in evaluating the merits of any investment.
+
+The content should not be construed as or relied upon in any manner as investment, legal, tax, or other advice. You should consult your own advisers as to legal, business, tax, and other related matters concerning any investment. Any projections, estimates, forecasts, targets, prospects and/or opinions expressed in these materials are subject to change without notice and may differ or be contrary to opinions expressed by others. Any charts provided here are for informational purposes only, and should not be relied upon when making any investment decision. Certain information contained in here has been obtained from third-party sources. While taken from sources believed to be reliable, I have not independently verified such information and makes no representations about the enduring accuracy of the information or its appropriateness for a given situation. The content speaks only as of the date indicated. 
+
+Under no circumstances should any posts or other information provided on this website -- or on associated content distribution outlets -- be construed as an offer soliciting the purchase or sale of any security or interest in any pooled investment vehicle sponsored, discussed, or mentioned by a16z personnel. Nor should it be construed as an offer to provide investment advisory services; an offer to invest in an a16z-managed pooled investment vehicle will be made separately and only by means of the confidential offering documents of the specific pooled investment vehicles -- which should be read in their entirety, and only to those who, among other requirements, meet certain qualifications under federal securities laws. Such investors, defined as accredited investors and qualified purchasers, are generally deemed capable of evaluating the merits and risks of prospective investments and financial matters. There can be no assurances that a16z’s investment objectives will be achieved or investment strategies will be successful. Any investment in a vehicle managed by a16z involves a high degree of risk including the risk that the entire amount invested is lost. Any investments or portfolio companies mentioned, referred to, or described are not representative of all investments in vehicles managed by a16z and there can be no assurance that the investments will be profitable or that other investments made in the future will have similar characteristics or results. A list of investments made by funds managed by a16z is available at https://a16z.com/investments/.
+ 
+ Excluded from this list are investments for which the issuer has not provided permission for a16z to disclose publicly as well as unannounced investments in publicly traded digital assets. Past results of Andreessen Horowitz’s investments, pooled investment vehicles, or investment strategies are not necessarily indicative of future results. Please see 
+
+https://a16z.com/disclosures
+
+ for additional important information.
+
+Pages
+
+About
+
+Downloads
+
+Essays on network effects, growth hacking, gaming, and consumer startups
+
+Featured Essays
+
+Get updates
+
+Recent
+
+Sitemap
+
+Search
+
+search site archives
+
+Blogroll
+
+Archives
+
+February 2024
+
+January 2024
+
+September 2023
+
+August 2023
+
+August 2022
+
+July 2022
+
+December 2021
+
+November 2021
+
+September 2021
+
+August 2021
+
+February 2021
+
+July 2020
+
+January 2020
+
+November 2019
+
+July 2019
+
+June 2019
+
+May 2019
+
+March 2019
+
+December 2018
+
+November 2018
+
+September 2018
+
+August 2018
+
+July 2018
+
+June 2018
+
+May 2018
+
+February 2018
+
+January 2018
+
+December 2017
+
+October 2017
+
+July 2017
+
+June 2017
+
+January 2017
+
+December 2016
+
+October 2016
+
+May 2016
+
+March 2016
+
+February 2016
+
+January 2016
+
+August 2015
+
+June 2015
+
+May 2015
+
+April 2015
+
+March 2015
+
+February 2015
+
+January 2015
+
+November 2014
+
+October 2014
+
+September 2014
+
+August 2014
+
+July 2014
+
+June 2014
+
+May 2014
+
+March 2014
+
+February 2014
+
+January 2014
+
+November 2013
+
+October 2013
+
+September 2013
+
+August 2013
+
+July 2013
+
+June 2013
+
+May 2013
+
+April 2013
+
+March 2013
+
+February 2013
+
+January 2013
+
+December 2012
+
+November 2012
+
+October 2012
+
+September 2012
+
+August 2012
+
+July 2012
+
+June 2012
+
+May 2012
+
+April 2012
+
+March 2012
+
+October 2011
+
+August 2011
+
+July 2011
+
+June 2011
+
+May 2011
+
+March 2011
+
+February 2011
+
+January 2011
+
+April 2010
+
+January 2010
+
+December 2009
+
+November 2009
+
+October 2009
+
+September 2009
+
+August 2009
+
+July 2009
+
+June 2009
+
+May 2009
+
+April 2009
+
+March 2009
+
+February 2009
+
+January 2009
+
+December 2008
+
+November 2008
+
+October 2008
+
+September 2008
+
+August 2008
+
+July 2008
+
+June 2008
+
+May 2008
+
+April 2008
+
+March 2008
+
+February 2008
+
+January 2008
+
+December 2007
+
+November 2007
+
+October 2007
+
+September 2007
+
+August 2007
+
+July 2007
+
+June 2007
+
+May 2007
+
+April 2007
+
+March 2007
+
+February 2007
+
+January 2007
+
+December 2006
+
+November 2006
+
+October 2006
+
+September 2006
+
+Categories
+
+Uncategorized
+
+Meta
+
+Log in
+
+Site Feed
+
+Comments Feed
+
+Back to top
+
+Sitemap

@@ -1,0 +1,277 @@
+# The Pmarca Guide to Startups, Part 6: How to Hire the Best People You've Ever Worked With
+# Author: Marc Andreessen (Andreessen Horowitz)
+# Source: https://pmarchive.com/guide_to_startups_part6.html
+
+Pmarchive
+
+An archive of the best articles from Marc Andreessen’s 2007 blog. 
+
+Get the ebook →
+
+Maintained by your friends at 
+
+Fictive Kin
+
+, the product studio of your dreams
+
+Part 6
+
+ How much funding is too little? Too much?
+
+Posted on July 3, 2007
+
+In this post, I answer these questions:
+
+How much funding for a startup is too little?
+
+How much funding for a startup is too much?
+
+And how can you know, and what can you do about it?
+
+The first question to ask is, 
+
+what is the 
+
+correct
+
+, or appropriate, amount of funding for a startup?
+
+The answer to that question, in my view, is based my 
+
+theory
+
+ that a startup’s life can be divided into two parts—
+
+Before Product/Market Fit
+
+, and 
+
+After Product/Market Fit
+
+.
+
+Before Product/Market Fit
+
+, a startup should ideally raise at least enough money to get to Product/Market Fit.
+
+After Product/Market Fit
+
+, a startup should ideally raise at least enough money to fully exploit the opportunity in front of it, and then to get to profitability while still fully exploiting that opportunity.
+
+I will further argue that the definition of “at least enough money” in each case should include 
+
+a substantial amount of extra money beyond your default plan
+
+, so that you can withstand bad surprises. In other words, 
+
+insurance
+
+. This is particularly true for startups that have not yet achieved Product/Market Fit, since you have no real idea how long that will take.
+
+These answers all sound obvious, but in my experience, a surprising number of startups go out to raise funding and do not have an underlying theory of how much money they are raising and for precisely what purpose they are raising it.
+
+What if you can’t raise that much money at once?
+
+Obviously, many startups find that they cannot raise enough money at one time to accomplish these objectives—but I believe this is 
+
+still the correct underlying theory
+
+ for how much money a startup should raise and around which you should orient your thinking.
+
+If you are Before Product/Market Fit and you can’t raise enough money in one shot to get to Product/Market Fit
+
+, then you will need get as far as you can on each round and demonstrate progress towards Product/Market Fit when you raise each new round.
+
+If you are After Product/Market Fit and you can’t raise enough money in one shot to fully exploit your opportunity
+
+, you have a high-class problem and will probably—but not definitely—find that it gets continually easier to raise new money as you need it.
+
+What if you don’t want to raise that much money at once?
+
+You can argue you should raise a smaller amount of money at a time, because if you are making progress—either BPMF or APMF—you can raise the rest of the money you need later, at a higher valuation, and give away less of the company.
+
+This is the reason some entrepreneurs who 
+
+can
+
+ raise a lot of money choose to hold back.
+
+Here’s why you shouldn’t do that:
+
+What are the consequences of not raising enough money?
+
+Not raising enough money risks the survival of your company, for the following reasons:
+
+First, you may have—and probably will have—unanticipated setbacks within your business.
+
+Maybe a new product release slips, or you have unexpected quality issues, or one of your major customers goes bankrupt, or a challenging new competitor emerges, or you get sued by a big company for patent infringement, or you lose a key engineer.
+
+Second, the funding window may not be open when you need more money.
+
+Sometimes investors are highly enthusiastic about funding new businesses, and sometimes they’re just not.
+
+When they’re not—when the “window is shut”, as the saying goes—it is very hard to convince them otherwise, even though those are many of the best times to invest in startups because of the prevailing atmosphere of fear and dread that is holding everyone else back.
+
+Those of us who were in startups that lived through 2001-2003 know exactly what this can be like.
+
+Third, something completely unanticipated, and bad, might happen.
+
+Another major terrorist attack is the one that I frankly worry about the most. A superbug. All-out war in the Middle East. North Korea demonstrating the ability to launch a true nuclear-tipped ICBM. Giant flaming meteorites. Such worst-case scenarios will not only close the funding window, they might keep it closed for a long time.
+
+Funny story: it turns out that a lot of Internet business models from the late 90’s that looked silly at the time actually work really well—either in their original form or with some tweaking.
+
+And there are quite a few startups from the late 90’s that are doing just great today—examples being OpenTable (which is about to go public) and TellMe (which recently sold itself to Microsoft for $800 million), and my own company Opsware—which would be bankrupt today if we hadn’t raised a ton of money when we could, and instead just did its first $100 million revenue year and has a roughly $1 billion public market value.
+
+I’ll go so far as to say that the 
+
+big
+
+ difference between the startups from that era that are doing well today versus the ones that no longer exist, is that the former group raised a ton of money when they could, and the latter did not.
+
+So how much money should I raise?
+
+In general, as much as you can.
+
+Without giving away control of your company, and without being insane.
+
+Entrepreneurs who try to play it too aggressive and hold back on raising money when they can because they think they can raise it later occasionally do very well, but are gambling their whole company on that strategy 
+
+in addition to all the normal startup risks
+
+.
+
+Suppose you raise a lot of money and you do really well. You’ll be really happy and make a lot of money, even if you don’t make quite as much money as if you had rolled the dice and raised less money up front.
+
+Suppose you don’t raise a lot of money when you can and it backfires. You lose your company, and you’ll be really, really sad.
+
+Is it really worth that risk?
+
+There is one additional consequence to raising a lot of money that you should bear in mind, although it is more important for some companies than others.
+
+That is 
+
+liquidation preference
+
+. In the scenario where your company ultimately gets acquired: the more money you raise from outside investors, the higher the acquisition price has to be for the founders and employees to make money on top of the initial payout to the investors.
+
+In other words, raising a lot of money can make it much harder to effectively sell your company for less than a very high price, which you may not be able to get when the time comes.
+
+If you are convinced that your company is going to get bought, and you don’t think the purchase price will be that high, then raising less money is a good idea purely in terms of optimizing for your own financial outcome. However, that strategy has lots of other risks and will be addressed in another entertaining post, to be entitled “Why building to flip is a bad idea”.
+
+Taking these factors into account, though, 
+
+in a normal scenario, raising more money rather than less usually makes sense
+
+, since 
+
+you are buying yourself insurance against both internal and external potential bad events
+
+—and that is more important than worrying too much about dilution or liquidation preference.
+
+How much money is too much?
+
+There are downside consequences to raising too much money.
+
+I already discussed two of them—possibly incremental dilution (which I dismissed as a real concern in most situations), and possibly excessively high liquidation preference (which should be monitored but not obsessed over).
+
+The big downside consequence to too much money, though, is 
+
+cultural corrosion
+
+.
+
+You don’t have to be in this industry very long before you run into the startup that has raised a ton of money and has become infected with a culture of complacency, laziness, and arrogance.
+
+Raising a ton of money 
+
+feels
+
+ really good—you feel like you’ve done something, that you’ve accomplished something, that you’re successful when a lot of other people weren’t.
+
+And of course, none of those things are true.
+
+Raising money is never an accomplishment in and of itself
+
+—it just raises the stakes for all the hard work you would have had to do anyway: actually building your business.
+
+Some signs of cultural corrosion caused by raising too much money:
+
+Hiring too many people—slows everything down and makes it much harder for you to react and change. You are almost certainly setting yourself up for layoffs in the future, 
+
+even if you are successful
+
+, because you probably won’t accurately allocate the hiring among functions for what you will really need as your business grows.
+
+Lazy management culture—it is easy for a management culture to get set where the manager’s job is simply to hire people, and then every other aspect of management suffers, with potentially disastrous long-term consequences to morale and effectiveness.
+
+Engineering team bloat—another side effect of hiring too many people; it’s very easy for engineering teams to get too large, and it happens very fast. And then the “Mythical Man Month” effect kicks in and everything slows to a crawl, your best people get frustrated and quit, and you’re in huge trouble.
+
+Lack of focus on product and customers—it’s a lot easier to not be completely obsessed with your product and your customers when you have a lot of money in the bank and don’t have to worry about your doors closing imminently.
+
+Too many salespeople too soon—out selling a product that isn’t quite ready yet, hasn’t yet achieved Product/Market Fit—alienating early adopters and making it much harder to go back when the product does get right.
+
+Product schedule slippage—what’s the urgency? We have all this cash! Creating a golden opportunity for a smaller, scrappier startup to come along and kick your rear.
+
+So what should you do if you do raise a lot of money?
+
+As my old boss Jim Barksdale used to say, 
+
+the main thing is to keep the main thing the main thing
+
+—be just as focused on product and customers when you raise a lot of money as you would be if you hadn’t raised a lot of money.
+
+Easy to say, hard to do, but worth it.
+
+Continue to run as lean as you can, bank as much of the money as possible, and 
+
+save it for a rainy day
+
+—or a nuclear winter.
+
+Tell everyone inside the company, over and over and over, until they can’t stand it anymore, and then tell them some more, that 
+
+raising money does not count as an accomplishment
+
+ and that you haven’t actually done anything yet other than raise the stakes and increase the pressure.
+
+Illustrate that point by staying as scrappy as possible on material items—office space, furniture, etc. The two areas to splurge, in my opinion, are big-screen monitors and ergonomic office chairs. Other than that, it should be Ikea all the way.
+
+The easiest way to lose control of your spending when you raise too much money is to 
+
+hire too many people
+
+. The second easiest way is to 
+
+pay people too much
+
+. Worry more about the first one than the second one; more people multiply spending a lot faster than a few raises.
+
+Generally speaking, 
+
+act like you haven’t raised nearly as much money as you actually have
+
+—in how you talk, act, and spend.
+
+In particular, 
+
+pay close attention to deadlines
+
+. The easiest thing to go wrong when you raise a lot of money is that suddenly things don’t seem so urgent anymore. Oh, they are. Competitors still lurk behind every bush and every tree, metaphorically speaking. Keeping moving fast if you want to survive.
+
+There are certain startups that raised an excessive amount of money, proceeded to spend it like drunken sailors, and went on to become hugely successful.
+
+ Odds are, you’re not them. Don’t bet your company on it. 
+
+There are a lot more startups that raised an excessive amount of money, burned through it, and went under.
+
+Remember Geocast? General Magic? Microunity? 
+
+HAL
+
+? 
+
+Trilogy Systems
+
+?
+
+Exactly.

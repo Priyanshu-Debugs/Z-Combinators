@@ -1,0 +1,417 @@
+# DAU/MAU is an Important Metric but Here's Where it Fails
+# Author: Andrew Chen (a16z)
+# Source: https://andrewchen.com/dau-mau-is-an-important-metric-but-heres-where-it-fails/
+
+DAU/MAU is an important metric to measure engagement, but here’s where it fails at andrewchen
+
+ 
+
+Andrew Chen Archives
+
+Subscribe
+
+ · 
+
+Featured
+
+ ·
+
+Recent
+
+ ·
+
+The Cold Start Problem 📘
+
+Dear readers,
+I have moved to Substack and I will be writing here from now on:
+
+ 👉 
+
+andrewchen.substack.com
+
+In the meantime, I will leave andrewchen.com up for posterity. Enjoy!
+ 
+
+DAU/MAU is an important metric to measure engagement, but here’s where it fails
+
+How DAU/MAU got popular
+
+DAU/MAU is a popular metric for user engagement – it’s the ratio of your daily active users over your monthly active users, expressed as a percentage. Usually apps over 20% are said to be good, and 50%+ is world class.
+
+How did this metric come into use? DAU/MAU has been a popular metric because of Facebook, which popularized the metric. As a result, as they began to talk about it, other consumer apps came to often be judged by the same KPIs. I first encountered DAU/MAU as a ratio during the Facebook Platform days, when it was used to evaluate apps on their platform.
+
+Are you up to date?
+
+Get new updates, usually once a week – featuring long-form essays with what’s going on in tech.
+
+Leave this field empty if you're human: 
+
+This metric was always impressive for Facebook because it’s always been high. It’s historically been >50%. In fact, I was curious at one point whether or not it’s always been that good. And it has! I found this from a Facebook 2004 media kit showing crazy high numbers even with a small base of 70k users:
+
+Assessing product/market fit with DAU/MAU
+
+It’s an important metric, to be sure, but it’s often misused to say that “XYZ isn’t working” when in fact, there’s a slightly less frequent usage pattern that’s still equally valuable.
+
+For consumer and bottoms up SaaS products, this metric is super useful, but seems to mostly exclude everything besides messaging/social products that are daily use. These are valuable products, but not the only ones.
+
+Products that aren’t daily, but still hugely valuable
+
+Not everything has to be daily use to be valuable. On the other side of the spectrum are products where the usage is episodic but each interaction is high value. DAU/MAU isn’t the right metric there.
+
+At Uber, our most profitable rides are to airports, via Black Car for a special night out, business travel, etc. These don’t happen every day, and although there are folks using us to commute, that’s not the average use case. So our DAU/MAU wasn’t >50%. The driver side has clusters of “power drivers” who are active >30hrs/week, but as it’s been widely published, our average driver is actually part-time. (Pareto Principle!)
+
+Linkedin is another interesting example which is low frequency – only recruiters and people looking for jobs use it in daily spurts – but it throws off so much unique data that you can build a bunch of vertical SaaS companies on top of this virally growing database.
+
+Products in travel, like Airbnb and Booking, are only used a few times per year by consumers. The average consumer only travels ~2x/year. Yet there are multi deca-billion dollar companies built in this space.
+
+In fact, for SaaS, it seems to be the exception not the rule. While email and business chat can be nearly daily use, a lot of super important tools like Workday, Google Analytics, Dropbox, Salesforce, etc. might only be used 1-2x/week at most.
+
+Much of e-commerce looks like this too, of course. You buy mattresses, new sunglasses, watches, etc fairly infrequently. Yet there are $1B+ wins in the category.
+
+You may notice a pattern here. If you’re low-frequency/episodic, then you have to generate enough dollars or data that it’s valuable. If you’re high-frequency, you have a higher chance of growing virally and building an audience business that monetizes using ads.
+
+Nature versus nurture
+
+To extend this idea further, you can argue that messaging/social products with high DAU/MAU is actually the extreme case, and in fact most product categories don’t index highly. A few years back I 
+
+shared this interesting diagram from Flurry
+
+ which compared different app categories and their retention versus frequency of use:
+
+In this chart, a couple categories jump out:
+
+Social games have high frequency (“I’m getting addicted!”) but once you burn through the content, you tend to churn
+
+Weather is interesting too – you don’t often check, maybe only on cloudy days, but you will have a need to check throughout your entire life- so it maxes out on highest retention rate over 90 days
+
+Communication, for all the reasons discussed before, is both high frequency and high retention. That’s awesome!
+
+What I’d love to see on this chart would be another overlay, monetization. There, I bet Travel, Dating, and Gaming would tend to stand out for different reasons. Travel because each transaction is big, and Dating/Gaming because it’s frequency combined with a focus on monetization because you won’t have the user for long.
+
+So you want to increase DAU/MAU? It’s hard
+
+So let’s say that you want your DAU/MAU to increase – so what do you do? Funny enough, a lot of people seem to implement emails and push notifications thinking it’ll help. My experience is that it tends to increase casual numbers (the MAU) but not the daily users. In other words, it’ll actually lower your DAU/MAU to focus on notifications because you’ll grow your MAUs more highly than your DAUs.
+
+I’ve also not seen a 10% DAU/MAU product, through sheer effort, become 40% DAU/MAU. There seems to be a natural cadence to the usage of these product categories that doesn’t change much over time.
+
+Increase, measure your hardcore users, network effects, monetization
+
+If your DAU/MAU isn’t super high, this is what I like to see instead: Show me your hardcore userbase. What % of your users are active every day last week? What are they doing? How are you going to produce more of them? Showing this group exists goes a long way.
+
+Similarly, show how the freq of use increases in correlation to something. Perhaps size of their network – showing network effects – or how much content they’ve produced or saved. Then make the argument that by increasing that variable, DAU/MAU will rise in cohorts over time.
+
+Finally, maybe DAU/MAU is just not for you. Sometimes you don’t have to be a foreground app to be successful. Maybe you just need to build something awesome that does something valuable for people, makes enough money, and they use it twice a year! Also great.
+
+DAU/MAU is useful, but has its limits
+
+In conclusion, if your product is a high-frequency, high-retention product that’s ultimately going to be ads supported, DAU/MAU should be your guiding light. But if you can monetize well, develop network effects, or quite frankly, your natural cadence isn’t going to be high – then just measure something else! It’s impossible to battle nature… just find the right metric for you that’s telling you that your product is providing value to your users.
+
+PS. Get new updates/analysis on tech and startups
+
+I write a high-quality, weekly newsletter covering what's happening in Silicon Valley, focused on startups, marketing, and mobile.
+
+Leave this field empty if you're human: 
+
+Views expressed in “content” (including posts, podcasts, videos) linked on this website or posted in social media and other platforms (collectively, “content distribution outlets”) are my own and are not the views of AH Capital Management, L.L.C. (“a16z”) or its respective affiliates. AH Capital Management is an investment adviser registered with the Securities and Exchange Commission. Registration as an investment adviser does not imply any special skill or training. The posts are not directed to any investors or potential investors, and do not constitute an offer to sell -- or a solicitation of an offer to buy -- any securities, and may not be used or relied upon in evaluating the merits of any investment.
+
+The content should not be construed as or relied upon in any manner as investment, legal, tax, or other advice. You should consult your own advisers as to legal, business, tax, and other related matters concerning any investment. Any projections, estimates, forecasts, targets, prospects and/or opinions expressed in these materials are subject to change without notice and may differ or be contrary to opinions expressed by others. Any charts provided here are for informational purposes only, and should not be relied upon when making any investment decision. Certain information contained in here has been obtained from third-party sources. While taken from sources believed to be reliable, I have not independently verified such information and makes no representations about the enduring accuracy of the information or its appropriateness for a given situation. The content speaks only as of the date indicated. 
+
+Under no circumstances should any posts or other information provided on this website -- or on associated content distribution outlets -- be construed as an offer soliciting the purchase or sale of any security or interest in any pooled investment vehicle sponsored, discussed, or mentioned by a16z personnel. Nor should it be construed as an offer to provide investment advisory services; an offer to invest in an a16z-managed pooled investment vehicle will be made separately and only by means of the confidential offering documents of the specific pooled investment vehicles -- which should be read in their entirety, and only to those who, among other requirements, meet certain qualifications under federal securities laws. Such investors, defined as accredited investors and qualified purchasers, are generally deemed capable of evaluating the merits and risks of prospective investments and financial matters. There can be no assurances that a16z’s investment objectives will be achieved or investment strategies will be successful. Any investment in a vehicle managed by a16z involves a high degree of risk including the risk that the entire amount invested is lost. Any investments or portfolio companies mentioned, referred to, or described are not representative of all investments in vehicles managed by a16z and there can be no assurance that the investments will be profitable or that other investments made in the future will have similar characteristics or results. A list of investments made by funds managed by a16z is available at https://a16z.com/investments/.
+ 
+ Excluded from this list are investments for which the issuer has not provided permission for a16z to disclose publicly as well as unannounced investments in publicly traded digital assets. Past results of Andreessen Horowitz’s investments, pooled investment vehicles, or investment strategies are not necessarily indicative of future results. Please see 
+
+https://a16z.com/disclosures
+
+ for additional important information.
+
+Pages
+
+About
+
+Downloads
+
+Essays on network effects, growth hacking, gaming, and consumer startups
+
+Featured Essays
+
+Get updates
+
+Recent
+
+Sitemap
+
+Search
+
+search site archives
+
+Blogroll
+
+Archives
+
+February 2024
+
+January 2024
+
+September 2023
+
+August 2023
+
+August 2022
+
+July 2022
+
+December 2021
+
+November 2021
+
+September 2021
+
+August 2021
+
+February 2021
+
+July 2020
+
+January 2020
+
+November 2019
+
+July 2019
+
+June 2019
+
+May 2019
+
+March 2019
+
+December 2018
+
+November 2018
+
+September 2018
+
+August 2018
+
+July 2018
+
+June 2018
+
+May 2018
+
+February 2018
+
+January 2018
+
+December 2017
+
+October 2017
+
+July 2017
+
+June 2017
+
+January 2017
+
+December 2016
+
+October 2016
+
+May 2016
+
+March 2016
+
+February 2016
+
+January 2016
+
+August 2015
+
+June 2015
+
+May 2015
+
+April 2015
+
+March 2015
+
+February 2015
+
+January 2015
+
+November 2014
+
+October 2014
+
+September 2014
+
+August 2014
+
+July 2014
+
+June 2014
+
+May 2014
+
+March 2014
+
+February 2014
+
+January 2014
+
+November 2013
+
+October 2013
+
+September 2013
+
+August 2013
+
+July 2013
+
+June 2013
+
+May 2013
+
+April 2013
+
+March 2013
+
+February 2013
+
+January 2013
+
+December 2012
+
+November 2012
+
+October 2012
+
+September 2012
+
+August 2012
+
+July 2012
+
+June 2012
+
+May 2012
+
+April 2012
+
+March 2012
+
+October 2011
+
+August 2011
+
+July 2011
+
+June 2011
+
+May 2011
+
+March 2011
+
+February 2011
+
+January 2011
+
+April 2010
+
+January 2010
+
+December 2009
+
+November 2009
+
+October 2009
+
+September 2009
+
+August 2009
+
+July 2009
+
+June 2009
+
+May 2009
+
+April 2009
+
+March 2009
+
+February 2009
+
+January 2009
+
+December 2008
+
+November 2008
+
+October 2008
+
+September 2008
+
+August 2008
+
+July 2008
+
+June 2008
+
+May 2008
+
+April 2008
+
+March 2008
+
+February 2008
+
+January 2008
+
+December 2007
+
+November 2007
+
+October 2007
+
+September 2007
+
+August 2007
+
+July 2007
+
+June 2007
+
+May 2007
+
+April 2007
+
+March 2007
+
+February 2007
+
+January 2007
+
+December 2006
+
+November 2006
+
+October 2006
+
+September 2006
+
+Categories
+
+Uncategorized
+
+Meta
+
+Log in
+
+Site Feed
+
+Comments Feed
+
+Back to top
+
+Sitemap

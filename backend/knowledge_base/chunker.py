@@ -26,63 +26,123 @@ class ChunkRecord:
 DIMENSION_KEYWORDS: dict[str, list[str]] = {
     "market": [
         "market size", "tam", "sam", "som", "addressable market",
-        "market opportunity", "demand", "growth rate", "market growth",
-        "billion dollar", "trillion", "revenue potential", "customer base",
-        "target market", "market cap", "industry size", "total market",
+        "market opportunity", "market growth", "billion dollar",
+        "trillion", "revenue potential", "customer base", "target market",
+        "market cap", "industry size", "total market", "demand", "niche market",
+        "bottom-up analysis", "beachhead market", "ideal customer",
+        "market pull", "annual contract value", "acv",
+        "serviceable", "obtainable", "willingness to pay",
+        "icp", "ideal customer profile", "market segment",
+        "total addressable", "buyer persona", "end user",
     ],
     "team": [
         "founder", "co-founder", "founding team", "team",
         "domain expertise", "founder-market fit", "hiring", "leadership",
         "ceo", "cto", "technical co-founder", "solo founder",
-        "complementary skills", "experience", "background",
+        "complementary skills", "resourceful", "relentlessly resourceful",
+        "hiring engineers", "early employees",
+        "culture", "cofounder dynamics", "management team",
+        "vp engineering", "first ten hires", "equity split",
+        "cofounder agreement", "founder dynamics", "technical talent",
+        "engineering culture", "people", "recruit", "talent",
+        "employee", "cofounder", "cofounders", "human capital",
     ],
     "timing": [
         "timing", "why now", "macro trend", "tailwind", "headwind",
-        "technology shift", "readiness", "inflection point",
-        "regulatory change", "pandemic", "post-covid", "emerging",
-        "cultural shift", "adoption curve",
+        "technology shift", "platform shift", "readiness", "inflection point",
+        "regulatory change", "wave", "catalyst", "right time", "wrong time",
+        "too early", "too late", "adoption curve", "turning point",
+        "market readiness", "enabling technology", "secular shift",
+        "market timing", "technology readiness", "consumer behavior shift",
+        "infrastructure maturity", "end of cycle", "macro environment",
+        "window of opportunity", "paradigm shift", "first mover",
+        "technology frontier", "right moment", "historical",
+        "the time is right", "when to start", "decade",
+        "trend", "trends", "premature", "premature scaling",
+        "new era", "new wave", "ahead of its time", "ahead of the curve",
+        "market cycle", "economic cycle", "technology cycle", "technological change",
+        "early adopter", "early adopters", "inflection", "timing matters",
+        "ripe for", "ripe for disruption", "downturn", "recession",
+        "secular trend", "wave of innovation", "market conditions",
     ],
     "competition": [
         "competitor", "competitive", "incumbent", "differentiation",
-        "alternative", "switching cost", "competitive advantage",
-        "market leader", "disrupt", "displacement", "substitute",
-        "barrier to entry", "competitive landscape",
+        "alternative", "competitive advantage", "market leader", "disrupt",
+        "displacement", "substitute", "barrier to entry", "competitive landscape",
+        "monopoly", "perfect competition",
+        "market position", "market share", "unfair advantage",
+        "category creation", "blue ocean", "red ocean",
+        "first mover advantage", "incumbent advantage",
+        "compete", "competing", "rival", "rivalry",
+        "zero sum", "big company", "big companies",
+        "crowded market", "fragmented market", "direct competitor",
     ],
     "moat": [
         "moat", "defensibility", "network effect", "switching cost",
-        "brand", "data advantage", "lock-in", "economies of scale",
-        "proprietary", "patent", "two-sided", "marketplace dynamics",
-        "flywheel", "compounding", "winner-take-all",
+        "brand advantage", "data advantage", "lock-in", "economies of scale",
+        "proprietary", "two-sided", "marketplace dynamics", "flywheel",
+        "winner-take-all", "retention curve", "pricing power", "take rate",
+        "cold start", "viral loop", "user-generated content",
+        "data moat", "supply-side lock-in", "demand-side lock-in",
+        "marketplace liquidity", "critical mass",
+        "defensible", "network effects", "switching costs",
+        "sustainable advantage", "durable advantage", "platform effect",
+        "barriers to entry", "durable moat", "competitive moat",
+        "gross margin", "gross margins", "high margin",
+        "two-sided marketplace", "winner take all", "hard to replicate",
+        "unreplicable", "copycat", "copycats", "sustainable competitive advantage",
     ],
     "execution": [
-        "mvp", "execution", "ship", "build", "iterate", "launch",
-        "product-market fit", "traction", "go-to-market", "gtm",
-        "prototype", "user acquisition", "growth", "metrics",
-        "unit economics", "burn rate", "runway", "pivot",
+        "mvp", "execution", "ship", "iterate", "launch",
+        "product-market fit", "pmf", "traction", "go-to-market", "gtm",
+        "user acquisition", "unit economics", "burn rate", "runway", "pivot",
+        "default alive", "default dead", "do things that dont scale",
+        "retention", "cohort analysis", "dau mau",
+        "monthly active users", "growth rate", "churn rate",
+        "payback period", "ltv cac", "growth accounting",
+        "north star metric", "activation rate", "retention curve",
+        "product market fit", "customer acquisition cost",
+        "customer lifetime value", "conversion rate", "funnel",
+        "scale", "scaling", "metrics", "revenue", "growth",
     ],
 }
 
 
-def tag_dimension(text: str) -> str:
+def tag_dimensions(text: str) -> list[str]:
     """
-    Tag a chunk with its most relevant dimension using keyword heuristics.
-
-    Returns the dimension with the highest keyword match count.
-    Falls back to 'execution' if no keywords match (most general dimension).
+    Tag a chunk with its relevant dimensions using keyword heuristics.
+    Multi-word phrases receive higher weighting (3 points) than single words (1 point).
+    Returns the primary dimension and an optional secondary dimension.
     """
     text_lower = text.lower()
     scores: dict[str, int] = {}
 
     for dimension, keywords in DIMENSION_KEYWORDS.items():
-        score = sum(1 for kw in keywords if kw in text_lower)
+        score = 0
+        for kw in keywords:
+            if kw in text_lower:
+                weight = 3 if " " in kw else 1
+                score += weight
         scores[dimension] = score
 
-    max_score = max(scores.values())
-    if max_score == 0:
-        return "execution"  # Default fallback for untaggable chunks
+    sorted_dims = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+    if sorted_dims[0][1] == 0:
+        return ["execution"]
 
-    # Return the dimension with the highest score
-    return max(scores, key=lambda d: scores[d])
+    top_dim, top_score = sorted_dims[0]
+    results = [top_dim]
+
+    # If a secondary dimension also has strong resonance (>= 2 matches & >= 60% of top score)
+    second_dim, second_score = sorted_dims[1]
+    if second_score >= 2 and second_score >= (top_score * 0.6):
+        results.append(second_dim)
+
+    return results
+
+
+def tag_dimension(text: str) -> str:
+    """Fallback single-dimension tagger for backwards compatibility."""
+    return tag_dimensions(text)[0]
 
 
 def split_into_chunks(
@@ -174,18 +234,20 @@ def chunk_file(
     records: list[ChunkRecord] = []
 
     for i, chunk_text in enumerate(raw_chunks):
-        dimension = tag_dimension(chunk_text)
-        records.append(
-            ChunkRecord(
-                text=chunk_text,
-                dimension=dimension,
-                source_org=source_org,
-                source_title=source_title,
-                chunk_index=i,
+        dims = tag_dimensions(chunk_text)
+        for dim in dims:
+            records.append(
+                ChunkRecord(
+                    text=chunk_text,
+                    dimension=dim,
+                    source_org=source_org,
+                    source_title=source_title,
+                    chunk_index=i,
+                )
             )
-        )
 
     return records
+
 
 
 def chunk_all(sources_dir: str) -> list[ChunkRecord]:

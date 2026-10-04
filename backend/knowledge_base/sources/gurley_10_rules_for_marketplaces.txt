@@ -1,0 +1,97 @@
+# All Markets Are Not Created Equal: 10 Factors To Consider in Evaluating Online Marketplaces
+# Author: Bill Gurley (Benchmark)
+# Source: https://abovethecrowd.com/2012/11/13/all-markets-are-not-created-equal-10-factors-to-consider-when-evaluating-digital-marketplaces/
+
+All Markets Are Not Created Equal: 10 Factors To Consider When Evaluating Digital Marketplaces
+
+November 13, 2012: 
+
+Since Benchmark’s investment in Ebay 15 years ago, we have been fascinated by online marketplaces. Entrepreneurs accurately recognize that the connective tissue of the Internet provides an opportunity to link the players in a particular market, reducing friction in both the buying and selling experience. For example, 
+
+my car tax check
+
+ is an online platfrom that allows you to book a slot for a complete history and guidance of your car taxes and other details. The arrival of the smartphone amplifies these opportunities, as the Internet’s connective tissue now extends deeper and deeper into an industry with the participants connected to the marketplace 24×7 – whether they are in the office, at home, or out in the field. It is a special experience to see an entrepreneur go from a PowerPoint describing a new marketplace opportunity to having established an online hub at the epicenter of a particular industry.
+
+Following our investment in Ebay, we have been fortunate enough to invest in several companies that link consumers and suppliers through a successful online marketplace. Companies such as OpenTable, Yelp, Zillow, oDesk, GrubHub, 1stdibs, UShip, and Uber have all reached significant scale within their respective markets. But we have also invested in several companies that we thought had marketplace opportunities that simply did not play out as expected. Simply put, some industries are much more susceptible to the arrival and success of online marketplaces than others.
+
+A true marketplace needs natural pull on both the consumer and supplier side of the market. Aggregating suppliers is a necessary, but insufficient step on its own. You must also organically aggregate demand. With each step, it should get easier to acquire the incremental consumer 
+
+AS WELL AS
+
+ the incremental supplier. Highly liquid marketplaces naturally “tip” towards becoming a clearinghouse where neither the consumer nor the supplier would favor an alternative. That only happens if your momentum is increasing, and both consumers and suppliers are sensing an increasing importance of your place in the world. Much easier said than done.
+
+Here are 10 factors to consider when evaluating the potential success of a new marketplace opportunity:
+
+New Experience vs. the Status Quo
+
+. Great marketplaces do not simply aggregate a market; they enhance it. They leverage the connective tissue to offer the consumer a user experience that simply was not possible before the arrival of this new intermediary. OpenTable enables the consumer to search reservation availability across hundreds and hundreds of restaurants in a matter of seconds. That capability never existed before, and as a result the delta of the new experience vs. the incumbent experience (dialing restaurants one by one) is extremely high. Another company with a high experience delta is Uber. By aggregating thousands of licensed limousine drivers, and overlaying that with a new-age supply chain management solution, Uber gives it users an experience that is drastically improved compared to the previous alternative. Today, 
+
+GrubHub announced “Track Your Grub”
+
+, a service that allows you to watch your food on the way to your house. When this experience delta is great enough, it creates “wow” moments for new users. “Wow” moments lead to word-of-mouth viral growth and high net promoter scores.
+
+Economic Advantages vs. the Status Quo
+
+. Some marketplaces provide enhanced economic advantages. oDesk enables companies to easily provision programming talent from all corners of the globe. This helps purchasers procure a cheaper alternative, while also providing brand-new economic lift to the programmer (supplier). Both sides experience an economic advantage. Another interesting example of this bi-directional advantage is AirBNB. For the property owner, the income is “found money” that simply didn’t exist prior to the marketplace. And in many cases the consumer receives a better price as well. If you can positively change the economics of an industry, you will find the participants on both sides rooting for your success. This gives you a huge head start when it comes to tipping the marketplace.
+
+Opportunity for Technology to Add Value
+
+. In many marketplaces, the technology offering greatly enhances the user experience. Zillow provides homebuyers with an abundance of data that was historically kept in proprietary systems. They have overlaid this data with maps and search technology that provide remarkable richness to the home buyer. Smartphones take this even further, with the ability to learn a great deal about any property with a one-click GPS enabled search. At Uber, the system has “perfect” information in an industry where just two years ago there was a complete lack of visibility (on both sides of the network) that led to enormous waste of resources. Uber’s system enables higher car utilization, more fares per hour for the driver, and faster and faster pickup times for the consumer. At oDesk, the platform enables the planning, development, and transfer of code from the supplier to the purchaser. The marketplace is also a work-flow system that enhances the overall experience for all parties. Facilitating work-flow reduces work for the participants, as well as increasing switching costs.
+
+High Fragmentation
+
+. High buyer and supplier fragmentation is a huge positive for an online marketplace. Likewise, a concentrated supplier (or purchaser) base greatly diminishes the likelihood of a successful online marketplace. A highly concentrated supplier base will be reluctant to allow a new intermediary in their market, and as a result will likely fight rather than support your arrival. They will also be very reluctant to share in the economics of the industry, as anyone in the online travel industry can confirm. The large airlines have all but obliterated the economics of online ticketing marketplaces, leading all the online players to focus on hotels where the fragmentation and therefore the economics are higher. If you look at the list above of successful Benchmark investments, you will see a common theme of fragmented supplier base.
+
+Friction of Supplier Sign-Up
+
+. In some markets signing up suppliers is relative easy. In others, it can be a painfully slow process that requires lots of touch and local presence. At companies such as Yelp, Uber, and GrubHub, new city launches are relatively quick after a process model had been established for how to launch those cities. The opposite was true for OpenTable where the installation of a personal computer and internet connectivity were part of the early roll-out requirements. High friction supplier signup can be a barrier to entry (as it is for OpenTable) if you are able to build a successful marketplace.  But in the early stages, this friction slows your roll-out and increases the costs associated with supplier aggregation. Remember, however, that supplier aggregation is the easy part. Aggregating demand is much harder and more critical.
+
+Size of the Market Opportunity
+
+. A proper TAM (total available market) analysis is imperative, but it is easy to make mistakes looking only at TAM. As a starter, if all the other factors are negative, it will not matter that the market is large. Some markets are crappy candidates for marketplaces. Second, you should also consider the percentage of the market that is likely to use the online alternative. In certain industries, there may be large portions of the market that may not be available to the new online marketplace. An interesting example is healthcare, which is unquestionably a very large market. However, the oligopoly of large players in this market controls a massive percentage of market and is unlikely to support a new alternative. You can also miss-analyze TAM in the other direction. In the case of OpenTable many investors missed the opportunity by mistakenly assuming the TAM was too low. In this case, they underestimated the percentage of the market that OpenTable could penetrate. OpenTable recently passed 10 million diners a month with less than 20% of transactions in North America currently online. You must combine a TAM analysis with the likelihood of marketplace success and penetration.
+
+Expand the Market
+
+.  Another potential error that can be made while analyzing TAM is to fail to understand that the features and enhancements of the new marketplace may actual expand the market opportunity for the whole industry. This may sound like a brazen claim, but certain marketplaces do indeed expand the market — by exploring new price points or enhancing convenience or usability. oDesk greatly simplifies the process of outsourcing code development, and as such many of its use cases are expansive to the overall market. oDesk’s presence increases the number of first time software outsourcers. Uber’s ease of use and simplicity have led many of its users to greatly increase the number of times they use an alternative car service. Some customers now use it as a second car alternative. As such, the company is meaningfully expands the market for black car services, which is in turn a huge boon to the suppliers that share in the economic expansion.
+
+Frequency
+
+. All things being equal, a higher frequency is obviously better. Yelp, GrubHub, OpenTable, 1stdibs (for the designer) and Uber are all high frequency use cases, where the consumers can rely on the marketplace as a utility. Many failed marketplaces attack purchasing cycles that are simply way too infrequent, which makes it much more difficult to build brand awareness and word-of-mouth customer growth. Another repeated mistake is attacking verticals where a satisfactory supplier “match” end’s the customer’s need to re-enter the market in search of an alternative. This second point negatively impacts many vertical service provider markets (such as pediatricians) where customers are actually prefer a monogamous relationship.
+
+Payment Flow
+
+. All things being equal, being part of the payment flow is superior to not being a part of the payment flow. This is due to the fact that it is much easier to extract reasonable economics when you are in the flow of payment. The supplier not only looks to you as a provider of revenue, but they receive that revenue “net of the fee.” Contrast this with a marketplace where you add value first, and then send a bill to the supplier at later date for services rendered. In this latter case the marketplace appears as an expense, and it’s easier for the supplier to view it is a “tax” versus a distribution relationship. Cash is king, and if you bring the cash, you are king. Unfortunately, some industries (like autos) just are not set up for this type of arrangement, as the payment likely lives at the end of a long purchasing process.
+
+Network Effects
+
+. Network effects are tricky and hard to describe but fundamentally turn on the following question: 
+
+Can the marketplace provide a better experience to customer “n+1000” than it did to customer “n” directly as a function of adding 1000 more participants to the market? 
+
+You can pose this question to either side of the network – demand or supply. If you have something like this in place it is magic, as you will get stronger over time not weaker. In the early days of OpenTable we noticed that the reservations per restaurant in a given city were correlated to market penetration. Clearly, the more restaurants that were on the network, the better the value proposition was for the consumer. Something similar occurs with Uber. As the company grows, they are able to facilitate more cars on the road, and along with their investment in route and load optimization, this allows for shorter and shorter pickup times. The experience gets better and better the longer they are in the market. UGC sites like Yelp and TripAdvisor also have strong network effects. Network effects are rare but golden. If you don’t have one try to find one; if you do have one, try to enhance it.
+
+It is unlikely that you will find a marketplace opportunity that would score ten out of ten with respect to this list. However a 7 or 8 out of 10 would imply that your opportunity of success is much, much higher than if you only match 3 or 4 out of 10.  It is also important to realize that finding a great opportunity is only a start, and this analysis could easily mislead one into underestimating the critical role that execution plays when it comes to marketplace businesses. Great marketplace execution is more nuanced and less systematic than other venture backed categories, and for every successful marketplace, you will find an amazing entrepreneur that out-executed the many others that had chosen to attack the same market. In addition to great marketplace characteristics, you also need a world-class entrepreneur to make the dream come true.
+
+*For a real-time look at this analysis in action, see 
+
+Our Most Recent Marketplace Investment, DogVacay from Los Angeles
+
+.
+
+Share this:
+
+Share on X (Opens in new window)
+
+X
+
+Share on Facebook (Opens in new window)
+
+Facebook
+
+Related
+
+ 
+
+Share it
+
+Share on Facebook

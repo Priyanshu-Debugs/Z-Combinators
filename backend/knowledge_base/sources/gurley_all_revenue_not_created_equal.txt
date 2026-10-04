@@ -1,0 +1,201 @@
+# All Revenue is Not Created Equal: The Keys to the 10X Revenue Club
+# Author: Bill Gurley (Benchmark)
+# Source: https://abovethecrowd.com/2011/05/24/all-revenue-is-not-created-equal-the-keys-to-the-10x-revenue-club/
+
+All Revenue is Not Created Equal: The Keys to the 10X Revenue Club
+
+May 24, 2011: 
+
+[Follow Me on Twitter]
+
+“ Don’t you know that you are a shooting star,
+
+And all the world will love you just as long,
+
+As long as you are.” 
+
+ — Paul Rodgers, Shooting Star
+
+With the IPO market now blown wide-open, and the media completely infatuated with frothy trades in the bubbly late stage private market, it is common to see articles that reference both “
+
+valuation
+
+” and “
+
+revenue
+
+” and suggest that there is a correlation between the two. Calculating or qualifying potential valuation using the simplistic and crude tool of a revenue multiple (also known as the price/revenue or price/sales ratio) was quite trendy back during the Internet bubble of the late 1990s. Perhaps it is not peculiar that our good friend the price/revenue ratio is back in vogue. But investors and analysts beware; this is a remarkably dangerous technique, because all revenues are not created equal.
+
+What drives true equity value? Those of us with a fondness for finance will argue until we are blue in the face that discounted cash flows (DCF) are the true drivers of value for any financial asset, companies included. The problem is that it is nearly impossible to predict with any accuracy what the long-term cash flows are for a given company; especially a company that is young or that might be using an innovative and new business model. Additionally, knowing what long-term cash flows look like requires knowledge of a vast number of disparate future variables. What is the long-term growth rate? What is the long-term operating margin? How long will this company hold off competition? How much will they be required to reinvest? Therefore, from a purely practical view, the DCF is an unruly valuation tool for young companies. This is not because it is a bad theoretical framework; it is because we don’t have accurate inputs. Garbage in, garbage out.
+
+Because of the difficulty of getting DCF right, investors commonly use a handful of other shortcuts to determine valuations. “Price earnings ratio” and “enterprise value to EBITDA” are common shortcuts, with their own benefits and limitations. I want to argue that for a variety of reasons, the price/revenue multiple is the crudest valuation tool of them all.
+
+The following chart, from a 
+
+Motley Fool review
+
+, highlights 2012 forward price/revenue ratios for 122 global Internet stocks. The broad range of results is nothing short of staggering. On one end is Overstock, trading at 0.2X analyst’s 2012 revenue estimates. On the other end is Youku.com, the leading Chinese video website (recent IPO LinkedIn is not included in this list).  Youku trades at 21.7X analysts average 2012 revenue estimate. The other companies live at many different places along this wide continuum. Now consider that the press and some investors frequently use price/revenue as their primary valuation tool when our data suggests there is a 100X difference in value per sales dollar from Overstock to Youku.com. Talk about room for error! What is that hot new company worth? This graph would suggest that the company’s revenue alone is a very poor guide.
+
+Before we talk about why there is such disparity, it is important to highlight a few more points. As you can see in the above graph, there is a very long tail to the left. Basically, there are many more low-price/revenue multiple companies than high. The following table shows this statistically. Over 72% of the companies have a 2012 price/revenue multiple below 4x. Also, you can see that only 12 of these 122 companies (<10%) have multiples over 7X. There are only 5 above 10X. Also recognize that the majority of these high multiple companies are domiciled outside the U.S. This is important because the press tends to favor the higher multiples, such as 10X revenues, as their “defaults.” The problem is, only a handful of companies deserve to be in the “10X club.”
+
+What causes such a wide dispersion of price/revenue multiples? While one might not have the specific numbers required to complete an accurate DCF, we do know which business qualities would have a positive impact on a DCF exercise, all things being equal. When investors see a large number of these traits, they then have an increased confidence that the elements are in place that will lead to a strong DCF value over time. You often hear people refer to companies with strong DCF characteristics as having high “revenue quality.” Companies with characteristics that are inconsistent with a strong DCF model are said to have low “revenue quality.”
+
+Here are some of the key business characteristics that would be used to separate high quality revenue companies from low quality revenue companies, and therefore are the distinguishing traits that warrant high price/revenue multiples.
+
+1. Sustainable Competitive Advantage (Warren Buffet’s Moat)
+
+By far, the most critical characteristic that separates high multiple companies from low multiple companies is competitive advantage. This concept, well explained in Porter’s book by the same name, basically asks the question, “How easy is it for someone else to provide the same product or service that you provide?”  If your company has “high barriers to entry,” Wall Street will be super excited, as investors will have confidence discounting cash flows many, many years into the future. Coca-Cola has a 5% estimated 2012 growth rate, and a 3.6x price/revenue multiple. RIM has a 12% estimated 2012 growth rate and a 0.77x price/revenue multiple. What gives? Investors expect Coke to be around in pretty much its same form 50 years from now. It is much harder to say that with confidence about RIM. Warren Buffet famously refers to these barriers to entry as an “
+
+economic moat
+
+,” inferring an image of the body of water that protects access to a castle.
+
+[For more on this topic, I highly reccomendan amazing paper on this subject, 
+
+Competitive Advantage Period “CAP,” The Neglected Value Driver
+
+ by 
+
+Mike Mauboussin
+
+, the Chief Investment Strategist at Legg Mason, and an adjunct finance professor at Columbia Business School.]
+
+If high price/revenue multiple companies have wide moats or strong barriers to entry, then the opposite is also true. Companies with little to no competitive advantage, or companies with relatively low barriers to entry, will struggle to maintain above-average price/revenue multiples. If an investor fears that a company’s competitive position (which allows them to create excess cash flow) is tenuous and will deteriorate, then the value of the enterprise may be worth the cash flows only from the next several years.
+
+2. The Presence of Network Effects
+
+No discussion of competitive advantages and barriers to entry is complete without a nod to perhaps the strongest economic moat of all, network effects. In a system where the value to the incremental customer is a direct function of the customers already in the system, you have a powerful dynamic that tips towards winner take all. Perhaps the definitive piece on this type of advantage is Brian Arthur’s 
+
+Increasing Returns and Two Worlds of Business
+
+ 
+
+published in HBR back in 1996.  This “second world” that Brian refers to is one where the market leader has an unfair advantage that is reinforced by network effects.
+
+There are a few important things to remember about network effects. Some network effect systems are stronger than others. What is key is the decay rate of value of the incremental user to the customer value function. Second, networks effects are discussed way more than they exist. Many things people indentify as network effects are merely economies of scale, which are not nearly as powerful. Unfortunately, strong form network effect companies are far and few between. Fortunately, when they do exist, they are typically leading candidates for the 10X+ price/revenue multiple club.  Microsoft, Ebay, Skype, Google Adwords, and Facebook (in their prime) all benefited from network effects.
+
+3. Visibility/Predictability Are Highly Valued
+
+For the same reason that investors favor companies with sustainable competitive advantages, investors favor pricing models that provide a high level of predictability and consistency in the future. It is easy to see why revenue visibility would have a positive impact on a DCF analysis. The more certain you can be of future cash flows, the higher premium you will put on a business, and as a result, you will see a higher price/revenue multiple. One obvious example of this is the predictable nature of SAAS subscription revenue. Salesforce.com trades at a staggering 7.5x 2012 estimated revenues. SuccessFactors trades at 7.9x 2012 estimated revenues.  Subscription revenue businesses take longer to grow than traditional software businesses, but once you reach scale investors put premium multiples on the predictable future revenue streams.
+
+The opposite of subscription revenue is revenue that is one-time or episodic. Traditional software models are one-time in nature. Consulting revenue is also typically one-time. Revenue that will only happen once, or that is highly likely to go away in future years, will command much lower price/revenue multiples. As a general rule, game companies, where the “hit” nature of the product offering will eventually ensure a finite life of most of its products, typically trade at discounted price/revenue multiples. Activision trades at just over 2X 2012 estimated revenues. Electronic Arts trades at 1.7x times the same estimate. Non-publisher game companies, where revenues may often come from a single title, will have even lower price/revenue multiples. Conversely, the game companies that get higher multiples are ones that own more of a publishing/distribution platform, such as TenCent in China. These companies are able to extract rent from whatever the hot game happens to be, and are therefore less vulnerable to “hit” risk.
+
+4. Customer Lock-in / High Switching Costs
+
+If investors value predictability, than retaining customers for long periods of time is obviously a positive. Conversely, if customers are churning away from your company, this is a huge negative. Investors are highly fixated on churn rates, as they should be. Churn has a direct and significant impact on a DCF model. With subscription models, a low-churn customer is quite valuable. In fact, companies with excessively low churn rates (5% annually or less) are very likely to have price/revenue multiples in the top decile. Obviously, high churn rates are really bad for all valuation multiples.
+
+For non-subscription businesses, customer-switching costs also play an important role. If it is relatively easy for your customer to switch back and forth from your products to you competitors, you will likely have a lower price/revenue multiple as your pricing power will be quite limited. On the other hand, if it is quite difficult for a customer to switch away from your product/service, you are likely to have stronger pricing power, and longer customer life, which will inevitably result in better DCF dynamics. Switching costs can take many forms – technical lock-in, data lock-in, high startup costs with a new vendor, and downstream revenue dependencies are just a few.  All things being equal, high switching costs are a positive for price/revenue multiples, and low switching costs are a negative.
+
+5. Gross Margin Levels
+
+This may seem super-basic or even tautological but there is a huge difference between companies with high gross margins and those with lower gross margins. Using the DCF framework, you cannot generate much cash from a revenue stream that is saddled with large, variable costs. As a result, lower gross margin companies will trade a highly discounted price/revenue multiples. Amazon (20% gross margin), which is certainly among the very best retailers when it comes to execution, trades at a low 1.5x 2012 revenue estimates. Wal-Mart (25% gross margin) trades at 0.41x 2012 revenues. Best Buy (24% gross margin) trades at only 0.22x forward revenues. All things being equal, gross margin percentage should have a direct impact on price/revenue multiple, as there will obviously be more gross margin dollars to contribute to free cash flow. Journalists who quickly apply 10x multiples to all private companies should at the very least consider gross margin levels in their analysis.
+
+6. Marginal Profitability Calculation
+
+Investors love companies with scale. What this means is that investors love companies where, all things being equal, higher revenues create higher profit margins. Microsoft had wonderful scale in this manner for many, many years. Selling more copies of the same piece of software (with zero incremental costs) is a business that scales nicely. Companies that are increasing their profit percentage while they grow are capable of carrying very high valuation multiples, as future periods will have much higher earnings and free cash flow due to the cumulative effect of growth and increased profitability.
+
+In order to measure how a business is scaling, many investors look at marginal incremental profitability. This can be done on a quarter-over-quarter basis, or a year-over-year basis. Simply look at the change in revenue versus the change in costs, and then calculate the incremental operating margin of the two results. If this marginal profitability number is much higher than historical profitability, a company is scaling nicely, and the investor has picture proof of that occurrence. If this number is lower than historic profitability, it raises a red flag for investors, who may be concerned that investments in new growth initiatives are yielding lower cash flow per dollar than previous investments.
+
+Google’s recent first quarter results provide a nice example here. As you can see in the graph, Google’s incremental marginal profitability for Q1 was actually negative on both a year-over-year and a quarter-over-quarter basis. If a company is scaling nicely, you will see a marginal incremental profitability that is actually higher than the current profit margin. Google stated on its earnings call, that the company was simply investing for the long-term over the short-term, and was not concerned about this trend. Investors viewed things differently, and sent the stock down $48 the next day, representing a 7% fall from $578 to $530/share.
+
+This is also the reason that “human capital” businesses like consulting businesses often have trouble with low valuations on Wall Street.  If the majority of costs are people, and people are also the key input for any work product, you will find the ability to generate increased marginal profitability quite difficult.
+
+7. Customer Concentration
+
+In their S-1, companies are required to highlight all customers that represent over 10% of their overall revenue?  Why do investors care about this?  Once again, all things being equal, you would rather have a highly fragmented customer base versus a highly concentrated one. Customers that represent a large percentage of your revenue have “market power” that is likely to result in pricing, feature, or service demands over time. And because of your dependence on said customer, you are likely to be responsive to those requests, which in the long run will negatively impact discounted cash flows. You also have an obvious issue if your top 2-5 customers can organize against you. This will severely limit pricing power. The ideal situation is tons of very small customers who are essentially “price takers” in the market.  Google’s AdWords program is a great example.
+
+8. Major Partner Dependencies
+
+Investors will discount the price/revenue valuation of any company that is heavily dependent on another partner is some way or form. A high profile example of this is Demand Media’s reliance on Google’s SEO traffic. Google isn’t the customer per se, but they can heavily impact the outcomes for Demand. And even if they don’t impact them (the recent quarter was in line with expectations), the mere awareness that they could, can have drastic impact on long-term valuation, and therefore price/revenue multiple.  These dependencies are also disclosed in the S-1 under “Risk Factors.” Here is the example of the risk disclosure of Demand’s dependence on Google from an SEO perspective:
+
+“We depend in part on various Internet search engines, such as Google, Bing, Yahoo!, and other search engines to direct a significant amount of traffic to our owned and operated websites. For the quarter ended September 30, 2010, approximately 41% of the page view traffic directed to our owned and operated websites came directly from these Internet search engines (and a majority of the traffic from search engines came from Google), according to our internal data.”
+
+These strong dependencies eat away at investors simply because the company is exposed to issues that are out of the control of management. As an example, Kayak’s potential IPO buyers will need to get comfortable with Google’s acquisition of ITA, Kayak’s use of ITA, and whether or not Google goes from being a source of traffic to a competitor. Likewise, if and when Zynga files for an IPO, new investors will be inherently betting on whether or not Zynga’s Facebook dependency is a positive or a negative. No one wants a partner policy or algorithm change to have unpredicted negative impacts on a public company. These risks are accounted for with lower valuation multiples.
+
+9. Organic Demand vs. Heavy Marketing Spend
+
+All things being equal, a heavy reliance on marketing spend will hurt your valuation multiple. Think about this simplistic example. There are two stores in the middle of town. One has a product/service that customers love, and as a result, customers flock to the store day in and day out all on their own. These customers then tell other potential customers, and through this “word of mouth” process, the customer base grows even larger. The second storeowner advertises frequently, and all new customers are a result of this advertisement and promotion (which obviously costs $$). Which business would you prefer to own?  Which one would likely have higher cash flows?  If you have to “buy” or “rent” your customers, you have a non-optimal business model – plain and simple.
+
+The empirical data backs this up. You will be hard pressed to find a company with a heavy marketing spend with a high price/revenue multiple. Perhaps the very best Internet company that invests heavily in marketing is Netflix (marketing is about 15% of sales in recent quarter). When it comes to execution, Netflix is considered by many to be the best of the best. So you have a company that is highly regarded for their management prowess, and that is growing over 50% year over year. Yet, they trade at 4X 2011 revenue estimates and 3X 2012 estimates. And this is the best of the best.  The majority of companies that are heavy marketers trade at price/revenue multiples well below Netflix.
+
+Consider another point. Most of the companies that have really high multiples, and that have been highly respected by investors all have or have had organic growth: Yahoo, Ebay, Google, Facebook, Skype, OpenTable, Baidu. These business models did not require marketing. The picture included below is borrowed from a Skype slide deck from a few years back, and does an amazing job of highlighting the difference between “bought traffic” and organic growth. As Niklas highlighted, the cost of acquiring a new Skype user was $0.001, versus $400 for Vonage, a very heavy marketer. Which company deserved a higher price/revenue multiple?
+
+For a period of time, Jeff Bezos was a heavy investor in marketing, but after a while he retrenched. “About three years ago we stopped doing television advertising. We did a 15-month-long test of TV advertising. And it worked, but not as much as the kind of price elasticity we knew we could get from taking those ad dollars and giving them back to consumers,” said Bezos. “More and more money will go into making a great customer experience, and less will go into shouting about the service. Word of mouth is becoming more powerful. If you offer a great service, people find out.”
+
+This should not be read as a blanket condemnation of all marketing programs, but rather a simple point that if there are two businesses that are otherwise identical, if one requires substantial marketing and one does not, Wall Street will pay a higher valuation of the one with organic customers.
+
+10. Growth
+
+We saved the best for last. Nothing contributes to a higher valuation multiple like good ole’ growth. Obviously, the faster you are growing, the larger, and larger future revenues and cash flows will be, which has direct implications for a DCF. High growth also implies that a company has tapped into a powerful new market opportunity, where customer demand is seemingly insatiable. As a result, there is typically a very strong correlation between growth and valuation multiples, including the price/revenue multiple.
+
+There is another reason why the premium paid for growth in 2011 may be even higher than it has been in the past.  As you can see from the table below, some of the largest names in technology are really struggling to grow. When you combine this fact with the paucity of IPOs from the past five years, the public technology investor has been starved from investing in companies with interesting growth characteristics. As such, they are likely to be super-excited by any company with a growth rate over 25%. If its over 50 or 100%, they will be ecstatic. Trading in and out of companies with low growth rates is simply not that interesting to an investor.
+
+So growth is good, correct? There is a reason to save growth for last. While growth is quite important, and even thought we are in a market where growth is in particularly high demand, growth all by itself can be misleading. Here is the problem. Growth that can never translate into long-term positive cash flow will have a negative impact on a DCF model, not a positive one. This is known as “profitless prosperity.”
+
+In the late 1990s, when Wall Street began to pay for “revenue” and not “profits” many entrepreneurs figured out a way to give them the revenues they wanted. It turns out that if all you want to do is grow revenues, with disregard for the other variables, it is quite simple to “manufacture” awe-inspiring revenue growth. To prove the point, consider this oft-used example from the Internet bubble. What if I had a business where I sold dollars for $0.85? What would my revenue growth look like? Obviously, you could grow this business to $ billions in revenue tomorrow. While this may be tongue and cheek, the real world example of the “dollar for $0.85” metaphor is any business where the value transfer to customers and suppliers and employees cannot be sustained at a positive profit. The customer will be thrilled with any “below market” offering, and will rush in to get all they can. In this case, the growth was actually created by the demand for the unsustainable offering.
+
+There is another situation where growth can be misleading. If a company stumbles on to a hot new market, but lacks “barriers to entry” or does not have a sustainable competitive advantage, there will eventually be trouble. In fact, the very success of the first company in the field will act as a siren inviting others into the market, which, in the absence of a competitive advantage, will lead to margin erosion. Many electronics products follow this trend as some hot new product is quickly commoditized.
+
+The 10X Club
+
+So there are ten business characteristics that can impact a company’s chances of making it into the 10X+ price/revenue multiple club. Clearly, some of these variables are interdependent, and clearly you may find a company or two without every single characteristic, that still make the club. That said, most of the companies that trade at 10X or higher in terms of price/revenue will do extremely well against this scorecard.
+
+All of which brings us to last week’s real world example, LinkedIn.  There has been much written about the LinkedIn IPO, and its tremendous after-market performance. As of Monday, LinkedIn’s market capitalization was $8.3 billion. Analysts have not published forward revenue estimates, but we have heard of investor models that put 2012 revenue anywhere between $550 and $700mm. Assuming these are accurate, LinkedIn trades between 11.8-15x 2012 revenues. This lofty valuation has attracted scrutiny from around the globe, including skeptical analysis from both the 
+
+New York Times
+
+ and 
+
+Barron’s
+
+.
+
+In the table below, you will see that LinkedIn does extremely well against our 10X club criteria list. It has growth, it has very high barriers to entry, it has network effects, and it has little to no dependencies. The only criticism one might have is that they are not showing enough profitability or marginal profitability. Profitability increased from Q3 to Q4 last year, but the company ramped sales spending in Q1, and profitability waned. So, assuming that the company is willing to show profit expansion over the next few years, it’s not that unreasonable for the company to trade at a 10X price/revenue multiple.
+
+However, all companies with which the press and public are enamored are not LinkedIn. There are many hot brand-names with lofty private valuations and strong revenues, that would not do so well on the “10X scorecard.” Over the next 12-18 months we should see these companies test the public markets, and with the benefit of data and a truly liquid marketplace, we should gain a better appreciation for real valuation. If we’ve learned anything from the past market cycles, it’s that the fundamentals eventually matter, and all revenues are decidedly not created equal.
+
+Update (5/26/2011): After some feedback from readers, and some further thoughts, there are a few more additions to the list worth mentioning, although in less detail.
+
+1. 
+
+Capital Expenditure Intensity
+
+ – All things being equal, a company with heavy CapEx will trade at a lower price/revenue multiple (for sure). Capital intensity requires constant funding which will dilute either shares (through increaased offferings) or directly use up earned cash.
+
+2. 
+
+Cash flow / Earnings
+
+ – Some companies generate way more cash flow than earnings, and some do the opposite (generate way more earnings than cash flow). The higher your ratio is of cash/earnings the better off you are. This can be accomplished in numerous ways, but one of the more common is to collect cash from your customer ahead of your accounting driven revenue-recognition. Cash is king, and if your cash margin is better than your accounting net income margin, you are golden. The opposite is also true. Companies that genreate far less free cash flow than earnings are going to have lower valuation multiples.
+
+3. 
+
+Optionality
+
+ – This topic is a bit more abstract, but sometimes a company, due to its market position, is in a strong position to have optionality on a whole new business. A few years back, Amazon was trading at 1x revenue and had just launched AWS. AWS was an “option” on a whole new business, and eventually began to be valued as such.
+
+4. 
+
+TAM
+
+ – One of the readers asked about TAM, which stand for Total Available Market. The assertion is that TAM can affect valuation multiple. I understand the concept, but I have not seen this play out in reality. Most of the companies that suffer from TAM never make it to the public markets. Also, companies that have high price/revenue multiples typically have optionality into other markets. So basically, I think TAM can radically affect private company valuations, but less so for public.
+
+[Follow Me on Twitter]
+
+Share this:
+
+Share on X (Opens in new window)
+
+X
+
+Share on Facebook (Opens in new window)
+
+Facebook
+
+Related
+
+ 
+
+Share it
+
+Share on Facebook

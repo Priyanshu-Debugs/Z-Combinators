@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import PageTransition from "../components/PageTransition";
 import ChatInterface from "../components/ChatInterface";
@@ -41,6 +43,8 @@ const WELCOME_MESSAGE = {
 };
 
 function EvaluateContent() {
+  const { isSignedIn, getToken } = useAuth();
+  const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; suggested_followups?: string[]; wasStreamed?: boolean }[]>([
     WELCOME_MESSAGE,
@@ -98,14 +102,72 @@ function EvaluateContent() {
 
   const retryTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Resume an existing session by ID
+  const handleResumeSession = useCallback(
+    async (targetSessionId: string): Promise<boolean> => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const headers: Record<string, string> = {};
+        if (isSignedIn) {
+          const token = await getToken();
+          if (token) headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const res = await fetch(`${API_URL}/api/v1/chat/session/${targetSessionId}`, {
+          headers,
+        });
+        if (!res.ok) throw new Error("Failed to load session details.");
+        const data = await res.json();
+        setSessionId(data.session_id);
+
+        if (data.history && data.history.length > 0) {
+          setMessages(
+            data.history.map(
+              (m: {
+                role: "user" | "assistant";
+                content: string;
+                suggested_followups?: string[];
+              }) => ({
+                role: m.role,
+                content: m.content,
+                suggested_followups: m.suggested_followups,
+                wasStreamed: true,
+              })
+            )
+          );
+        } else {
+          setMessages([WELCOME_MESSAGE]);
+        }
+
+        setDossier(data.compiled_dossier || []);
+        window.history.replaceState(null, "", `/evaluate?session=${targetSessionId}`);
+        return true;
+      } catch (err) {
+        console.error("Failed to resume session", err);
+        setError("Could not load session history. Starting a new evaluation instead.");
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isSignedIn, getToken]
+  );
+
   // Initialize or retry session
   const initSession = useCallback(async () => {
     setError(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/chat/session`, {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (isSignedIn) {
+        const token = await getToken();
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${API_URL}/api/v1/chat/session`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
       });
       if (res.ok) {
         const data = await res.json();
@@ -123,12 +185,18 @@ function EvaluateContent() {
       console.warn("Advisor service is currently booting up, retrying...", err);
     }
     return false;
-  }, []);
+  }, [isSignedIn, getToken]);
 
   useEffect(() => {
     let retryTimer: NodeJS.Timeout | null = null;
-    
+
     const tryConnect = async () => {
+      const urlSession = searchParams.get("session");
+      if (urlSession) {
+        const resumed = await handleResumeSession(urlSession);
+        if (resumed) return;
+      }
+
       const success = await initSession();
       if (!success) {
         retryTimer = setInterval(async () => {
@@ -140,13 +208,13 @@ function EvaluateContent() {
         }, 6000);
       }
     };
-    
+
     tryConnect();
-    
+
     return () => {
       if (retryTimer) clearInterval(retryTimer);
     };
-  }, [initSession]);
+  }, [initSession, handleResumeSession, searchParams]);
 
   // Save evaluation to history when dimensions change significantly
   useEffect(() => {
@@ -180,9 +248,15 @@ function EvaluateContent() {
     setMessages(updatedMessages);
 
     try {
-      const res = await fetch(`${API_URL}/api/chat/message/stream`, {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (isSignedIn) {
+        const token = await getToken();
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${API_URL}/api/v1/chat/message/stream`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ session_id: sessionId, content }),
       });
 
@@ -292,15 +366,22 @@ function EvaluateContent() {
   const handleNewChat = async () => {
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/chat/session`, {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (isSignedIn) {
+        const token = await getToken();
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${API_URL}/api/v1/chat/session`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
       });
       if (res.ok) {
         const data = await res.json();
         setSessionId(data.session_id);
         setMessages([WELCOME_MESSAGE]);
         setDossier([]);
+        window.history.replaceState(null, "", "/evaluate");
       }
     } catch {
       setError("Failed to start new chat.");
@@ -724,7 +805,11 @@ function EvaluateContent() {
       <Disclaimer />
 
       {/* History Drawer */}
-      <EvaluationHistory isOpen={showHistory} onClose={() => setShowHistory(false)} />
+      <EvaluationHistory
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        onSelectSession={handleResumeSession}
+      />
 
       {/* Report Preview Modal */}
       <AnimatePresence>

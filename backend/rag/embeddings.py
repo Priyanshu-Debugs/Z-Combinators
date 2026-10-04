@@ -43,11 +43,11 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
     if not texts:
         return []
         
-    batch_size = 16
+    batch_size = 32
     results = []
     
     i = 0
-    max_attempts = max(3, len(key_manager.keys))
+    max_attempts = 8
     
     while i < len(texts):
         batch = texts[i : i + batch_size]
@@ -61,22 +61,24 @@ def embed_texts(texts: list[str]) -> list[list[float]]:
                 success = True
                 break
             except Exception as e:
+                is_rate_limit = is_rate_limit_error(e)
                 if key_manager.has_multiple_keys():
                     key_manager.rotate_key()
                     get_embeddings_model(force_recreate=True)
-                    continue
+                
                 if attempt == max_attempts - 1:
+                    print(f"Embedding failed after {max_attempts} attempts: {e}")
                     raise e
-                time.sleep(2)
+                
+                wait_time = 15 if is_rate_limit else 4
+                print(f"  [Attempt {attempt + 1}/{max_attempts}] Hit {type(e).__name__} (rate limit: {is_rate_limit}). Waiting {wait_time}s before retry...")
+                time.sleep(wait_time)
                 
         if not success:
             raise Exception("Failed to embed batch after multiple attempts.")
             
         i += batch_size
         if i < len(texts):
-            # Gemini free-tier limits embeddings to 100 requests/minute.
-            # We batch in sizes of 16 and sleep for 22 seconds between batches
-            # (maximum rate of 48 documents per minute, well under the 100 limit).
-            time.sleep(22)
+            time.sleep(4)
             
     return results
